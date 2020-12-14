@@ -18,6 +18,12 @@ class Snake:
     self.owner_name = owner_name
     self.steps = steps
 
+  def add_snake_part(self, snake_part):
+    self.snake_parts.append(snake_part)
+
+  def incerase_steps(self, steps):
+    self.steps += steps
+
 
 class SnakePart(DrawableComponentBase):
   def __init__(self, x_coordinate, y_coordinate, height, width, part_type):
@@ -33,6 +39,7 @@ class User:
 
 
 class Food(DrawableComponentBase):
-  def __init__(self, x_coordinate, y_coordinate, height, width, points_worth):
+  def __init__(self, x_coordinate, y_coordinate, height, width, points_worth, steps_worth):
     super().__init__(x_coordinate, y_coordinate, height, width)
     self.points_worth = points_worth
+    self.steps_worth = steps_worth
