@@ -5,9 +5,11 @@ class SnakePartType:
   BODY = 2
 
 class DrawableComponentBase:
-  def __init__(self, x_coordinate, y_coordinate):
+  def __init__(self, x_coordinate, y_coordinate, height, width):
     self.x_coordinate = x_coordinate
     self.y_coordinate = y_coordinate
+    self.height = height
+    self.width = width
 
 
 class Snake:
@@ -18,8 +20,8 @@ class Snake:
 
 
 class SnakePart(DrawableComponentBase):
-  def __init__(self, x_coordinate, y_coordinate, part_type):
-    super().__init__(x_coordinate, y_coordinate,)
+  def __init__(self, x_coordinate, y_coordinate, height, width, part_type):
+    super().__init__(x_coordinate, y_coordinate, height, width)
     self.part_type = part_type
 
 
@@ -31,5 +33,6 @@ class User:
 
 
 class Food(DrawableComponentBase):
-  def __init__(self, x_coordinate, y_coordinate, points_worth):
-    super().__init__(x_coordinate, y_coordinate,)
+  def __init__(self, x_coordinate, y_coordinate, height, width, points_worth):
+    super().__init__(x_coordinate, y_coordinate, height, width)
+    self.points_worth = points_worth
