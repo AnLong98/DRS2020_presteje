@@ -3,38 +3,38 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from models import Snake, SnakePart, SnakePartType, DrawableComponentBase, Food
 
-
 class GameBoard(QFrame):
     def __init__(self):
         super(GameBoard, self).__init__()
         self.define_frame_style()
         self.painter = QPainter(self)
 
-        self.snakeParts = [
-             SnakePart(5, 10, 15, 15, SnakePartType.HEAD)
-            ,SnakePart(5, 11, 15, 15, SnakePartType.BODY)
-            ,SnakePart(5, 12, 15, 15, SnakePartType.BODY)
-        ]
+        # self.snakeParts = [
+        #      SnakePart(5, 10, 15, 15, SnakePartType.HEAD)
+        #     ,SnakePart(5, 11, 15, 15, SnakePartType.BODY)
+        #     ,SnakePart(5, 12, 15, 15, SnakePartType.BODY)
+        # ]
+        #
+        # self.staticSnake = [
+        #      SnakePart(50, 30, 15, 15, SnakePartType.HEAD)
+        #     ,SnakePart(50, 31, 15, 15, SnakePartType.BODY)
+        #     ,SnakePart(50, 32, 15, 15, SnakePartType.BODY)
+        #     ,SnakePart(50, 33, 15, 15, SnakePartType.BODY)
+        #     ,SnakePart(50, 34, 15, 15, SnakePartType.BODY)
+        # ]
+        #
+        #
+        # self.foods = [
+        #     Food(23, 10, 15, 15, 1, 1),
+        #     Food(40, 40, 15, 15, 1, 1)
+        # ]
+        #
+        # self.snake = Snake(self.snakeParts, 'Stefan', 1)
+        # self.static1 = Snake(self.staticSnake, "Static1", 1)
+        # #self.static2 = Snake(self.staticSnake2, "Static2", 1)
 
-        self.staticSnake = [
-             SnakePart(50, 30, 15, 15, SnakePartType.HEAD)
-            ,SnakePart(50, 31, 15, 15, SnakePartType.BODY)
-            ,SnakePart(50, 32, 15, 15, SnakePartType.BODY)
-            ,SnakePart(50, 33, 15, 15, SnakePartType.BODY)
-            ,SnakePart(50, 34, 15, 15, SnakePartType.BODY)
-        ]
-
-
-        self.foods = [
-            Food(23, 10, 15, 15, 1, 1),
-            Food(40, 40, 15, 15, 1, 1)
-        ]
-
-        self.snake = Snake(self.snakeParts, 'Stefan', 1)
-        self.static1 = Snake(self.staticSnake, "Static1", 1)
-        #self.static2 = Snake(self.staticSnake2, "Static2", 1)
-
-        self.snakes = [self.snake, self.static1]
+        #self.snakes = [self.snake, self.static1]
+        self.snakes = []
 
 
     def define_frame_style(self):
