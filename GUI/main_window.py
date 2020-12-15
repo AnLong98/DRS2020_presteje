@@ -5,6 +5,8 @@ from PyQt5.QtGui import *
 from GUI.game_board import GameBoard
 from GUI.score_board import ScoreBoard
 
+from Managers.drawing_manager import DrawingManager
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -12,11 +14,13 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("PreSteJe Snake Game")
         self.setFixedSize(1200, 800)
 
+        self.gameboard = GameBoard()
+        self.scoreboard = ScoreBoard()
+
         # self.center_main_window()
         self.generate_window_layout()
 
-        self.gameboard = GameBoard()
-        self.scoreboard = ScoreBoard()
+
 
     # def center_main_window(self):
     #     qtRectangle = self.frameGeometry()
@@ -27,8 +31,8 @@ class MainWindow(QMainWindow):
     def generate_window_layout(self):
         splitter = QSplitter(Qt.Horizontal)
         splitter.setEnabled(False)
-        splitter.addWidget(self.game_board)
-        splitter.addWidget(self.score_board)
+        splitter.addWidget(self.gameboard)
+        splitter.addWidget(self.scoreboard)
         self.setCentralWidget(splitter)
 
     @property
