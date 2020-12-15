@@ -2,10 +2,18 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from models import Snake, SnakePart, SnakePartType, DrawableComponentBase
+from models import SnakeDirection
+
+
+class KeyPressed:
+    LEFT = 1
+    RIGHT = 2
+    UP = 3
+    DOWN = 4
 
 
 class GameBoard(QFrame):
-    def __init__(self):
+    def __init__(self, game):
         super(GameBoard, self).__init__()
         self.define_frame_style()
         self.painter = QPainter(self)
@@ -16,11 +24,27 @@ class GameBoard(QFrame):
         ]
         self.snake = Snake(self.snakeParts, 'Stefan', 1)
         print(self.snake)
+        self.game = game
 
     def define_frame_style(self):
         self.setFixedSize(950, 800)
         self.setFrameShape(QFrame.StyledPanel)
         self.setStyleSheet('background-color: #7ffc03')
+
+    def keyPressEvent(self, event):
+        key = event.key()
+
+        if key == Qt.Key_Left:
+            self.game.start_game(KeyPressed.LEFT)
+
+        elif key == Qt.Key_Right:
+            self.game.start_game(KeyPressed.RIGHT)
+
+        elif key == Qt.Key_Up:
+            self.game.start_game(KeyPressed.UP)
+
+        elif key == Qt.Key_Down:
+            self.game.start_game(KeyPressed.DOWN)
 
     @property
     def get_painter(self):

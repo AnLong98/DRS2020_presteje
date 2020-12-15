@@ -1,3 +1,8 @@
+class SnakeDirection:
+    LEFT = 1
+    RIGHT = 2
+    UP = 3
+    DOWN = 4
 
 
 class SnakePartType:
@@ -13,10 +18,11 @@ class DrawableComponentBase:
 
 
 class Snake:
-  def __init__(self, snake_parts, owner_name, steps):
+  def __init__(self, snake_parts, owner_name, steps, direction):
     self.snake_parts = snake_parts
     self.owner_name = owner_name
     self.steps = steps
+    self.direction = direction
 
   def add_snake_part(self, snake_part):
     self.snake_parts.append(snake_part)
