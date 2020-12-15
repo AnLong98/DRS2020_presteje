@@ -6,6 +6,7 @@ from GUI.game_board import GameBoard
 from GUI.score_board import ScoreBoard
 
 from Managers.drawing_manager import DrawingManager
+from models import Snake, SnakePart, SnakePartType, DrawableComponentBase, Food
 
 
 class MainWindow(QMainWindow):
@@ -15,8 +16,18 @@ class MainWindow(QMainWindow):
         self.setFixedSize(1200, 800)
 
         self.gameboard = GameBoard()
+
         self.scoreboard = ScoreBoard()
 
+        self.staticSnake2 = [
+            SnakePart(7, 15, 15, 15, SnakePartType.HEAD)
+            , SnakePart(8, 15, 15, 15, SnakePartType.BODY)
+            , SnakePart(9, 15, 15, 15, SnakePartType.BODY)
+            , SnakePart(10, 15, 15, 15, SnakePartType.BODY)
+            , SnakePart(11, 15, 15, 15, SnakePartType.BODY)
+        ]
+        self.static2 = Snake(self.staticSnake2, "Static2", 1)
+        self.gameboard.snakes.append(self.static2)
         # self.center_main_window()
         self.generate_window_layout()
 
