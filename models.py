@@ -1,3 +1,5 @@
+
+
 class SnakePartType:
   HEAD = 1
   BODY = 2
