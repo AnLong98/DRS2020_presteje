@@ -35,6 +35,7 @@ class GameBoard(QFrame):
 
         #self.snakes = [self.snake, self.static1]
         self.snakes = []
+        self.foods = []
 
 
     def define_frame_style(self):
