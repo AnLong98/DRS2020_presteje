@@ -1,11 +1,10 @@
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from models import *
 
 class DrawingManager:
-    def drawSnake(self, snake, game_board):
-        game_board.snakes.append(snake)
+    def __init__(self, game_board):
+        self.game_board = game_board
 
-    def drawFood(self, food, game_board):
-        game_board.foods.append(food)
+    def draw_snakes(self, snakes):
+        self.game_board.update_snakes(snakes)
+
+    def draw_food(self, food):
+        self.game_board.update_food(food)

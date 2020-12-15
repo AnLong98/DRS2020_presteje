@@ -5,50 +5,17 @@ from models import Snake, SnakePart, SnakePartType, DrawableComponentBase
 from models import SnakeDirection
 
 
-class KeyPressed:
-    LEFT = 1
-    RIGHT = 2
-    UP = 3
-    DOWN = 4
-
-
 class GameBoard(QFrame):
-    def __init__(self, game):
+    def __init__(self):
         super(GameBoard, self).__init__()
+        self.snakes = []
+        self.food = []
         self.define_frame_style()
-        self.painter = QPainter(self)
-        self.snakeParts = [
-             SnakePart(5, 10, 15, 15, SnakePartType.HEAD)
-            ,SnakePart(5, 11, 15, 15, SnakePartType.BODY)
-            ,SnakePart(5, 12, 15, 15, SnakePartType.BODY)
-        ]
-        self.snake = Snake(self.snakeParts, 'Stefan', 1)
-        print(self.snake)
-        self.game = game
 
     def define_frame_style(self):
         self.setFixedSize(950, 800)
         self.setFrameShape(QFrame.StyledPanel)
         self.setStyleSheet('background-color: #7ffc03')
-
-    def keyPressEvent(self, event):
-        key = event.key()
-
-        if key == Qt.Key_Left:
-            self.game.start_game(KeyPressed.LEFT)
-
-        elif key == Qt.Key_Right:
-            self.game.start_game(KeyPressed.RIGHT)
-
-        elif key == Qt.Key_Up:
-            self.game.start_game(KeyPressed.UP)
-
-        elif key == Qt.Key_Down:
-            self.game.start_game(KeyPressed.DOWN)
-
-    @property
-    def get_painter(self):
-        return self.painter
 
     @property
     def get_gameboard_height(self):
@@ -66,18 +33,27 @@ class GameBoard(QFrame):
     def square_height(self):
         return 15
 
+    def update_snakes(self, snakes):
+        self.snakes = snakes
+        self.update()
+
+    def update_food(self, food):
+        self.food = food
+        self.update()
+
     def paintEvent(self, event):
         qp = QPainter(self)
-        for part in self.snake.snake_parts:
-            self.draw_square(qp, part)
+        for snake in self.snakes:
+            for part in snake.snake_parts:
+                self.draw_square(qp,part)
 
-    def draw_square(self, painter, snake_part):
+    def draw_square(self, qp, snake_part):
         color = QColor(Qt.black)
         rect = self.contentsRect()
         if snake_part.part_type == SnakePartType.HEAD:
             color = QColor(Qt.red)
         else:
             color = QColor(Qt.black)
-        painter.fillRect(rect.left() + snake_part.x_coordinate * 15 + 1, snake_part.y_coordinate * 15 + 1, self.square_width() - 2, self.square_height() - 2, color)
+        qp.fillRect(rect.left() + snake_part.x_coordinate, snake_part.y_coordinate, self.square_width(), self.square_height(), color)
 
 

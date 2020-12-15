@@ -43,6 +43,9 @@ class User:
     self.points = points
     self.user_name = user_name
 
+  def remove_snake(self, snake):
+    self.snakes.remove(snake)
+
 
 class Food(DrawableComponentBase):
   def __init__(self, x_coordinate, y_coordinate, height, width, points_worth, steps_worth):

@@ -1,6 +1,12 @@
 from models import SnakeDirection
 from models import SnakePartType
-from GUI.game_board import KeyPressed
+
+
+class KeyPressed:
+    LEFT = 1
+    RIGHT = 2
+    UP = 3
+    DOWN = 4
 
 
 class MovementManager:
@@ -28,10 +34,11 @@ class MovementManager:
 
     def move_active_snake(self, active_snake):
         snake_head = active_snake.snake_parts[0]
+        movement_size = 15
 
         if active_snake.direction == SnakeDirection.LEFT:
             part_previous = snake_head  # cuva prethodni
-            snake_head.x_coordinate = snake_head.x_coordinate - 1
+            snake_head.x_coordinate = snake_head.x_coordinate - movement_size
 
             for x in active_snake.snake_parts:
                 if x.part_type == SnakePartType.HEAD:
@@ -42,7 +49,7 @@ class MovementManager:
 
         elif active_snake.direction == SnakeDirection.RIGHT:
             part_previous = snake_head
-            snake_head.x_coordinate = snake_head.x_coordinate + 1
+            snake_head.x_coordinate = snake_head.x_coordinate + movement_size
 
             for x in active_snake.snake_parts:
                 if x.part_type == SnakePartType.HEAD:
@@ -53,7 +60,7 @@ class MovementManager:
 
         elif active_snake.direction == SnakeDirection.UP:
             part_previous = snake_head
-            snake_head.x_coordinate = snake_head.y_coordinate - 1
+            snake_head.x_coordinate = snake_head.y_coordinate - movement_size
 
             for x in active_snake.snake_parts:
                 if x.part_type == SnakePartType.HEAD:
@@ -64,7 +71,7 @@ class MovementManager:
 
         elif active_snake.direction == SnakeDirection.DOWN:
             part_previous = snake_head
-            snake_head.x_coordinate = snake_head.y_coordinate + 1
+            snake_head.x_coordinate = snake_head.y_coordinate + movement_size
 
             for x in active_snake.snake_parts:
                 if x.part_type == SnakePartType.HEAD:
@@ -72,7 +79,3 @@ class MovementManager:
                 part_temp = x
                 x.x_coordinate, x.y_coordinate = part_previous.x_coordinate, part_previous.y_coordinate
                 part_previous = part_temp
-
-        # treba mi drawing_manager instanca
-        # def eraseSnake(active_snake)
-        # def eraseSnake(painter, active_snake)  treba mi painter instanca
