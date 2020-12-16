@@ -7,14 +7,12 @@ from models import SnakeDirection
 
 class GameBoard(QFrame):
     def __init__(self):
-
         super(GameBoard, self).__init__()
         self.snakes = []
         self.food = []
         self.define_frame_style()
 
     def define_frame_style(self):
-
         self.setFixedSize(960, 810)
         self.setFrameShape(QFrame.StyledPanel)
         self.setStyleSheet('background-color: #7ffc03')
@@ -50,6 +48,9 @@ class GameBoard(QFrame):
             for part in snake.snake_parts:
                 self.draw_square(qp,part)
 
+        for f in self.food:
+            self.draw_square_food(qp, f)
+
     def draw_square(self, qp, snake_part):
 
         color = QColor(Qt.black)
@@ -61,4 +62,9 @@ class GameBoard(QFrame):
             color = QColor(Qt.black)
         qp.fillRect(rect.left() + snake_part.x_coordinate, snake_part.y_coordinate, self.square_width(), self.square_height(), color)
 
+    def draw_square_food(self, qp, food):
+        color = QColor(Qt.white)
+        rect = self.contentsRect()
 
+        qp.fillRect(rect.left() + food.x_coordinate, food.y_coordinate, self.square_width(), self.square_height(),
+                    color)
