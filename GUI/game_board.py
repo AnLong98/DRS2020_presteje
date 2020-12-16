@@ -7,12 +7,14 @@ from models import SnakeDirection
 
 class GameBoard(QFrame):
     def __init__(self):
+
         super(GameBoard, self).__init__()
         self.snakes = []
         self.food = []
         self.define_frame_style()
 
     def define_frame_style(self):
+
         self.setFixedSize(960, 810)
         self.setFrameShape(QFrame.StyledPanel)
         self.setStyleSheet('background-color: #7ffc03')
