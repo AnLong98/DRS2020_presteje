@@ -13,7 +13,7 @@ class GameBoard(QFrame):
         self.define_frame_style()
 
     def define_frame_style(self):
-        self.setFixedSize(950, 800)
+        self.setFixedSize(960, 810)
         self.setFrameShape(QFrame.StyledPanel)
         self.setStyleSheet('background-color: #7ffc03')
 
