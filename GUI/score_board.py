@@ -10,7 +10,7 @@ class ScoreBoard(QFrame):
         self.define_frame_style()
 
     def define_frame_style(self):
-        self.setFixedSize(250, 800)
+        self.setFixedSize(240, 810)
         self.setFrameShape(QFrame.StyledPanel)
         self.setStyleSheet('background-color: #8f918d')
 

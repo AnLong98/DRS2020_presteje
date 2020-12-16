@@ -33,49 +33,62 @@ class MovementManager:
 
 
     def move_active_snake(self, active_snake):
-        snake_head = active_snake.snake_parts[0]
+        snake_head_x = active_snake.snake_parts[0].x_coordinate
+        snake_head_y = active_snake.snake_parts[0].y_coordinate
         movement_size = 15
 
         if active_snake.direction == SnakeDirection.LEFT:
-            part_previous = snake_head  # cuva prethodni
-            snake_head.x_coordinate = snake_head.x_coordinate - movement_size
+            part_previous_x = snake_head_x
+            part_previous_y = snake_head_y
+            active_snake.snake_parts[0].x_coordinate = active_snake.snake_parts[0].x_coordinate - movement_size
 
             for x in active_snake.snake_parts:
                 if x.part_type == SnakePartType.HEAD:
                     continue
-                part_temp = x
-                x.x_coordinate, x.y_coordinate = part_previous.x_coordinate, part_previous.y_coordinate
-                part_previous = part_temp
+                part_temp_x = x.x_coordinate
+                part_temp_y = x.y_coordinate
+                x.x_coordinate, x.y_coordinate = part_previous_x, part_previous_y
+                part_previous_x = part_temp_x
+                part_previous_y = part_temp_y
 
         elif active_snake.direction == SnakeDirection.RIGHT:
-            part_previous = snake_head
-            snake_head.x_coordinate = snake_head.x_coordinate + movement_size
+            part_previous_x = snake_head_x
+            part_previous_y = snake_head_y
+            active_snake.snake_parts[0].x_coordinate = active_snake.snake_parts[0].x_coordinate + movement_size
 
             for x in active_snake.snake_parts:
                 if x.part_type == SnakePartType.HEAD:
                     continue
-                part_temp = x
-                x.x_coordinate, x.y_coordinate = part_previous.x_coordinate, part_previous.y_coordinate
-                part_previous = part_temp
+                part_temp_x = x.x_coordinate
+                part_temp_y = x.y_coordinate
+                x.x_coordinate, x.y_coordinate = part_previous_x, part_previous_y
+                part_previous_x = part_temp_x
+                part_previous_y = part_temp_y
 
         elif active_snake.direction == SnakeDirection.UP:
-            part_previous = snake_head
-            snake_head.x_coordinate = snake_head.y_coordinate - movement_size
+            part_previous_x = snake_head_x
+            part_previous_y = snake_head_y
+            active_snake.snake_parts[0].y_coordinate = active_snake.snake_parts[0].y_coordinate - movement_size
 
             for x in active_snake.snake_parts:
                 if x.part_type == SnakePartType.HEAD:
                     continue
-                part_temp = x
-                x.x_coordinate, x.y_coordinate = part_previous.x_coordinate, part_previous.y_coordinate
-                part_previous = part_temp
+                part_temp_x = x.x_coordinate
+                part_temp_y = x.y_coordinate
+                x.x_coordinate, x.y_coordinate = part_previous_x, part_previous_y
+                part_previous_x = part_temp_x
+                part_previous_y = part_temp_y
 
         elif active_snake.direction == SnakeDirection.DOWN:
-            part_previous = snake_head
-            snake_head.x_coordinate = snake_head.y_coordinate + movement_size
+            part_previous_x = snake_head_x
+            part_previous_y = snake_head_y
+            active_snake.snake_parts[0].y_coordinate = active_snake.snake_parts[0].y_coordinate + movement_size
 
             for x in active_snake.snake_parts:
                 if x.part_type == SnakePartType.HEAD:
                     continue
-                part_temp = x
-                x.x_coordinate, x.y_coordinate = part_previous.x_coordinate, part_previous.y_coordinate
-                part_previous = part_temp
+                part_temp_x = x.x_coordinate
+                part_temp_y = x.y_coordinate
+                x.x_coordinate, x.y_coordinate = part_previous_x, part_previous_y
+                part_previous_x = part_temp_x
+                part_previous_y = part_temp_y

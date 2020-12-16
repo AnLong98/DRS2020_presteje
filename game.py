@@ -3,15 +3,17 @@ import sys
 from Managers.collision_manager import CollisionManager, CollisionDetectionResult
 from models import SnakeDirection
 from Managers.movement_manager import  KeyPressed
+from Managers.snake_part_manager import SnakePartManager
 
 
 class Game:
-    def __init__(self, players, food, collision_manager, drawing_manager, movement_manager, table_width, table_height):
+    def __init__(self, players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, table_width, table_height):
         self.players = players
         self.food = food
         self.collision_manager = collision_manager
         self.drawing_manager = drawing_manager
         self.movement_manager = movement_manager
+        self.snake_part_manager = snake_part_manager
         self.table_width = table_width
         self.table_height = table_height
         self.all_snakes = []
@@ -35,12 +37,17 @@ class Game:
         if collision_result == CollisionDetectionResult.FOOD_COLLISION:
             self.food.remove(object_collided)
             self.active_snake.incerase_steps(object_collided.steps_worth)
+            self.snake_part_manager.increase_snake(self.active_snake)
             self.drawing_manager.draw_food(self.food)
-        else:
+
+        elif collision_result == CollisionDetectionResult.AUTO_COLLISION or \
+                collision_result == CollisionDetectionResult.ENEMY_COLLISION or \
+                collision_result == CollisionDetectionResult.FRIENDLY_COLLISION or \
+                collision_result == CollisionDetectionResult.WALL_COLLISION:
             self.all_snakes.remove(self.active_snake)
             self.active_player.remove_snake(self.active_snake)
             print("Collision!, game over!")
 
-        self.drawing_manager.draw_snakes(self.all_snakes)
-
+        elif collision_result == CollisionDetectionResult.NO_COLLISION:
+            self.drawing_manager.draw_snakes(self.all_snakes)
 

@@ -10,13 +10,14 @@ from Managers.drawing_manager import DrawingManager
 from Managers.movement_manager import MovementManager, KeyPressed
 from game import Game
 from models import Snake, SnakePart, SnakePartType, DrawableComponentBase, Food, SnakeDirection, User
+from Managers.snake_part_manager import SnakePartManager
 
 
 class MainWindow(QMainWindow):
     def __init__(self, game_board, score_board, game):
         super(MainWindow, self).__init__()
         self.setWindowTitle("PreSteJe Snake Game")
-        self.setFixedSize(1200, 800)
+        self.setFixedSize(1200, 810)
 
         self.gameboard = game_board
 
@@ -34,6 +35,7 @@ class MainWindow(QMainWindow):
     def generate_window_layout(self):
         splitter = QSplitter(Qt.Horizontal)
         splitter.setEnabled(False)
+        splitter.setStyleSheet("QSplitter::handle {image: none;}")
         splitter.addWidget(self.gameboard)
         splitter.addWidget(self.scoreboard)
         self.setCentralWidget(splitter)
@@ -80,27 +82,32 @@ if __name__ == "__main__":
     collision_manager = CollisionManager()
     drawing_manager = DrawingManager(game_board)
     movement_manager = MovementManager()
+    snake_part_manager = SnakePartManager()
     table_width = game_board.get_gameboard_width
     table_height = game_board.get_gameboard_height
 
     food = []
-    food.append(Food(23, 10, 15, 15, 1, 1))
-    food.append(Food(50, 50, 15, 15, 1, 1))
+    food.append(Food(45, 240, 15, 15, 1, 1))
+    food.append(Food(390, 60, 15, 15, 1, 1))
+    food.append(Food(210, 75, 15, 15, 1, 1))
+    food.append(Food(75, 525, 15, 15, 1, 1))
+    food.append(Food(180, 390, 15, 15, 1, 1))
+    food.append(Food(60, 390, 15, 15, 1, 1))
 
     snakes = []
     snakeParts = [
-         SnakePart(5, 200, 15, 15, SnakePartType.HEAD)
-        ,SnakePart(5, 215, 15, 15, SnakePartType.BODY)
-        ,SnakePart(5, 230, 15, 15, SnakePartType.BODY)
+         SnakePart(15, 210, 15, 15, SnakePartType.HEAD)
+        ,SnakePart(15, 225, 15, 15, SnakePartType.BODY)
+        ,SnakePart(15, 240, 15, 15, SnakePartType.BODY)
     ]
     snake = Snake(snakeParts, 'Stefan', 1, SnakeDirection.UP)
     snakes.append(snake)
 
     snakes2 = []
     snakeParts2 = [
-        SnakePart(70, 70, 15, 15, SnakePartType.HEAD)
-        , SnakePart(85, 70, 15, 15, SnakePartType.BODY)
-        , SnakePart(100, 70, 15, 15, SnakePartType.BODY)
+        SnakePart(70, 75, 15, 15, SnakePartType.HEAD)
+        , SnakePart(85, 75, 15, 15, SnakePartType.BODY)
+        , SnakePart(100, 75, 15, 15, SnakePartType.BODY)
     ]
     snake2 = Snake(snakeParts2, 'Mikisa', 1, SnakeDirection.LEFT)
     snakes2.append(snake2)
@@ -112,7 +119,7 @@ if __name__ == "__main__":
     players.append(player)
     players.append(player2)
 
-    game = Game(players, food, collision_manager, drawing_manager, movement_manager, table_width, table_height )
+    game = Game(players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, table_width, table_height )
     game.set_active_player(player)
     game.set_active_snake(snake)
 
