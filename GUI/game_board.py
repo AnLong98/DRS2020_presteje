@@ -43,6 +43,7 @@ class GameBoard(QFrame):
 
     def paintEvent(self, event):
         qp = QPainter(self)
+
         for snake in self.snakes:
             for part in snake.snake_parts:
                 self.draw_square(qp, part)
@@ -51,8 +52,10 @@ class GameBoard(QFrame):
             self.draw_square_food(qp, f)
 
     def draw_square(self, qp, snake_part):
+
         color = QColor(Qt.black)
         rect = self.contentsRect()
+
         if snake_part.part_type == SnakePartType.HEAD:
             color = QColor(Qt.red)
         else:
