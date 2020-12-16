@@ -78,11 +78,14 @@ if __name__ == "__main__":
     game_board = GameBoard()
     score_board = ScoreBoard()
 
+    part_width = 15
+    part_height = 15
+
     #init game related things hardcoded for prototype
     collision_manager = CollisionManager()
     drawing_manager = DrawingManager(game_board)
     movement_manager = MovementManager()
-    snake_part_manager = SnakePartManager()
+    snake_part_manager = SnakePartManager(part_width, part_height)
     table_width = game_board.get_gameboard_width
     table_height = game_board.get_gameboard_height
 
