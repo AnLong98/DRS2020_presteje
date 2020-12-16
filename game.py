@@ -40,14 +40,9 @@ class Game:
             self.snake_part_manager.increase_snake(self.active_snake)
             self.drawing_manager.draw_food(self.food)
 
-        elif collision_result == CollisionDetectionResult.AUTO_COLLISION or \
-                collision_result == CollisionDetectionResult.ENEMY_COLLISION or \
-                collision_result == CollisionDetectionResult.FRIENDLY_COLLISION or \
-                collision_result == CollisionDetectionResult.WALL_COLLISION:
+        elif collision_result != CollisionDetectionResult.NO_COLLISION:
             self.all_snakes.remove(self.active_snake)
             self.active_player.remove_snake(self.active_snake)
             print("Collision!, game over!")
-
-        elif collision_result == CollisionDetectionResult.NO_COLLISION:
-            self.drawing_manager.draw_snakes(self.all_snakes)
+        self.drawing_manager.draw_snakes(self.all_snakes)
 
