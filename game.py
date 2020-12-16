@@ -39,7 +39,6 @@ class Game:
             self.active_snake.incerase_steps(object_collided.steps_worth)
             self.snake_part_manager.increase_snake(self.active_snake)
             self.drawing_manager.draw_food(self.food)
-
         elif collision_result != CollisionDetectionResult.NO_COLLISION:
             self.all_snakes.remove(self.active_snake)
             self.active_player.remove_snake(self.active_snake)

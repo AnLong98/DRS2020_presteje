@@ -96,9 +96,9 @@ if __name__ == "__main__":
 
     snakes = []
     snakeParts = [
-         SnakePart(15, 210, 15, 15, SnakePartType.HEAD)
-        ,SnakePart(15, 225, 15, 15, SnakePartType.BODY)
-        ,SnakePart(15, 240, 15, 15, SnakePartType.BODY)
+         SnakePart(17, 210, 15, 15, SnakePartType.HEAD)
+        ,SnakePart(17, 225, 15, 15, SnakePartType.BODY)
+        ,SnakePart(17, 240, 15, 15, SnakePartType.BODY)
     ]
     snake = Snake(snakeParts, 'Stefan', 1, SnakeDirection.UP)
     snakes.append(snake)
