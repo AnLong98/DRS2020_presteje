@@ -15,7 +15,7 @@ class GameBoard(QFrame):
     def define_frame_style(self):
         self.setFixedSize(960, 810)
         self.setFrameShape(QFrame.StyledPanel)
-        self.setStyleSheet('background-color: #7ffc03')
+        self.setStyleSheet('background-color: #27962d')
 
     @property
     def get_gameboard_height(self):
@@ -46,7 +46,7 @@ class GameBoard(QFrame):
 
         for snake in self.snakes:
             for part in snake.snake_parts:
-                self.draw_square(qp,part)
+                self.draw_square(qp, part)
 
         for f in self.food:
             self.draw_square_food(qp, f)
@@ -57,13 +57,14 @@ class GameBoard(QFrame):
         rect = self.contentsRect()
 
         if snake_part.part_type == SnakePartType.HEAD:
-            color = QColor(Qt.red)
+            #color = QColor(Qt.lightGray)
+            color = QColor('#d1d1d1')
         else:
-            color = QColor(Qt.black)
+            color = QColor(Qt.yellow)
         qp.fillRect(rect.left() + snake_part.x_coordinate, snake_part.y_coordinate, self.square_width(), self.square_height(), color)
 
     def draw_square_food(self, qp, food):
-        color = QColor(Qt.white)
+        color = QColor('#ff911c')
         rect = self.contentsRect()
 
         qp.fillRect(rect.left() + food.x_coordinate, food.y_coordinate, self.square_width(), self.square_height(),

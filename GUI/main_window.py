@@ -16,7 +16,7 @@ from Managers.snake_part_manager import SnakePartManager
 class MainWindow(QMainWindow):
     def __init__(self, game_board, score_board, game):
         super(MainWindow, self).__init__()
-        self.setWindowTitle("PreSteJe Snake Game")
+        self.setWindowTitle("Turn Snake - PreSteJe")
         self.setFixedSize(1200, 810)
 
         self.gameboard = game_board
@@ -99,25 +99,25 @@ if __name__ == "__main__":
 
     snakes = []
     snakeParts = [
-         SnakePart(17, 210, 15, 15, SnakePartType.HEAD)
-        ,SnakePart(17, 225, 15, 15, SnakePartType.BODY)
-        ,SnakePart(17, 240, 15, 15, SnakePartType.BODY)
+         SnakePart(15, 210, 15, 15, SnakePartType.HEAD)
+        ,SnakePart(15, 225, 15, 15, SnakePartType.BODY)
+        ,SnakePart(15, 240, 15, 15, SnakePartType.BODY)
     ]
     snake = Snake(snakeParts, 'Stefan', 1, SnakeDirection.UP)
     snakes.append(snake)
 
     snakes2 = []
     snakeParts2 = [
-        SnakePart(70, 75, 15, 15, SnakePartType.HEAD)
-        , SnakePart(85, 75, 15, 15, SnakePartType.BODY)
-        , SnakePart(100, 75, 15, 15, SnakePartType.BODY)
+        SnakePart(75, 75, 15, 15, SnakePartType.HEAD)
+        , SnakePart(90, 75, 15, 15, SnakePartType.BODY)
+        , SnakePart(105, 75, 15, 15, SnakePartType.BODY)
     ]
-    snake2 = Snake(snakeParts2, 'Mikisa', 1, SnakeDirection.LEFT)
+    snake2 = Snake(snakeParts2, 'Djura', 1, SnakeDirection.LEFT)
     snakes2.append(snake2)
 
     players = []
     player = User(snakes, 0, "Stefan")
-    player2 = User(snakes2, 0, "Mikisa")
+    player2 = User(snakes2, 0, "Djura")
 
     players.append(player)
     players.append(player2)
