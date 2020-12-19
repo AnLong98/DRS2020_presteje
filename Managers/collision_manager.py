@@ -65,3 +65,23 @@ class CollisionManager:
         return False
 
 
+    def check_generated_food_collision(self, all_snakes, all_food, table_width, table_height, generated_food):
+
+        # check if food collided with window border
+        if self.check_component_to_wall_collision(generated_food, wall_width=table_width, wall_height=table_height):
+            return CollisionDetectionResult.WALL_COLLISION, None
+
+        # check for collision with other food
+        for food in all_food:
+            if self.check_components_collision(food, generated_food):
+                return CollisionDetectionResult.FOOD_COLLISION, food
+
+        # check for collision with other snakes:
+        for snake in all_snakes:
+            is_colliding = self.check_head_to_body_collision(generated_food, snake)
+            if is_colliding:
+                return CollisionDetectionResult.ENEMY_COLLISION, snake
+
+        return CollisionDetectionResult.NO_COLLISION, None
+
+

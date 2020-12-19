@@ -27,7 +27,7 @@ class Snake:
   def add_snake_part(self, snake_part):
     self.snake_parts.append(snake_part)
 
-  def incerase_steps(self, steps):
+  def increase_steps(self, steps):
     self.steps += steps
 
 
@@ -45,6 +45,9 @@ class User:
 
   def remove_snake(self, snake):
     self.snakes.remove(snake)
+
+  def increase_points(self, points):
+    self.points += points
 
 
 class Food(DrawableComponentBase):

@@ -7,13 +7,14 @@ from Managers.snake_part_manager import SnakePartManager
 
 
 class Game:
-    def __init__(self, players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, table_width, table_height):
+    def __init__(self, players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, food_manager, table_width, table_height):
         self.players = players
         self.food = food
         self.collision_manager = collision_manager
         self.drawing_manager = drawing_manager
         self.movement_manager = movement_manager
         self.snake_part_manager = snake_part_manager
+        self.food_manager = food_manager
         self.table_width = table_width
         self.table_height = table_height
         self.all_snakes = []
@@ -38,8 +39,13 @@ class Game:
         collision_result, object_collided = self.collision_manager.check_moving_snake_collision(self.active_snake, self.all_snakes, self.food, self.table_width, self.table_height)
         if collision_result == CollisionDetectionResult.FOOD_COLLISION:
             self.food.remove(object_collided)
-            self.active_snake.incerase_steps(object_collided.steps_worth)
+            self.active_snake.increase_steps(object_collided.steps_worth)
+            self.active_player.increase_points(object_collided.points_worth)
             self.snake_part_manager.increase_snake(self.active_snake, snake_tail_x, snake_tail_y)
+            generated_food = self.food_manager.generate_food(object_collided.points_worth, object_collided.steps_worth,
+                                                             self.all_snakes, self.food, self.table_width,
+                                                             self.table_height, object_collided.width)
+            self.food.append(generated_food)
             self.drawing_manager.draw_food(self.food)
         elif collision_result != CollisionDetectionResult.NO_COLLISION:
             self.all_snakes.remove(self.active_snake)

@@ -277,9 +277,125 @@ class CollisionManagerTests(unittest.TestCase):
                                                                                                all_food,
                                                                                                self.table_width,
                                                                                                self.table_height)
-        self.assertEqual(collison_result, CollisionDetectionResult.NO_COLLISION)
-        self.assertEqual(object_collided, None)
 
+    def test__check_generated_food_collision__wall_collision__returns_wall_collision(self):
+        snake_parts = []
+        snake_part_1 = self.mock_component(1, 0, 1, 1)
+        snake_head = self.mock_component(1, 1, 1, 1)
+        snake_parts.append(snake_head)
+        snake_parts.append(snake_part_1)
+        snake = MagicMock()
+        snake.snake_parts = snake_parts
+        snake.owner_name = "pedja"
+
+        food = self.mock_component(99, 99, 1, 1)
+        generated_food = self.mock_component(99, 95, 3, 3)
+        all_food = []
+        all_food.append(food)
+
+        all_snakes = []
+        all_snakes.append(snake)
+
+        collison_result, object_collided = self.collision_manager.check_generated_food_collision(all_snakes, all_food,
+                                                                                                 self.table_width,
+                                                                                                 self.table_height,
+                                                                                                 generated_food)
+        self.assertEqual(collison_result, CollisionDetectionResult.WALL_COLLISION)
+
+
+    def test__check_generated_food_collision__food_collision__returns_food_collision(self):
+        snake_parts = []
+        snake_part_1 = self.mock_component(1, 0, 1, 1)
+        snake_head = self.mock_component(1, 1, 1, 1)
+        snake_parts.append(snake_head)
+        snake_parts.append(snake_part_1)
+        snake = MagicMock()
+        snake.snake_parts = snake_parts
+        snake.owner_name = "pedja"
+
+        food = self.mock_component(99, 99, 1, 1)
+        generated_food = self.mock_component(98, 98, 2, 2)
+        all_food = []
+        all_food.append(food)
+
+        all_snakes = []
+        all_snakes.append(snake)
+
+        collison_result, object_collided = self.collision_manager.check_generated_food_collision(all_snakes, all_food,
+                                                                                                 self.table_width,
+                                                                                                 self.table_height,
+                                                                                                 generated_food)
+        self.assertEqual(collison_result, CollisionDetectionResult.FOOD_COLLISION)
+
+
+    def test__check_generated_food_collision__snake_collision__returns_enemy_collision(self):
+        snake_parts = []
+        snake_part_1 = self.mock_component(1, 0, 1, 1)
+        snake_head = self.mock_component(1, 1, 1, 1)
+        snake_parts.append(snake_head)
+        snake_parts.append(snake_part_1)
+        snake = MagicMock()
+        snake.snake_parts = snake_parts
+        snake.owner_name = "pedja"
+
+        snake_parts2 = []
+        snake2_part_1 = self.mock_component(1, 3, 1, 1)
+        snake2_head = self.mock_component(1, 2, 1, 1)
+        snake_parts2.append(snake2_head)
+        snake_parts2.append(snake2_part_1)
+        snake2 = MagicMock()
+        snake2.snake_parts = snake_parts2
+        snake2.owner_name = "miki"
+
+        food = self.mock_component(99, 99, 1, 1)
+        generated_food = self.mock_component(1, 3, 2, 2)
+        all_food = []
+        all_food.append(food)
+
+        all_snakes = []
+        all_snakes.append(snake)
+        all_snakes.append(snake2)
+
+        collison_result, object_collided = self.collision_manager.check_generated_food_collision(all_snakes, all_food,
+                                                                                                 self.table_width,
+                                                                                                 self.table_height,
+                                                                                                 generated_food)
+        self.assertEqual(collison_result, CollisionDetectionResult.ENEMY_COLLISION)
+
+
+    def test__check_generated_food_collision__no_collision__returns_no_collision(self):
+        snake_parts = []
+        snake_part_1 = self.mock_component(1, 0, 1, 1)
+        snake_head = self.mock_component(1, 1, 1, 1)
+        snake_parts.append(snake_head)
+        snake_parts.append(snake_part_1)
+        snake = MagicMock()
+        snake.snake_parts = snake_parts
+        snake.owner_name = "pedja"
+
+        snake_parts2 = []
+        snake2_part_1 = self.mock_component(1, 3, 1, 1)
+        snake2_head = self.mock_component(1, 2, 1, 1)
+        snake_parts2.append(snake2_head)
+        snake_parts2.append(snake2_part_1)
+        snake2 = MagicMock()
+        snake2.snake_parts = snake_parts2
+        snake2.owner_name = "miki"
+
+        food = self.mock_component(99, 99, 1, 1)
+        generated_food = self.mock_component(2, 3, 1, 1)
+        all_food = []
+        all_food.append(food)
+
+        all_snakes = []
+        all_snakes.append(snake)
+        all_snakes.append(snake2)
+
+        collison_result, object_collided = self.collision_manager.check_generated_food_collision(all_snakes, all_food,
+                                                                                                 self.table_width,
+                                                                                                 self.table_height,
+                                                                                                 generated_food)
+        self.assertEqual(collison_result, CollisionDetectionResult.NO_COLLISION)
 
 
     def mock_component(self, x, y, height, width):

@@ -7,6 +7,7 @@ from GUI.score_board import ScoreBoard
 from Managers.collision_manager import CollisionManager
 
 from Managers.drawing_manager import DrawingManager
+from Managers.food_manager import FoodManager
 from Managers.movement_manager import MovementManager, KeyPressed
 from game import Game
 from models import Snake, SnakePart, SnakePartType, DrawableComponentBase, Food, SnakeDirection, User
@@ -83,6 +84,7 @@ if __name__ == "__main__":
 
     #init game related things hardcoded for prototype
     collision_manager = CollisionManager()
+    food_manager = FoodManager(collision_manager)
     drawing_manager = DrawingManager(game_board)
     movement_manager = MovementManager()
     snake_part_manager = SnakePartManager(part_width, part_height)
@@ -90,40 +92,105 @@ if __name__ == "__main__":
     table_height = game_board.get_gameboard_height
 
     food = []
-    food.append(Food(45, 240, 15, 15, 1, 1))
-    food.append(Food(390, 60, 15, 15, 1, 1))
-    food.append(Food(210, 75, 15, 15, 1, 1))
-    food.append(Food(75, 525, 15, 15, 1, 1))
-    food.append(Food(180, 390, 15, 15, 1, 1))
-    food.append(Food(60, 390, 15, 15, 1, 1))
+    all_snakes = []
 
-    snakes = []
+    #create Player 1 hardcoded
+    snakes_player1 = []
     snakeParts = [
-         SnakePart(15, 210, 15, 15, SnakePartType.HEAD)
-        ,SnakePart(15, 225, 15, 15, SnakePartType.BODY)
-        ,SnakePart(15, 240, 15, 15, SnakePartType.BODY)
+        SnakePart(200, 45, 15, 15, SnakePartType.HEAD)
+        , SnakePart(185, 45, 15, 15, SnakePartType.BODY)
+        , SnakePart(170, 45, 15, 15, SnakePartType.BODY)
     ]
-    snake = Snake(snakeParts, 'Stefan', 1, SnakeDirection.UP)
-    snakes.append(snake)
+    snake = Snake(snakeParts, 'Stefan', 1, SnakeDirection.RIGHT)
+    snakes_player1.append(snake)
 
-    snakes2 = []
+    snakeParts1_1 = [
+        SnakePart(200, 75, 15, 15, SnakePartType.HEAD)
+        , SnakePart(185, 75, 15, 15, SnakePartType.BODY)
+        , SnakePart(170, 75, 15, 15, SnakePartType.BODY)
+    ]
+    snake1_1 = Snake(snakeParts1_1, 'Stefan', 1, SnakeDirection.RIGHT)
+    snakes_player1.append(snake1_1)
+
+    player_1 = User(snakes_player1, 0, "Stefan")
+
+    # create Player 2 hardcoded
+    snakes_player2 = []
     snakeParts2 = [
-        SnakePart(75, 75, 15, 15, SnakePartType.HEAD)
-        , SnakePart(90, 75, 15, 15, SnakePartType.BODY)
-        , SnakePart(105, 75, 15, 15, SnakePartType.BODY)
+        SnakePart(700, 75, 15, 15, SnakePartType.HEAD)
+        , SnakePart(715, 75, 15, 15, SnakePartType.BODY)
+        , SnakePart(730, 75, 15, 15, SnakePartType.BODY)
     ]
     snake2 = Snake(snakeParts2, 'Djura', 1, SnakeDirection.LEFT)
-    snakes2.append(snake2)
+    snakes_player2.append(snake2)
+
+    snakeParts2_1 = [
+        SnakePart(700, 45, 15, 15, SnakePartType.HEAD)
+        , SnakePart(715, 45, 15, 15, SnakePartType.BODY)
+        , SnakePart(730, 45, 15, 15, SnakePartType.BODY)
+    ]
+    snake2_1 = Snake(snakeParts2_1, 'Djura', 1, SnakeDirection.LEFT)
+    snakes_player2.append(snake2_1)
+    player_2 = User(snakes_player2, 0, "Djura")
+
+    # create Player 3 hardcoded
+    snakes_player3 = []
+    snakeParts3 = [
+        SnakePart(700, 700, 15, 15, SnakePartType.HEAD)
+        , SnakePart(715, 700, 15, 15, SnakePartType.BODY)
+        , SnakePart(730, 700, 15, 15, SnakePartType.BODY)
+    ]
+    snake3 = Snake(snakeParts3, 'Gangula', 1, SnakeDirection.LEFT)
+    snakes_player3.append(snake3)
+
+    snakeParts3_1 = [
+        SnakePart(700, 670, 15, 15, SnakePartType.HEAD)
+        , SnakePart(715, 670, 15, 15, SnakePartType.BODY)
+        , SnakePart(730, 670, 15, 15, SnakePartType.BODY)
+    ]
+    snake3_1 = Snake(snakeParts3_1, 'Gangula', 1, SnakeDirection.LEFT)
+    snakes_player3.append(snake3_1)
+    player_3 = User(snakes_player3, 0, "Gangula")
+
+    # create Player 4 hardcoded
+    snakes_player4 = []
+    snakeParts4 = [
+        SnakePart(200, 700, 15, 15, SnakePartType.HEAD)
+        , SnakePart(185, 700, 15, 15, SnakePartType.BODY)
+        , SnakePart(170, 700, 15, 15, SnakePartType.BODY)
+    ]
+    snake4 = Snake(snakeParts4, 'Beba', 1, SnakeDirection.RIGHT)
+    snakes_player4.append(snake4)
+
+    snakeParts4_1 = [
+        SnakePart(200, 670, 15, 15, SnakePartType.HEAD)
+        , SnakePart(185, 670, 15, 15, SnakePartType.BODY)
+        , SnakePart(170, 670, 15, 15, SnakePartType.BODY)
+    ]
+    snake4_1 = Snake(snakeParts4_1, 'Beba', 1, SnakeDirection.RIGHT)
+    snakes_player4.append(snake4_1)
+
+    player_4 = User(snakes_player4, 0, "Beba")
+
 
     players = []
-    player = User(snakes, 0, "Stefan")
-    player2 = User(snakes2, 0, "Djura")
 
-    players.append(player)
-    players.append(player2)
+    players.append(player_1)
+    players.append(player_2)
+    players.append(player_3)
+    players.append(player_4)
 
-    game = Game(players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, table_width, table_height )
-    game.set_active_player(player)
+    #Append all snakes
+    all_snakes.extend(player_1.snakes)
+    all_snakes.extend(player_2.snakes)
+    all_snakes.extend(player_3.snakes)
+    all_snakes.extend(player_4.snakes)
+
+    for i in range(0,4):
+        food.append(food_manager.generate_food(1,1, all_snakes, food, table_width, table_height, 15))
+
+    game = Game(players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, food_manager, table_width, table_height )
+    game.set_active_player(player_1)
     game.set_active_snake(snake)
 
     window = MainWindow(game_board, score_board, game)
