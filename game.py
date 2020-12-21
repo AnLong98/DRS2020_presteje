@@ -25,6 +25,7 @@ class Game:
         drawing_manager.draw_snakes(self.all_snakes)
         self.active_snake = None
 
+        self.drawing_manager.add_player_to_scoreboard(self.players)
 
     def set_active_player(self, active_player):
         self.active_player = active_player
@@ -42,6 +43,7 @@ class Game:
             self.active_snake.increase_steps(object_collided.steps_worth)
             self.active_player.increase_points(object_collided.points_worth)
             self.snake_part_manager.increase_snake(self.active_snake, snake_tail_x, snake_tail_y)
+            self.drawing_manager.add_player_to_scoreboard(self.players)
             generated_food = self.food_manager.generate_food(object_collided.points_worth, object_collided.steps_worth,
                                                              self.all_snakes, self.food, self.table_width,
                                                              self.table_height, object_collided.width)
