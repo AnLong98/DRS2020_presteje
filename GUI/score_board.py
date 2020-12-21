@@ -7,14 +7,21 @@ class PlayerFrame(QFrame):
         super(QFrame, self).__init__()
 
         self.players = players
+        self.scores = []
 
         self.setFixedSize(240, 300)
         self.setStyleSheet('background-color: #e8eb34')
 
         self.define_frame_style()
 
-    def define_frame_style(self):
+        self.qTimer = QTimer()
+        self.qTimer.setInterval(500)
+        # connect timeout signal to signal handler
+        self.qTimer.timeout.connect(self.update_scores)
+        # start timer
+        self.qTimer.start()
 
+    def define_frame_style(self):
         layout = QVBoxLayout()
         for player in self.players:
             name_label = QLabel("Player: " + player.user_name, self)
@@ -22,10 +29,17 @@ class PlayerFrame(QFrame):
 
             points_label = QLabel("Points: " + str(player.points), self)
             points_label.setFont(QFont('Arial', 10))
+
+            self.scores.append([name_label, points_label])
             layout.addWidget(name_label)
             layout.addWidget(points_label)
         layout.addStretch(1)
         self.setLayout(layout)
+
+    def update_scores(self):
+        for labels, player in zip(self.scores, self.players):
+            labels[1].setText("Points: " + str(player.points))
+
 
 class TimerFrame(QFrame):
     def __init__(self):
@@ -46,15 +60,16 @@ class ScoreBoard(QFrame):
         super(ScoreBoard, self).__init__()
         self.define_frame_style()
         self.players = []
-        if self.players:
-            self.getPlayersData()
 
         self.qTimer = QTimer()
-        self.qTimer.setInterval(1000)
+        self.qTimer.setInterval(100)
         # connect timeout signal to signal handler
         self.qTimer.timeout.connect(self.getPlayersData)
         # start timer
         self.qTimer.start()
+
+        # if self.players:
+        #     self.getPlayersData()
 
     def define_frame_style(self):
         self.setFixedSize(240, 810)
@@ -74,11 +89,13 @@ class ScoreBoard(QFrame):
         return self.width()
 
     def getPlayersData(self):
-        self.vbox = QVBoxLayout()
-        self.splitter = QSplitter(Qt.Vertical)
-        self.splitter.setEnabled(False)
-        self.splitter.addWidget(PlayerFrame(self.players))
-        self.splitter.addWidget(TimerFrame())
-        self.splitter.addWidget(ButtonFrame())
-        self.vbox.addWidget(self.splitter)
-        self.setLayout(self.vbox)
+        if self.players:
+            self.vbox = QVBoxLayout()
+            self.splitter = QSplitter(Qt.Vertical)
+            self.splitter.setEnabled(False)
+            self.splitter.addWidget(PlayerFrame(self.players))
+            self.splitter.addWidget(TimerFrame())
+            self.splitter.addWidget(ButtonFrame())
+            self.vbox.addWidget(self.splitter)
+            self.setLayout(self.vbox)
+            self.qTimer.stop()

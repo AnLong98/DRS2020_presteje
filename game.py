@@ -24,7 +24,6 @@ class Game:
         drawing_manager.draw_food(food)
         drawing_manager.draw_snakes(self.all_snakes)
         self.active_snake = None
-
         self.drawing_manager.add_player_to_scoreboard(self.players)
 
     def set_active_player(self, active_player):
