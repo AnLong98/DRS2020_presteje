@@ -21,17 +21,11 @@ class MainWindow(QMainWindow):
         self.setFixedSize(1200, 810)
 
         self.gameboard = game_board
-
         self.scoreboard = score_board
 
         self.generate_window_layout()
-        self.game = game
 
-    # def center_main_window(self):
-    #     qtRectangle = self.frameGeometry()
-    #     centerPoint = QDesktopWidget().availableGeometry().center()
-    #     qtRectangle.moveCenter(centerPoint)
-    #     return self.move(qtRectangle.topLeft())
+        self.game = game
 
     def generate_window_layout(self):
         splitter = QSplitter(Qt.Horizontal)
@@ -85,7 +79,7 @@ if __name__ == "__main__":
     #init game related things hardcoded for prototype
     collision_manager = CollisionManager()
     food_manager = FoodManager(collision_manager)
-    drawing_manager = DrawingManager(game_board)
+    drawing_manager = DrawingManager(game_board, score_board)
     movement_manager = MovementManager()
     snake_part_manager = SnakePartManager(part_width, part_height)
     table_width = game_board.get_gameboard_width
