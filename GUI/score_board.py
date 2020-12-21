@@ -26,9 +26,11 @@ class PlayerFrame(QFrame):
         for player in self.players:
             name_label = QLabel("Player: " + player.user_name, self)
             name_label.setFont(QFont('Arial', 10))
+            name_label.setStyleSheet('color: '+ player.color)
 
             points_label = QLabel("Points: " + str(player.points), self)
             points_label.setFont(QFont('Arial', 10))
+            points_label.setStyleSheet('color: ' + player.color)
 
             self.scores.append([name_label, points_label])
             layout.addWidget(name_label)
@@ -47,6 +49,26 @@ class TimerFrame(QFrame):
 
         self.setFixedSize(240, 100)
         self.setStyleSheet('background-color: #34ebdf')
+        self.elapsedTime = 10 #zakucano vreme za potez.
+
+        vbox = QVBoxLayout()
+        self.time = QLabel("Time left: " + str(self.elapsedTime), self)
+        self.time.setFont(QFont('Arial', 25))
+        vbox.addWidget(self.time)
+        self.setLayout(vbox)
+
+        self.qTimer = QTimer()  #pocinje tajmer da radi i da odbrojava vreme, svake 1 sec poziva funkciju koja smanjuje elapsed_time
+        self.qTimer.setInterval(1000)
+        # connect timeout signal to signal handler
+        self.qTimer.timeout.connect(self.start_timer)
+        # start timer
+        self.qTimer.start()
+
+    def start_timer(self):
+        self.elapsedTime = self.elapsedTime - 1
+        self.time.setText("Time left: " + str(self.elapsedTime))
+        if self.elapsedTime == 0:
+            self.qTimer.stop()   # ovde dolazi do 0, trebala bi da se pozove funkcija za promenu poteaza i da se rr timer.
 
 class ButtonFrame(QFrame):
     def __init__(self):

@@ -106,7 +106,7 @@ if __name__ == "__main__":
     snake1_1 = Snake(snakeParts1_1, 'Stefan', 1, SnakeDirection.RIGHT)
     snakes_player1.append(snake1_1)
 
-    player_1 = User(snakes_player1, 0, "Stefan")
+    player_1 = User(snakes_player1, 0, "Stefan", "#a84232") #CRVENA BOJA IGRACA 1
 
     # create Player 2 hardcoded
     snakes_player2 = []
@@ -125,7 +125,7 @@ if __name__ == "__main__":
     ]
     snake2_1 = Snake(snakeParts2_1, 'Djura', 1, SnakeDirection.LEFT)
     snakes_player2.append(snake2_1)
-    player_2 = User(snakes_player2, 0, "Djura")
+    player_2 = User(snakes_player2, 0, "Djura", "#2e35b3") #PLAVA BOJA IGRACA 2
 
     # create Player 3 hardcoded
     snakes_player3 = []
@@ -144,7 +144,7 @@ if __name__ == "__main__":
     ]
     snake3_1 = Snake(snakeParts3_1, 'Gangula', 1, SnakeDirection.LEFT)
     snakes_player3.append(snake3_1)
-    player_3 = User(snakes_player3, 0, "Gangula")
+    player_3 = User(snakes_player3, 0, "Gangula", "#d21be3") #NEKA ROZA BOJA IGRACA 3
 
     # create Player 4 hardcoded
     snakes_player4 = []
@@ -164,7 +164,7 @@ if __name__ == "__main__":
     snake4_1 = Snake(snakeParts4_1, 'Beba', 1, SnakeDirection.RIGHT)
     snakes_player4.append(snake4_1)
 
-    player_4 = User(snakes_player4, 0, "Beba")
+    player_4 = User(snakes_player4, 0, "Beba", "#23e1e8") #SVETLO PLAVA BOJA IGRACA 4
 
 
     players = []

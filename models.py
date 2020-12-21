@@ -38,10 +38,11 @@ class SnakePart(DrawableComponentBase):
 
 
 class User:
-  def __init__(self, snakes, points, user_name):
+  def __init__(self, snakes, points, user_name, color):
     self.snakes = snakes
     self.points = points
     self.user_name = user_name
+    self.color = color
 
   def remove_snake(self, snake):
     self.snakes.remove(snake)
