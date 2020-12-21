@@ -8,3 +8,6 @@ class DrawingManager:
 
     def draw_food(self, food):
         self.game_board.update_food(food)
+
+    def add_player_to_scoreboard(self, player):
+        pass
