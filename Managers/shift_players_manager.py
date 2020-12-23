@@ -4,7 +4,7 @@ class ShiftPlayersManager:
         current_player_index = all_players.index(active_player)
         next_player_index = (current_player_index + 1) % player_count
         next_player = all_players[next_player_index]
-        while next_player.snakes == None:
+        while next_player.snakes is None:
             current_player_index = next_player_index
             next_player_index = (current_player_index + 1) % player_count
             next_player = all_players[next_player_index]

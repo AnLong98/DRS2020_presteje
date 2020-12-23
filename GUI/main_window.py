@@ -102,19 +102,19 @@ if __name__ == "__main__":
     #create Player 1 hardcoded
     snakes_player1 = []
     snakeParts = [
-        SnakePart(200, 45, 15, 15, SnakePartType.HEAD)
-        , SnakePart(185, 45, 15, 15, SnakePartType.BODY)
-        , SnakePart(170, 45, 15, 15, SnakePartType.BODY)
+        SnakePart(210, 45, 15, 15, SnakePartType.HEAD)
+        , SnakePart(195, 45, 15, 15, SnakePartType.BODY)
+        , SnakePart(180, 45, 15, 15, SnakePartType.BODY)
     ]
-    snake = Snake(snakeParts, 'Stefan', 1, 0, SnakeDirection.RIGHT, "#fff200")
+    snake = Snake(snakeParts, 'Stefan', 10, 0, SnakeDirection.RIGHT, "#fff200")
     snakes_player1.append(snake)
 
     snakeParts1_1 = [
-        SnakePart(200, 75, 15, 15, SnakePartType.HEAD)
-        , SnakePart(185, 75, 15, 15, SnakePartType.BODY)
-        , SnakePart(170, 75, 15, 15, SnakePartType.BODY)
+        SnakePart(210, 75, 15, 15, SnakePartType.HEAD)
+        , SnakePart(195, 75, 15, 15, SnakePartType.BODY)
+        , SnakePart(180, 75, 15, 15, SnakePartType.BODY)
     ]
-    snake1_1 = Snake(snakeParts1_1, 'Stefan', 1, 0, SnakeDirection.RIGHT, "#fff200")
+    snake1_1 = Snake(snakeParts1_1, 'Stefan', 10, 0, SnakeDirection.RIGHT, "#fff200")
     snakes_player1.append(snake1_1)
 
     player_1 = User(snakes_player1, 0, "Stefan", "#fff200") #CRVENA BOJA IGRACA 1
@@ -122,57 +122,57 @@ if __name__ == "__main__":
     # create Player 2 hardcoded
     snakes_player2 = []
     snakeParts2 = [
-        SnakePart(700, 75, 15, 15, SnakePartType.HEAD)
-        , SnakePart(715, 75, 15, 15, SnakePartType.BODY)
-        , SnakePart(730, 75, 15, 15, SnakePartType.BODY)
+        SnakePart(705, 75, 15, 15, SnakePartType.HEAD)
+        , SnakePart(720, 75, 15, 15, SnakePartType.BODY)
+        , SnakePart(735, 75, 15, 15, SnakePartType.BODY)
     ]
-    snake2 = Snake(snakeParts2, 'Djura', 1, 0, SnakeDirection.LEFT, "#b87bba")
+    snake2 = Snake(snakeParts2, 'Djura', 10, 0, SnakeDirection.LEFT, "#b87bba")
     snakes_player2.append(snake2)
 
     snakeParts2_1 = [
-        SnakePart(700, 45, 15, 15, SnakePartType.HEAD)
-        , SnakePart(715, 45, 15, 15, SnakePartType.BODY)
-        , SnakePart(730, 45, 15, 15, SnakePartType.BODY)
+        SnakePart(705, 45, 15, 15, SnakePartType.HEAD)
+        , SnakePart(720, 45, 15, 15, SnakePartType.BODY)
+        , SnakePart(735, 45, 15, 15, SnakePartType.BODY)
     ]
-    snake2_1 = Snake(snakeParts2_1, 'Djura', 1, 0, SnakeDirection.LEFT, "#b87bba")
+    snake2_1 = Snake(snakeParts2_1, 'Djura', 10, 0, SnakeDirection.LEFT, "#b87bba")
     snakes_player2.append(snake2_1)
     player_2 = User(snakes_player2, 0, "Djura", "#b87bba") #PLAVA BOJA IGRACA 2
 
     # create Player 3 hardcoded
     snakes_player3 = []
     snakeParts3 = [
-        SnakePart(700, 700, 15, 15, SnakePartType.HEAD)
-        , SnakePart(715, 700, 15, 15, SnakePartType.BODY)
-        , SnakePart(730, 700, 15, 15, SnakePartType.BODY)
+        SnakePart(705, 705, 15, 15, SnakePartType.HEAD)
+        , SnakePart(720, 705, 15, 15, SnakePartType.BODY)
+        , SnakePart(735, 705, 15, 15, SnakePartType.BODY)
     ]
-    snake3 = Snake(snakeParts3, 'Gangula', 1, 0, SnakeDirection.LEFT, "#3494e3")
+    snake3 = Snake(snakeParts3, 'Gangula', 10, 0, SnakeDirection.LEFT, "#3494e3")
     snakes_player3.append(snake3)
 
     snakeParts3_1 = [
-        SnakePart(700, 670, 15, 15, SnakePartType.HEAD)
-        , SnakePart(715, 670, 15, 15, SnakePartType.BODY)
-        , SnakePart(730, 670, 15, 15, SnakePartType.BODY)
+        SnakePart(705, 675, 15, 15, SnakePartType.HEAD)
+        , SnakePart(720, 675, 15, 15, SnakePartType.BODY)
+        , SnakePart(735, 675, 15, 15, SnakePartType.BODY)
     ]
-    snake3_1 = Snake(snakeParts3_1, 'Gangula', 1, 0, SnakeDirection.LEFT, "#3494e3")
+    snake3_1 = Snake(snakeParts3_1, 'Gangula', 10, 0, SnakeDirection.LEFT, "#3494e3")
     snakes_player3.append(snake3_1)
     player_3 = User(snakes_player3, 0, "Gangula", "#3494e3") #NEKA ROZA BOJA IGRACA 3
 
     # create Player 4 hardcoded
     snakes_player4 = []
     snakeParts4 = [
-        SnakePart(200, 700, 15, 15, SnakePartType.HEAD)
-        , SnakePart(185, 700, 15, 15, SnakePartType.BODY)
-        , SnakePart(170, 700, 15, 15, SnakePartType.BODY)
+        SnakePart(210, 705, 15, 15, SnakePartType.HEAD)
+        , SnakePart(195, 705, 15, 15, SnakePartType.BODY)
+        , SnakePart(180, 705, 15, 15, SnakePartType.BODY)
     ]
-    snake4 = Snake(snakeParts4, 'Beba', 1, 0, SnakeDirection.RIGHT, "#fa5700")
+    snake4 = Snake(snakeParts4, 'Beba', 10, 0, SnakeDirection.RIGHT, "#fa5700")
     snakes_player4.append(snake4)
 
     snakeParts4_1 = [
-        SnakePart(200, 670, 15, 15, SnakePartType.HEAD)
-        , SnakePart(185, 670, 15, 15, SnakePartType.BODY)
-        , SnakePart(170, 670, 15, 15, SnakePartType.BODY)
+        SnakePart(210, 675, 15, 15, SnakePartType.HEAD)
+        , SnakePart(195, 675, 15, 15, SnakePartType.BODY)
+        , SnakePart(180, 675, 15, 15, SnakePartType.BODY)
     ]
-    snake4_1 = Snake(snakeParts4_1, 'Beba', 1, 0, SnakeDirection.RIGHT, "#fa5700")
+    snake4_1 = Snake(snakeParts4_1, 'Beba', 10, 0, SnakeDirection.RIGHT, "#fa5700")
     snakes_player4.append(snake4_1)
 
     player_4 = User(snakes_player4, 0, "Beba", "#fa5700") #SVETLO PLAVA BOJA IGRACA 4
@@ -191,7 +191,7 @@ if __name__ == "__main__":
     all_snakes.extend(player_3.snakes)
     all_snakes.extend(player_4.snakes)
 
-    for i in range(0, 100):
+    for i in range(0, 30):
         food.append(food_manager.generate_food(1, 1, all_snakes, food, table_width, table_height, 15))
 
     game = Game(players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, food_manager, shift_players_manager, shift_snakes_manager, snake_played_steps_manager, table_width, table_height )
