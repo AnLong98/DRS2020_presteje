@@ -71,11 +71,15 @@ class TimerFrame(QFrame):
     def set_game(self, game):
         self.game = game
 
+    def reset_timer(self):
+        self.elapsedTime = 10
+
     def start_timer(self):
-        self.elapsedTime = self.elapsedTime - 1
         self.time.setText("Time left: " + str(self.elapsedTime))
+        self.elapsedTime = self.elapsedTime - 1
         if self.elapsedTime == 0:
-            self.elapsedTime = 11
+            self.time.setText("Time left: " + str(self.elapsedTime))
+            self.reset_timer()
             self.game.change_player()
             # self.qTimer.stop()
 
@@ -111,7 +115,8 @@ class ScoreBoard(QFrame):
         self.setFrameShape(QFrame.StyledPanel)
         self.setStyleSheet('background-color: #bababa')
 
-
+    def reset_timer(self):
+        self.timer_frame.reset_timer()
 
     @property
     def get_painter(self):

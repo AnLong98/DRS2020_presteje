@@ -63,13 +63,16 @@ class Game:
                                                              self.table_height, object_collided.width)
                 self.food.append(generated_food)
                 self.drawing_manager.draw_food(self.food)
+            elif collision_result == CollisionDetectionResult.FRIENDLY_COLLISION or collision_result == CollisionDetectionResult.AUTO_COLLISION:
+                for snake in self.active_player.snakes:
+                    self.all_snakes.remove(snake)
+                self.active_player.snakes = None
+                self.change_player()
+                self.drawing_manager.reset_turn_time()
             elif collision_result != CollisionDetectionResult.NO_COLLISION:
                 self.all_snakes.remove(self.active_snake)
                 self.active_player.remove_snake(self.active_snake)
-                print("Collision!, game over!")
                 self.change_player()
-                # ovde treba pozvati reset tajmera ili da se promeni zmija tog igraca ali ce nam za to trebati nova f-ja
-                # koja ce proveravati da li on uopste ima jos zmija
-                # i ako nema da promeni igraca gde ce opet trebati da se resetuje tajmer => tako da: reset tajmera
+                self.drawing_manager.reset_turn_time()
             self.drawing_manager.draw_snakes(self.all_snakes)
 

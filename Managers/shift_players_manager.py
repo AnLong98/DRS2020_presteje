@@ -9,3 +9,5 @@ class ShiftPlayersManager:
             next_player_index = (current_player_index + 1) % player_count
             next_player = all_players[next_player_index]
         return next_player
+
+    #Pedja 23.12.2020 Razmisliti da li nam ovaj kod zaista zasluzuje da stoji u posebnoj klasi.

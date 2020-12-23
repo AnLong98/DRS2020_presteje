@@ -15,3 +15,6 @@ class DrawingManager:
 
     def change_head(self, snake):
         self.game_board.change_head_color(snake)
+
+    def reset_turn_time(self):
+        self.score_board.reset_timer()

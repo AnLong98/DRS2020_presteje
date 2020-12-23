@@ -73,3 +73,4 @@ class GameBoard(QFrame):
 
     def change_head_color(self, snake):
         self.active_snake = snake
+        self.update()
