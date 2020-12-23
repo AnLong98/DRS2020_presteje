@@ -51,7 +51,7 @@ class TimerFrame(QFrame):
 
         self.setFixedSize(240, 100)
         self.setStyleSheet('background-color: #bababa')
-        self.elapsedTime = 10 #zakucano vreme za potez.
+        self.elapsedTime = 7 #zakucano vreme za potez.
 
         vbox = QVBoxLayout()
         self.time = QLabel("Time left: " + str(self.elapsedTime), self)
@@ -75,7 +75,7 @@ class TimerFrame(QFrame):
         self.elapsedTime = self.elapsedTime - 1
         self.time.setText("Time left: " + str(self.elapsedTime))
         if self.elapsedTime == 0:
-            self.elapsedTime = 11
+            self.elapsedTime = 8
             self.game.change_player()
             # self.qTimer.stop()
 

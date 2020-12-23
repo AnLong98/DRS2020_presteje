@@ -15,6 +15,7 @@ from Managers.snake_part_manager import SnakePartManager
 from Managers.shift_players_manager import ShiftPlayersManager
 from Managers.shift_snakes_manager import ShiftSnakesManager
 from GUI.score_board import TimerFrame
+from Managers.snake_played_steps_manager import SnakePlayedStepsManager
 
 
 class MainWindow(QMainWindow):
@@ -91,6 +92,7 @@ if __name__ == "__main__":
     snake_part_manager = SnakePartManager(part_width, part_height)
     shift_players_manager = ShiftPlayersManager()
     shift_snakes_manager = ShiftSnakesManager()
+    snake_played_steps_manager = SnakePlayedStepsManager()
     table_width = game_board.get_gameboard_width
     table_height = game_board.get_gameboard_height
 
@@ -189,10 +191,10 @@ if __name__ == "__main__":
     all_snakes.extend(player_3.snakes)
     all_snakes.extend(player_4.snakes)
 
-    for i in range(0, 4):
+    for i in range(0, 100):
         food.append(food_manager.generate_food(1, 1, all_snakes, food, table_width, table_height, 15))
 
-    game = Game(players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, food_manager, shift_players_manager, shift_snakes_manager, table_width, table_height )
+    game = Game(players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, food_manager, shift_players_manager, shift_snakes_manager, snake_played_steps_manager, table_width, table_height )
     game.set_active_player(player_1)
     game.set_active_snake(snake)
 

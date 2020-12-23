@@ -32,6 +32,9 @@ class Snake:
   def increase_steps(self, steps):
     self.steps += steps
 
+  def increase_played_steps(self):
+    self.played_steps += 1
+
 
 class SnakePart(DrawableComponentBase):
   def __init__(self, x_coordinate, y_coordinate, height, width, part_type):
