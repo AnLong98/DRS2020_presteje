@@ -73,6 +73,8 @@ class CollisionManager:
 
         # check for collision with other food
         for food in all_food:
+            if food == generated_food:
+                continue
             if self.check_components_collision(food, generated_food):
                 return CollisionDetectionResult.FOOD_COLLISION, food
 

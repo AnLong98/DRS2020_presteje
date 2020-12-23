@@ -75,6 +75,7 @@ class TimerFrame(QFrame):
     def reset_timer(self):
         self.qTimer.stop()
         self.elapsedTime = 10
+        self.time.setText("Time left: " + str(self.elapsedTime))
         self.qTimer.start()
 
     def start_timer(self):
