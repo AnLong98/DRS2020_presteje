@@ -12,3 +12,6 @@ class DrawingManager:
 
     def add_player_to_scoreboard(self, players):
         self.score_board.players = players
+
+    def change_head(self, snake):
+        self.game_board.change_head_color(snake)

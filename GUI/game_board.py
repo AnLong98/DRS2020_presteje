@@ -46,21 +46,22 @@ class GameBoard(QFrame):
 
         for snake in self.snakes:
             for part in snake.snake_parts:
-                self.draw_square(qp, part)
+                self.draw_square(qp, part, snake)
 
         for f in self.food:
             self.draw_square_food(qp, f)
 
-    def draw_square(self, qp, snake_part):
-
-        color = QColor(Qt.black)
+    def draw_square(self, qp, snake_part, snake):
         rect = self.contentsRect()
 
         if snake_part.part_type == SnakePartType.HEAD:
-            #color = QColor(Qt.lightGray)
-            color = QColor('#d1d1d1')
+            if snake == self.active_snake:
+                color = QColor('#000000')
+            else:
+                color = QColor('#d1d1d1')
         else:
-            color = QColor(Qt.yellow)
+            color = QColor(snake.color)
+
         qp.fillRect(rect.left() + snake_part.x_coordinate, snake_part.y_coordinate, self.square_width(), self.square_height(), color)
 
     def draw_square_food(self, qp, food):
@@ -69,3 +70,6 @@ class GameBoard(QFrame):
 
         qp.fillRect(rect.left() + food.x_coordinate, food.y_coordinate, self.square_width(), self.square_height(),
                     color)
+
+    def change_head_color(self, snake):
+        self.active_snake = snake

@@ -95,7 +95,7 @@ if __name__ == "__main__":
         , SnakePart(185, 45, 15, 15, SnakePartType.BODY)
         , SnakePart(170, 45, 15, 15, SnakePartType.BODY)
     ]
-    snake = Snake(snakeParts, 'Stefan', 1, SnakeDirection.RIGHT)
+    snake = Snake(snakeParts, 'Stefan', 1, SnakeDirection.RIGHT, "#fff200")
     snakes_player1.append(snake)
 
     snakeParts1_1 = [
@@ -103,10 +103,10 @@ if __name__ == "__main__":
         , SnakePart(185, 75, 15, 15, SnakePartType.BODY)
         , SnakePart(170, 75, 15, 15, SnakePartType.BODY)
     ]
-    snake1_1 = Snake(snakeParts1_1, 'Stefan', 1, SnakeDirection.RIGHT)
+    snake1_1 = Snake(snakeParts1_1, 'Stefan', 1, SnakeDirection.RIGHT, "#fff200")
     snakes_player1.append(snake1_1)
 
-    player_1 = User(snakes_player1, 0, "Stefan", "#a84232") #CRVENA BOJA IGRACA 1
+    player_1 = User(snakes_player1, 0, "Stefan", "#fff200") #CRVENA BOJA IGRACA 1
 
     # create Player 2 hardcoded
     snakes_player2 = []
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         , SnakePart(715, 75, 15, 15, SnakePartType.BODY)
         , SnakePart(730, 75, 15, 15, SnakePartType.BODY)
     ]
-    snake2 = Snake(snakeParts2, 'Djura', 1, SnakeDirection.LEFT)
+    snake2 = Snake(snakeParts2, 'Djura', 1, SnakeDirection.LEFT, "#b87bba")
     snakes_player2.append(snake2)
 
     snakeParts2_1 = [
@@ -123,9 +123,9 @@ if __name__ == "__main__":
         , SnakePart(715, 45, 15, 15, SnakePartType.BODY)
         , SnakePart(730, 45, 15, 15, SnakePartType.BODY)
     ]
-    snake2_1 = Snake(snakeParts2_1, 'Djura', 1, SnakeDirection.LEFT)
+    snake2_1 = Snake(snakeParts2_1, 'Djura', 1, SnakeDirection.LEFT, "#b87bba")
     snakes_player2.append(snake2_1)
-    player_2 = User(snakes_player2, 0, "Djura", "#2e35b3") #PLAVA BOJA IGRACA 2
+    player_2 = User(snakes_player2, 0, "Djura", "#b87bba") #PLAVA BOJA IGRACA 2
 
     # create Player 3 hardcoded
     snakes_player3 = []
@@ -134,7 +134,7 @@ if __name__ == "__main__":
         , SnakePart(715, 700, 15, 15, SnakePartType.BODY)
         , SnakePart(730, 700, 15, 15, SnakePartType.BODY)
     ]
-    snake3 = Snake(snakeParts3, 'Gangula', 1, SnakeDirection.LEFT)
+    snake3 = Snake(snakeParts3, 'Gangula', 1, SnakeDirection.LEFT, "#3494e3")
     snakes_player3.append(snake3)
 
     snakeParts3_1 = [
@@ -142,9 +142,9 @@ if __name__ == "__main__":
         , SnakePart(715, 670, 15, 15, SnakePartType.BODY)
         , SnakePart(730, 670, 15, 15, SnakePartType.BODY)
     ]
-    snake3_1 = Snake(snakeParts3_1, 'Gangula', 1, SnakeDirection.LEFT)
+    snake3_1 = Snake(snakeParts3_1, 'Gangula', 1, SnakeDirection.LEFT, "#3494e3")
     snakes_player3.append(snake3_1)
-    player_3 = User(snakes_player3, 0, "Gangula", "#d21be3") #NEKA ROZA BOJA IGRACA 3
+    player_3 = User(snakes_player3, 0, "Gangula", "#3494e3") #NEKA ROZA BOJA IGRACA 3
 
     # create Player 4 hardcoded
     snakes_player4 = []
@@ -153,7 +153,7 @@ if __name__ == "__main__":
         , SnakePart(185, 700, 15, 15, SnakePartType.BODY)
         , SnakePart(170, 700, 15, 15, SnakePartType.BODY)
     ]
-    snake4 = Snake(snakeParts4, 'Beba', 1, SnakeDirection.RIGHT)
+    snake4 = Snake(snakeParts4, 'Beba', 1, SnakeDirection.RIGHT, "#fa5700")
     snakes_player4.append(snake4)
 
     snakeParts4_1 = [
@@ -161,10 +161,10 @@ if __name__ == "__main__":
         , SnakePart(185, 670, 15, 15, SnakePartType.BODY)
         , SnakePart(170, 670, 15, 15, SnakePartType.BODY)
     ]
-    snake4_1 = Snake(snakeParts4_1, 'Beba', 1, SnakeDirection.RIGHT)
+    snake4_1 = Snake(snakeParts4_1, 'Beba', 1, SnakeDirection.RIGHT, "#fa5700")
     snakes_player4.append(snake4_1)
 
-    player_4 = User(snakes_player4, 0, "Beba", "#23e1e8") #SVETLO PLAVA BOJA IGRACA 4
+    player_4 = User(snakes_player4, 0, "Beba", "#fa5700") #SVETLO PLAVA BOJA IGRACA 4
 
 
     players = []

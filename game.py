@@ -31,6 +31,7 @@ class Game:
 
     def set_active_snake(self, active_snake):
         self.active_snake = active_snake
+        self.drawing_manager.change_head(active_snake)
 
     def advance_game(self, key_pressed):
         snake_tail_x = self.active_snake.snake_parts[-1].x_coordinate

@@ -10,7 +10,7 @@ class PlayerFrame(QFrame):
         self.scores = []
 
         self.setFixedSize(240, 300)
-        self.setStyleSheet('background-color: #e8eb34')
+        self.setStyleSheet('background-color: #bababa')
 
         self.define_frame_style()
 
@@ -25,11 +25,12 @@ class PlayerFrame(QFrame):
         layout = QVBoxLayout()
         for player in self.players:
             name_label = QLabel("Player: " + player.user_name, self)
-            name_label.setFont(QFont('Arial', 10))
+            font = QFont('Arial', 17)
+            name_label.setFont(font)
             name_label.setStyleSheet('color: '+ player.color)
 
             points_label = QLabel("Points: " + str(player.points), self)
-            points_label.setFont(QFont('Arial', 10))
+            points_label.setFont(font)
             points_label.setStyleSheet('color: ' + player.color)
 
             self.scores.append([name_label, points_label])
@@ -48,11 +49,12 @@ class TimerFrame(QFrame):
         super(QFrame, self).__init__()
 
         self.setFixedSize(240, 100)
-        self.setStyleSheet('background-color: #34ebdf')
+        self.setStyleSheet('background-color: #bababa')
         self.elapsedTime = 10 #zakucano vreme za potez.
 
         vbox = QVBoxLayout()
         self.time = QLabel("Time left: " + str(self.elapsedTime), self)
+        self.time.setStyleSheet("color: #e31212")
         self.time.setFont(QFont('Arial', 25))
         vbox.addWidget(self.time)
         self.setLayout(vbox)
@@ -75,7 +77,7 @@ class ButtonFrame(QFrame):
         super(QFrame, self).__init__()
 
         self.setFixedSize(240, 400)
-        self.setStyleSheet('background-color: #b134eb')
+        self.setStyleSheet('background-color: #bababa')
 
 class ScoreBoard(QFrame):
     def __init__(self):
@@ -96,7 +98,7 @@ class ScoreBoard(QFrame):
     def define_frame_style(self):
         self.setFixedSize(240, 810)
         self.setFrameShape(QFrame.StyledPanel)
-        self.setStyleSheet('background-color: #dedede')
+        self.setStyleSheet('background-color: #bababa')
 
     @property
     def get_painter(self):
