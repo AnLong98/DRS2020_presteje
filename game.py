@@ -42,6 +42,7 @@ class Game:
         next_snake = self.active_player.snakes[0]
         self.set_active_snake(next_snake)
         self.snake_played_steps_manager.reset_played_steps(self.active_player, self.players)
+        self.food_manager.move_all_food(self.all_snakes, self.food, self.table_width, self.table_height)
 
     def change_snake(self):
         next_snake = self.shift_snakes_manager.shift_snakes(self.active_snake, self.active_player)

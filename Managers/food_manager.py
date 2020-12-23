@@ -9,7 +9,6 @@ class FoodManager:
         self.collision_manager = collision_manager
 
     def generate_food(self, points_worth, steps_worth, all_snakes, all_food, table_width, table_height, food_size):
-        #TODO : Add generating different food types
         while True:
             generated_x = random.randint(0, table_width - food_size)
             generated_y = random.randint(0, table_height - food_size)
@@ -24,4 +23,8 @@ class FoodManager:
             if collision_result == CollisionDetectionResult.NO_COLLISION:
                 return generated_food
 
+
+    def move_all_food(self, all_snakes, all_food, table_width, table_height):
+        #for food in all_food:
+        pass
 

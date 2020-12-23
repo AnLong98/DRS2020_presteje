@@ -64,6 +64,7 @@ class TimerFrame(QFrame):
         self.qTimer = QTimer()  # pocinje tajmer da radi i da odbrojava vreme, svake 1 sec poziva funkciju koja smanjuje elapsed_time
         self.qTimer.setInterval(1000)
         # connect timeout signal to signal handler
+        self.time.setText("Time left: " + str(self.elapsedTime))
         self.qTimer.timeout.connect(self.start_timer)
         # start timer
         self.qTimer.start()
@@ -72,16 +73,18 @@ class TimerFrame(QFrame):
         self.game = game
 
     def reset_timer(self):
+        self.qTimer.stop()
         self.elapsedTime = 10
+        self.qTimer.start()
 
     def start_timer(self):
         self.time.setText("Time left: " + str(self.elapsedTime))
         self.elapsedTime = self.elapsedTime - 1
-        if self.elapsedTime == 0:
-            self.time.setText("Time left: " + str(self.elapsedTime))
+        if self.elapsedTime == -1:
             self.reset_timer()
             self.game.change_player()
-            # self.qTimer.stop()
+
+
 
 
 
