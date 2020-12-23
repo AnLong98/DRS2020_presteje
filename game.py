@@ -7,7 +7,7 @@ from Managers.snake_part_manager import SnakePartManager
 
 
 class Game:
-    def __init__(self, players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, food_manager, table_width, table_height):
+    def __init__(self, players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, food_manager, shift_players_manager, table_width, table_height):
         self.players = players
         self.food = food
         self.collision_manager = collision_manager
@@ -15,6 +15,7 @@ class Game:
         self.movement_manager = movement_manager
         self.snake_part_manager = snake_part_manager
         self.food_manager = food_manager
+        self.shift_players_manager = shift_players_manager
         self.table_width = table_width
         self.table_height = table_height
         self.all_snakes = []
@@ -32,6 +33,13 @@ class Game:
     def set_active_snake(self, active_snake):
         self.active_snake = active_snake
         self.drawing_manager.change_head(active_snake)
+
+    def change_player(self):
+        next_player = self.shift_players_manager.shift_player(self.players, self.active_player)
+        self.set_active_player(next_player)
+        next_snake = self.active_player.snakes[0]
+        self.set_active_snake(next_snake)
+
 
     def advance_game(self, key_pressed):
         snake_tail_x = self.active_snake.snake_parts[-1].x_coordinate

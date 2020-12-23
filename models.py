@@ -18,10 +18,11 @@ class DrawableComponentBase:
 
 
 class Snake:
-  def __init__(self, snake_parts, owner_name, steps, direction, color):
+  def __init__(self, snake_parts, owner_name, steps, played_steps, direction, color):
     self.snake_parts = snake_parts
     self.owner_name = owner_name
     self.steps = steps
+    self.played_steps = played_steps
     self.direction = direction
     self.color = color
 

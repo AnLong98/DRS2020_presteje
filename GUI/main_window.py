@@ -12,6 +12,8 @@ from Managers.movement_manager import MovementManager, KeyPressed
 from game import Game
 from models import Snake, SnakePart, SnakePartType, DrawableComponentBase, Food, SnakeDirection, User
 from Managers.snake_part_manager import SnakePartManager
+from Managers.shift_players_manager import ShiftPlayersManager
+from GUI.score_board import TimerFrame
 
 
 class MainWindow(QMainWindow):
@@ -52,6 +54,9 @@ class MainWindow(QMainWindow):
         elif key == Qt.Key_Down:
             self.game.advance_game(KeyPressed.DOWN)
 
+        elif key == Qt.Key_Tab:
+            self.game.change_snake()
+
     @property
     def get_gameboard(self):
         return self.gameboard
@@ -71,7 +76,8 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     game_board = GameBoard()
-    score_board = ScoreBoard()
+    timer = TimerFrame()
+    score_board = ScoreBoard(timer)
 
     part_width = 15
     part_height = 15
@@ -82,6 +88,7 @@ if __name__ == "__main__":
     drawing_manager = DrawingManager(game_board, score_board)
     movement_manager = MovementManager()
     snake_part_manager = SnakePartManager(part_width, part_height)
+    shift_players_manager = ShiftPlayersManager()
     table_width = game_board.get_gameboard_width
     table_height = game_board.get_gameboard_height
 
@@ -95,7 +102,7 @@ if __name__ == "__main__":
         , SnakePart(185, 45, 15, 15, SnakePartType.BODY)
         , SnakePart(170, 45, 15, 15, SnakePartType.BODY)
     ]
-    snake = Snake(snakeParts, 'Stefan', 1, SnakeDirection.RIGHT, "#fff200")
+    snake = Snake(snakeParts, 'Stefan', 1, 0, SnakeDirection.RIGHT, "#fff200")
     snakes_player1.append(snake)
 
     snakeParts1_1 = [
@@ -103,7 +110,7 @@ if __name__ == "__main__":
         , SnakePart(185, 75, 15, 15, SnakePartType.BODY)
         , SnakePart(170, 75, 15, 15, SnakePartType.BODY)
     ]
-    snake1_1 = Snake(snakeParts1_1, 'Stefan', 1, SnakeDirection.RIGHT, "#fff200")
+    snake1_1 = Snake(snakeParts1_1, 'Stefan', 1, 0, SnakeDirection.RIGHT, "#fff200")
     snakes_player1.append(snake1_1)
 
     player_1 = User(snakes_player1, 0, "Stefan", "#fff200") #CRVENA BOJA IGRACA 1
@@ -115,7 +122,7 @@ if __name__ == "__main__":
         , SnakePart(715, 75, 15, 15, SnakePartType.BODY)
         , SnakePart(730, 75, 15, 15, SnakePartType.BODY)
     ]
-    snake2 = Snake(snakeParts2, 'Djura', 1, SnakeDirection.LEFT, "#b87bba")
+    snake2 = Snake(snakeParts2, 'Djura', 1, 0, SnakeDirection.LEFT, "#b87bba")
     snakes_player2.append(snake2)
 
     snakeParts2_1 = [
@@ -123,7 +130,7 @@ if __name__ == "__main__":
         , SnakePart(715, 45, 15, 15, SnakePartType.BODY)
         , SnakePart(730, 45, 15, 15, SnakePartType.BODY)
     ]
-    snake2_1 = Snake(snakeParts2_1, 'Djura', 1, SnakeDirection.LEFT, "#b87bba")
+    snake2_1 = Snake(snakeParts2_1, 'Djura', 1, 0, SnakeDirection.LEFT, "#b87bba")
     snakes_player2.append(snake2_1)
     player_2 = User(snakes_player2, 0, "Djura", "#b87bba") #PLAVA BOJA IGRACA 2
 
@@ -134,7 +141,7 @@ if __name__ == "__main__":
         , SnakePart(715, 700, 15, 15, SnakePartType.BODY)
         , SnakePart(730, 700, 15, 15, SnakePartType.BODY)
     ]
-    snake3 = Snake(snakeParts3, 'Gangula', 1, SnakeDirection.LEFT, "#3494e3")
+    snake3 = Snake(snakeParts3, 'Gangula', 1, 0, SnakeDirection.LEFT, "#3494e3")
     snakes_player3.append(snake3)
 
     snakeParts3_1 = [
@@ -142,7 +149,7 @@ if __name__ == "__main__":
         , SnakePart(715, 670, 15, 15, SnakePartType.BODY)
         , SnakePart(730, 670, 15, 15, SnakePartType.BODY)
     ]
-    snake3_1 = Snake(snakeParts3_1, 'Gangula', 1, SnakeDirection.LEFT, "#3494e3")
+    snake3_1 = Snake(snakeParts3_1, 'Gangula', 1, 0, SnakeDirection.LEFT, "#3494e3")
     snakes_player3.append(snake3_1)
     player_3 = User(snakes_player3, 0, "Gangula", "#3494e3") #NEKA ROZA BOJA IGRACA 3
 
@@ -153,7 +160,7 @@ if __name__ == "__main__":
         , SnakePart(185, 700, 15, 15, SnakePartType.BODY)
         , SnakePart(170, 700, 15, 15, SnakePartType.BODY)
     ]
-    snake4 = Snake(snakeParts4, 'Beba', 1, SnakeDirection.RIGHT, "#fa5700")
+    snake4 = Snake(snakeParts4, 'Beba', 1, 0, SnakeDirection.RIGHT, "#fa5700")
     snakes_player4.append(snake4)
 
     snakeParts4_1 = [
@@ -161,7 +168,7 @@ if __name__ == "__main__":
         , SnakePart(185, 670, 15, 15, SnakePartType.BODY)
         , SnakePart(170, 670, 15, 15, SnakePartType.BODY)
     ]
-    snake4_1 = Snake(snakeParts4_1, 'Beba', 1, SnakeDirection.RIGHT, "#fa5700")
+    snake4_1 = Snake(snakeParts4_1, 'Beba', 1, 0, SnakeDirection.RIGHT, "#fa5700")
     snakes_player4.append(snake4_1)
 
     player_4 = User(snakes_player4, 0, "Beba", "#fa5700") #SVETLO PLAVA BOJA IGRACA 4
@@ -180,12 +187,14 @@ if __name__ == "__main__":
     all_snakes.extend(player_3.snakes)
     all_snakes.extend(player_4.snakes)
 
-    for i in range(0,4):
-        food.append(food_manager.generate_food(1,1, all_snakes, food, table_width, table_height, 15))
+    for i in range(0, 4):
+        food.append(food_manager.generate_food(1, 1, all_snakes, food, table_width, table_height, 15))
 
-    game = Game(players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, food_manager, table_width, table_height )
+    game = Game(players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, food_manager, shift_players_manager, table_width, table_height )
     game.set_active_player(player_1)
     game.set_active_snake(snake)
+
+    timer.set_game(game)
 
     window = MainWindow(game_board, score_board, game)
     window.show()
