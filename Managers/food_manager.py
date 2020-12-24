@@ -35,7 +35,7 @@ class FoodManager:
 
             if move_direction == 1: # move by x coordinate
                 for step in movements_list:
-                    food.x_coordinate = food_x + step
+                    food.x_coordinate = food_x + step * 15
                     collision_result, _ = self.collision_manager.check_generated_food_collision(all_snakes,
                                                                                                 all_food,
                                                                                                 table_width,
@@ -49,7 +49,7 @@ class FoodManager:
                 food.x_coordinate = food_x
                 movements_list.append(0)
                 for step in movements_list:
-                    food.y_coordinate = food_y + step
+                    food.y_coordinate = food_y + step * 15
                     collision_result, _ = self.collision_manager.check_generated_food_collision(all_snakes,
                                                                                                 all_food,
                                                                                                 table_width,
