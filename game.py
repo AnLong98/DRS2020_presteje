@@ -29,6 +29,9 @@ class Game:
         self.active_snake = None
         self.drawing_manager.add_player_to_scoreboard(self.players)
 
+        self.alive_players_count = len(self.players)
+        self.players_finished_turn = 0
+
     def set_active_player(self, active_player):
         self.active_player = active_player
 
@@ -37,17 +40,23 @@ class Game:
         self.drawing_manager.change_head(active_snake)
 
     def change_player(self):
+        self.finish_players_turn()
         next_player = self.shift_players_manager.shift_player(self.players, self.active_player)
         self.set_active_player(next_player)
         next_snake = self.active_player.snakes[0]
         self.set_active_snake(next_snake)
         self.snake_played_steps_manager.reset_played_steps(self.active_player, self.players)
-        self.food_manager.move_all_food(self.all_snakes, self.food, self.table_width, self.table_height)
-        self.drawing_manager.draw_food(self.food)
 
     def change_snake(self):
         next_snake = self.shift_snakes_manager.shift_snakes(self.active_snake, self.active_player)
         self.set_active_snake(next_snake)
+
+    def finish_players_turn(self):
+        self.players_finished_turn += 1
+        if self.players_finished_turn >= self.alive_players_count:
+            self.food_manager.move_all_food(self.all_snakes, self.food, self.table_width, self.table_height)
+            self.drawing_manager.draw_food(self.food)
+            self.players_finished_turn = 0
 
     def advance_game(self, key_pressed):
         snake_tail_x = self.active_snake.snake_parts[-1].x_coordinate
@@ -62,12 +71,13 @@ class Game:
                 self.drawing_manager.add_player_to_scoreboard(self.players)
                 generated_food = self.food_manager.generate_food(object_collided.points_worth, object_collided.steps_worth,
                                                              self.all_snakes, self.food, self.table_width,
-                                                             self.table_height, object_collided.width)
+                                                             self.table_height, object_collided.width, object_collided.is_super_food)
                 self.food.append(generated_food)
                 self.drawing_manager.draw_food(self.food)
             elif collision_result == CollisionDetectionResult.FRIENDLY_COLLISION or collision_result == CollisionDetectionResult.AUTO_COLLISION:
                 for snake in self.active_player.snakes:
                     self.all_snakes.remove(snake)
+                self.alive_players_count -= 1
                 self.active_player.snakes = None
                 self.change_player()
                 self.drawing_manager.reset_turn_time()

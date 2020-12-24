@@ -65,7 +65,10 @@ class GameBoard(QFrame):
         qp.fillRect(rect.left() + snake_part.x_coordinate, snake_part.y_coordinate, self.square_width(), self.square_height(), color)
 
     def draw_square_food(self, qp, food):
-        color = QColor('#ff911c')
+        if food.is_super_food:
+            color = QColor('#00FFFF')
+        else:
+            color = QColor('#ff911c')
         rect = self.contentsRect()
 
         qp.fillRect(rect.left() + food.x_coordinate, food.y_coordinate, self.square_width(), self.square_height(),
