@@ -7,7 +7,7 @@ from Managers.snake_part_manager import SnakePartManager
 
 
 class Game:
-    def __init__(self, players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, food_manager, shift_players_manager, shift_snakes_manager, snake_played_steps_manager, table_width, table_height):
+    def __init__(self, players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, food_manager, shift_players_manager, table_width, table_height):
         self.players = players
         self.food = food
         self.collision_manager = collision_manager
@@ -16,8 +16,6 @@ class Game:
         self.snake_part_manager = snake_part_manager
         self.food_manager = food_manager
         self.shift_players_manager = shift_players_manager
-        self.shift_snakes_manager = shift_snakes_manager
-        self.snake_played_steps_manager = snake_played_steps_manager
         self.table_width = table_width
         self.table_height = table_height
         self.all_snakes = []
@@ -45,11 +43,17 @@ class Game:
         self.set_active_player(next_player)
         next_snake = self.active_player.snakes[0]
         self.set_active_snake(next_snake)
-        self.snake_played_steps_manager.reset_played_steps(self.active_player, self.players)
+        self.reset_played_steps()
 
     def change_snake(self):
-        next_snake = self.shift_snakes_manager.shift_snakes(self.active_snake, self.active_player)
+        next_snake = self.shift_players_manager.shift_snakes(self.active_snake, self.active_player)
         self.set_active_snake(next_snake)
+
+    def reset_played_steps(self):
+        for player in self.players:  # ne moze samo prethodnom
+            if player.snakes is not None and player.user_name != self.active_player.user_name:
+                for snake in player.snakes:
+                    snake.played_steps = 0
 
     def finish_players_turn(self):
         self.players_finished_turn += 1

@@ -10,4 +10,11 @@ class ShiftPlayersManager:
             next_player = all_players[next_player_index]
         return next_player
 
-    #Pedja 23.12.2020 Razmisliti da li nam ovaj kod zaista zasluzuje da stoji u posebnoj klasi.
+    def shift_snakes(self, active_snake, active_player):
+        snake_count = len(active_player.snakes)
+        current_snake_index = active_player.snakes.index(active_snake)
+        next_snake_index = (current_snake_index + 1) % snake_count
+        next_snake = active_player.snakes[next_snake_index]
+        return next_snake
+
+# Pedja 23.12.2020 Razmisliti da li nam ovaj kod zaista zasluzuje da stoji u posebnoj klasi.
