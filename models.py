@@ -52,6 +52,9 @@ class User:
   def remove_snake(self, snake):
     self.snakes.remove(snake)
 
+  def add_snake(self, snake):
+    self.snakes.append(snake)
+
   def increase_points(self, points):
     self.points += points
 

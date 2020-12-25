@@ -63,17 +63,26 @@ class Game:
         snake_tail_y = self.active_snake.snake_parts[-1].y_coordinate
         if self.movement_manager.set_snake_direction(key_pressed, self.active_snake) is None:  # radi optimizacije
             collision_result, object_collided = self.collision_manager.check_moving_snake_collision(self.active_snake, self.all_snakes, self.food, self.table_width, self.table_height)
+
             if collision_result == CollisionDetectionResult.FOOD_COLLISION:
                 self.food.remove(object_collided)
                 self.active_snake.increase_steps(object_collided.steps_worth)
                 self.active_player.increase_points(object_collided.points_worth)
                 self.snake_part_manager.increase_snake(self.active_snake, snake_tail_x, snake_tail_y)
                 self.drawing_manager.add_player_to_scoreboard(self.players)
+
                 generated_food = self.food_manager.generate_food(object_collided.points_worth, object_collided.steps_worth,
                                                              self.all_snakes, self.food, self.table_width,
                                                              self.table_height, object_collided.width, object_collided.is_super_food)
                 self.food.append(generated_food)
                 self.drawing_manager.draw_food(self.food)
+
+                if object_collided.is_super_food:
+                    snake = self.snake_part_manager.generate_snake_for_player(self.active_player, self.table_width,
+                                                                      self.table_height, 5, self.all_snakes, self.food)
+                    self.active_player.add_snake(snake)
+                    self.all_snakes.append(snake)
+
             elif collision_result == CollisionDetectionResult.FRIENDLY_COLLISION or collision_result == CollisionDetectionResult.AUTO_COLLISION:
                 for snake in self.active_player.snakes:
                     self.all_snakes.remove(snake)
@@ -81,6 +90,7 @@ class Game:
                 self.active_player.snakes = None
                 self.change_player()
                 self.drawing_manager.reset_turn_time()
+
             elif collision_result != CollisionDetectionResult.NO_COLLISION:
                 self.all_snakes.remove(self.active_snake)
                 self.active_player.remove_snake(self.active_snake)

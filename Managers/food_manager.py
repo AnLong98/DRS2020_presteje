@@ -14,13 +14,11 @@ class FoodManager:
 
 
             generated_food = Food(generated_x, generated_y, food_size, food_size, points_worth, steps_worth, is_super_food)
-            collision_result, _ = self.collision_manager.check_generated_food_collision(all_snakes,
-                                                                                         all_food,
-                                                                                         table_width,
-                                                                                         table_height,
-                                                                                         generated_food)
-
-            if collision_result == CollisionDetectionResult.NO_COLLISION:
+            if not self.collision_manager.is_coordinate_colliding(all_snakes,
+                                                                 all_food,
+                                                                 table_width,
+                                                                 table_height,
+                                                                 generated_food):
                 return generated_food
 
 

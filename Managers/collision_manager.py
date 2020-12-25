@@ -86,7 +86,7 @@ class CollisionManager:
 
         return CollisionDetectionResult.NO_COLLISION, None
 
-    def is_coordinate_free(self, all_snakes, all_food, table_width, table_height, drawable_component):
+    def is_coordinate_colliding(self, all_snakes, all_food, table_width, table_height, drawable_component):
 
         # check if component collided with window border
         if self.check_component_to_wall_collision(drawable_component, wall_width=table_width, wall_height=table_height):
@@ -99,8 +99,16 @@ class CollisionManager:
 
         # check for collision with other snakes:
         for snake in all_snakes:
-            is_colliding = self.check_head_to_body_collision(drawable_component, snake)
-            if is_colliding:
+            for snake_part in snake.snake_parts:
+                is_colliding = self.check_components_collision(snake_part, drawable_component)
+                if is_colliding:
+                    return True
+
+        return False
+
+    def is_colliding_with_marked_locations(self, drawable_component, marked_locations):
+        for component in marked_locations:
+            if self.check_components_collision(component, drawable_component):
                 return True
 
         return False
