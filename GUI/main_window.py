@@ -101,13 +101,13 @@ if __name__ == "__main__":
         SnakePart(210, 45, 15, 15, SnakePartType.HEAD)
         , SnakePart(195, 45, 15, 15, SnakePartType.BODY)
         , SnakePart(180, 45, 15, 15, SnakePartType.BODY)
-        , SnakePart(175, 45, 15, 15, SnakePartType.BODY)
-        , SnakePart(160, 45, 15, 15, SnakePartType.BODY)
-        , SnakePart(145, 45, 15, 15, SnakePartType.BODY)
-        , SnakePart(130, 45, 15, 15, SnakePartType.BODY)
-        , SnakePart(115, 45, 15, 15, SnakePartType.BODY)
-        , SnakePart(100, 45, 15, 15, SnakePartType.BODY)
-        , SnakePart(85, 45, 15, 15, SnakePartType.BODY)
+        , SnakePart(165, 45, 15, 15, SnakePartType.BODY)
+        , SnakePart(150, 45, 15, 15, SnakePartType.BODY)
+        , SnakePart(135, 45, 15, 15, SnakePartType.BODY)
+        , SnakePart(120, 45, 15, 15, SnakePartType.BODY)
+        , SnakePart(105, 45, 15, 15, SnakePartType.BODY)
+        , SnakePart(90, 45, 15, 15, SnakePartType.BODY)
+        , SnakePart(75, 45, 15, 15, SnakePartType.BODY)
 
     ]
     snake = Snake(snakeParts, 'Stefan', 10, 0, SnakeDirection.RIGHT, "#fff200")
@@ -117,13 +117,13 @@ if __name__ == "__main__":
         SnakePart(210, 75, 15, 15, SnakePartType.HEAD)
         , SnakePart(195, 75, 15, 15, SnakePartType.BODY)
         , SnakePart(180, 75, 15, 15, SnakePartType.BODY)
-        , SnakePart(175, 75, 15, 15, SnakePartType.BODY)
-        , SnakePart(160, 75, 15, 15, SnakePartType.BODY)
-        , SnakePart(145, 75, 15, 15, SnakePartType.BODY)
-        , SnakePart(130, 75, 15, 15, SnakePartType.BODY)
-        , SnakePart(115, 75, 15, 15, SnakePartType.BODY)
-        , SnakePart(100, 75, 15, 15, SnakePartType.BODY)
-        , SnakePart(85, 75, 15, 15, SnakePartType.BODY)
+        , SnakePart(165, 75, 15, 15, SnakePartType.BODY)
+        , SnakePart(150, 75, 15, 15, SnakePartType.BODY)
+        , SnakePart(135, 75, 15, 15, SnakePartType.BODY)
+        , SnakePart(120, 75, 15, 15, SnakePartType.BODY)
+        , SnakePart(105, 75, 15, 15, SnakePartType.BODY)
+        , SnakePart(90, 75, 15, 15, SnakePartType.BODY)
+        , SnakePart(75, 75, 15, 15, SnakePartType.BODY)
     ]
     snake1_1 = Snake(snakeParts1_1, 'Stefan', 10, 0, SnakeDirection.RIGHT, "#fff200")
     snakes_player1.append(snake1_1)
@@ -203,13 +203,13 @@ if __name__ == "__main__":
         SnakePart(210, 705, 15, 15, SnakePartType.HEAD)
         , SnakePart(195, 705, 15, 15, SnakePartType.BODY)
         , SnakePart(180, 705, 15, 15, SnakePartType.BODY)
-        , SnakePart(175, 705, 15, 15, SnakePartType.BODY)
-        , SnakePart(160, 705, 15, 15, SnakePartType.BODY)
-        , SnakePart(145, 705, 15, 15, SnakePartType.BODY)
-        , SnakePart(130, 705, 15, 15, SnakePartType.BODY)
-        , SnakePart(115, 705, 15, 15, SnakePartType.BODY)
-        , SnakePart(100, 705, 15, 15, SnakePartType.BODY)
-        , SnakePart(85, 705, 15, 15, SnakePartType.BODY)
+        , SnakePart(165, 705, 15, 15, SnakePartType.BODY)
+        , SnakePart(150, 705, 15, 15, SnakePartType.BODY)
+        , SnakePart(135, 705, 15, 15, SnakePartType.BODY)
+        , SnakePart(120, 705, 15, 15, SnakePartType.BODY)
+        , SnakePart(105, 705, 15, 15, SnakePartType.BODY)
+        , SnakePart(90, 705, 15, 15, SnakePartType.BODY)
+        , SnakePart(75, 705, 15, 15, SnakePartType.BODY)
     ]
     snake4 = Snake(snakeParts4, 'Beba', 10, 0, SnakeDirection.RIGHT, "#fa5700")
     snakes_player4.append(snake4)
@@ -218,13 +218,13 @@ if __name__ == "__main__":
         SnakePart(210, 675, 15, 15, SnakePartType.HEAD)
         , SnakePart(195, 675, 15, 15, SnakePartType.BODY)
         , SnakePart(180, 675, 15, 15, SnakePartType.BODY)
-        , SnakePart(175, 675, 15, 15, SnakePartType.BODY)
-        , SnakePart(160, 675, 15, 15, SnakePartType.BODY)
-        , SnakePart(145, 675, 15, 15, SnakePartType.BODY)
-        , SnakePart(130, 675, 15, 15, SnakePartType.BODY)
-        , SnakePart(115, 675, 15, 15, SnakePartType.BODY)
-        , SnakePart(100, 675, 15, 15, SnakePartType.BODY)
-        , SnakePart(85, 675, 15, 15, SnakePartType.BODY)
+        , SnakePart(165, 675, 15, 15, SnakePartType.BODY)
+        , SnakePart(150, 675, 15, 15, SnakePartType.BODY)
+        , SnakePart(135, 675, 15, 15, SnakePartType.BODY)
+        , SnakePart(120, 675, 15, 15, SnakePartType.BODY)
+        , SnakePart(105, 675, 15, 15, SnakePartType.BODY)
+        , SnakePart(90, 675, 15, 15, SnakePartType.BODY)
+        , SnakePart(75, 675, 15, 15, SnakePartType.BODY)
     ]
     snake4_1 = Snake(snakeParts4_1, 'Beba', 10, 0, SnakeDirection.RIGHT, "#fa5700")
     snakes_player4.append(snake4_1)
@@ -251,8 +251,8 @@ if __name__ == "__main__":
     food.append(food_manager.generate_food(1, 1, all_snakes, food, table_width, table_height, 15, True))# generate superfood
 
     #Uncomment for testing
-    #for i in range(0, 200):
-       #food.append(food_manager.generate_food(1, 1, all_snakes, food, table_width, table_height, 15, True)) #generate superfood
+    for i in range(0, 200):
+       food.append(food_manager.generate_food(1, 1, all_snakes, food, table_width, table_height, 15, True)) #generate superfood
 
 
     game = Game(players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, food_manager, shift_players_manager, table_width, table_height )

@@ -62,7 +62,7 @@ class GameBoard(QFrame):
         else:
             color = QColor(snake.color)
 
-        qp.fillRect(rect.left() + snake_part.x_coordinate, snake_part.y_coordinate, self.square_width(), self.square_height(), color)
+        qp.fillRect(rect.left() + snake_part.x_coordinate, snake_part.y_coordinate, self.square_width() - 1, self.square_height() - 1, color)
 
     def draw_square_food(self, qp, food):
         if food.is_super_food:
@@ -71,7 +71,7 @@ class GameBoard(QFrame):
             color = QColor('#ff911c')
         rect = self.contentsRect()
 
-        qp.fillRect(rect.left() + food.x_coordinate, food.y_coordinate, self.square_width(), self.square_height(),
+        qp.fillRect(rect.left() + food.x_coordinate, food.y_coordinate, self.square_width() - 1, self.square_height() - 1,
                     color)
 
     def change_head_color(self, snake):
