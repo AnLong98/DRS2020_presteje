@@ -1,5 +1,5 @@
 import sys
-
+from threading import Lock
 from Managers.collision_manager import CollisionManager, CollisionDetectionResult
 from models import SnakeDirection
 from Managers.movement_manager import  KeyPressed
@@ -26,9 +26,9 @@ class Game:
         drawing_manager.draw_snakes(self.all_snakes)
         self.active_snake = None
         self.drawing_manager.add_player_to_scoreboard(self.players)
-
         self.alive_players_count = len(self.players)
         self.players_finished_turn = 0
+        self.game_mutex = Lock()
 
     def set_active_player(self, active_player):
         self.active_player = active_player
@@ -38,12 +38,14 @@ class Game:
         self.drawing_manager.change_head(active_snake)
 
     def change_player(self):
+        self.game_mutex.acquire()
         self.finish_players_turn()
         next_player = self.shift_players_manager.shift_player(self.players, self.active_player)
         self.set_active_player(next_player)
         next_snake = self.active_player.snakes[0]
         self.set_active_snake(next_snake)
         self.reset_played_steps()
+        self.game_mutex.release()
 
     def change_snake(self):
         next_snake = self.shift_players_manager.shift_snakes(self.active_snake, self.active_player)
@@ -63,6 +65,7 @@ class Game:
             self.players_finished_turn = 0
 
     def advance_game(self, key_pressed):
+        self.game_mutex.acquire()
         snake_tail_x = self.active_snake.snake_parts[-1].x_coordinate
         snake_tail_y = self.active_snake.snake_parts[-1].y_coordinate
         if self.movement_manager.set_snake_direction(key_pressed, self.active_snake) is None:  # radi optimizacije
@@ -91,13 +94,17 @@ class Game:
                     self.all_snakes.remove(snake)
                 self.alive_players_count -= 1
                 self.active_player.snakes = None
+                self.game_mutex.release()
                 self.change_player()
+                self.game_mutex.acquire()
                 self.drawing_manager.reset_turn_time()
 
             elif collision_result != CollisionDetectionResult.NO_COLLISION:
                 self.all_snakes.remove(self.active_snake)
                 self.active_player.remove_snake(self.active_snake)
+                self.game_mutex.release()
                 self.change_player()
+                self.game_mutex.acquire()
                 self.drawing_manager.reset_turn_time()
 
             trapped_snakes = self.collision_manager.get_trapped_enemy_snakes(self.all_snakes, self.table_width, self.table_height, self.active_player)
@@ -106,6 +113,6 @@ class Game:
                     if snake.owner_name == player.user_name:
                         self.all_snakes.remove(snake)
                         player.remove_snake(snake)
-
+            self.game_mutex.release()
             self.drawing_manager.draw_snakes(self.all_snakes)
 

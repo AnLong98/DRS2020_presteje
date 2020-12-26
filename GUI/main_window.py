@@ -252,7 +252,7 @@ if __name__ == "__main__":
 
     #Uncomment for testing
     #for i in range(0, 200):
-       # food.append(food_manager.generate_food(1, 1, all_snakes, food, table_width, table_height, 15, True)) #generate superfood
+       #food.append(food_manager.generate_food(1, 1, all_snakes, food, table_width, table_height, 15, True)) #generate superfood
 
 
     game = Game(players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, food_manager, shift_players_manager, table_width, table_height )
