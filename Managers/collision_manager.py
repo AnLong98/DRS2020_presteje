@@ -1,3 +1,5 @@
+from models import DrawableComponentBase
+
 
 class CollisionDetectionResult:
     NO_COLLISION = 1
@@ -106,9 +108,69 @@ class CollisionManager:
 
         return False
 
+    def is_snake_side_blocked(self, all_snakes, table_width, table_height, side_drawable_component, snake_owner):
+
+        # check if component collided with window border
+        if self.check_component_to_wall_collision(side_drawable_component, wall_width=table_width, wall_height=table_height):
+            return CollisionDetectionResult.WALL_COLLISION
+
+        # check for collision with other snakes:
+        for snake in all_snakes:
+            for snake_part in snake.snake_parts:
+                is_colliding = self.check_components_collision(snake_part, side_drawable_component)
+                if is_colliding and snake.owner_name == snake_owner:
+                    return CollisionDetectionResult.FRIENDLY_COLLISION
+                elif is_colliding:
+                    return CollisionDetectionResult.ENEMY_COLLISION
+
+        return CollisionDetectionResult.NO_COLLISION
+
     def is_colliding_with_marked_locations(self, drawable_component, marked_locations):
         for component in marked_locations:
             if self.check_components_collision(component, drawable_component):
+                return True
+
+        return False
+
+    def get_trapped_enemy_snakes(self, all_snakes, table_width, table_height, current_player):
+        trapped_snakes = []
+        for snake in all_snakes:
+            if snake.owner_name == current_player.user_name:
+                continue
+            if self.is_snake_surrounded(snake, all_snakes, table_width, table_height):
+                trapped_snakes.append(snake)
+
+        return trapped_snakes
+
+
+
+    def is_snake_surrounded(self, snake, all_snakes, table_width, table_height):
+        collision_results = []
+
+        snake_head = snake.snake_parts[0]
+        head_move_coordinates = []
+        head_move_coordinates.append(DrawableComponentBase(snake_head.x_coordinate - snake_head.width,
+                                                           snake_head.y_coordinate, snake_head.width,
+                                                           snake_head.height))   #head moving left
+        head_move_coordinates.append(DrawableComponentBase(snake_head.x_coordinate + snake_head.width,
+                                                           snake_head.y_coordinate, snake_head.width,
+                                                           snake_head.height))  # head moving right
+        head_move_coordinates.append(DrawableComponentBase(snake_head.x_coordinate,
+                                                           snake_head.y_coordinate - snake_head.height, snake_head.width,
+                                                           snake_head.height))  # head moving up
+        head_move_coordinates.append(DrawableComponentBase(snake_head.x_coordinate,
+                                                           snake_head.y_coordinate + snake_head.height,
+                                                           snake_head.width,
+                                                           snake_head.height))  # head moving down
+
+        for snake_side in head_move_coordinates:
+            collision_results.append(self.is_snake_side_blocked(all_snakes, table_width, table_height,
+                                                               snake_side, snake.owner_name))
+            if collision_results[-1] == CollisionDetectionResult.NO_COLLISION:
+                return False
+
+        for collision_result in collision_results:
+            if collision_result == CollisionDetectionResult.ENEMY_COLLISION:
                 return True
 
         return False

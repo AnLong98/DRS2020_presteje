@@ -67,7 +67,6 @@ class Game:
         snake_tail_y = self.active_snake.snake_parts[-1].y_coordinate
         if self.movement_manager.set_snake_direction(key_pressed, self.active_snake) is None:  # radi optimizacije
             collision_result, object_collided = self.collision_manager.check_moving_snake_collision(self.active_snake, self.all_snakes, self.food, self.table_width, self.table_height)
-
             if collision_result == CollisionDetectionResult.FOOD_COLLISION:
                 self.food.remove(object_collided)
                 self.active_snake.increase_steps(object_collided.steps_worth)
@@ -100,5 +99,13 @@ class Game:
                 self.active_player.remove_snake(self.active_snake)
                 self.change_player()
                 self.drawing_manager.reset_turn_time()
+
+            trapped_snakes = self.collision_manager.get_trapped_enemy_snakes(self.all_snakes, self.table_width, self.table_height, self.active_player)
+            for snake in trapped_snakes:
+                for player in self.players:
+                    if snake.owner_name == player.user_name:
+                        self.all_snakes.remove(snake)
+                        player.remove_snake(snake)
+
             self.drawing_manager.draw_snakes(self.all_snakes)
 
