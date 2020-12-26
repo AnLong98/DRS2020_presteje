@@ -81,7 +81,7 @@ class Game:
                                                              self.all_snakes, self.food, self.table_width,
                                                              self.table_height, object_collided.width, object_collided.is_super_food)
                 self.food.append(generated_food)
-                self.drawing_manager.draw_food(self.food)
+
 
                 if object_collided.is_super_food:
                     snake = self.snake_part_manager.generate_snake_for_player(self.active_player, self.table_width,
@@ -114,5 +114,6 @@ class Game:
                         self.all_snakes.remove(snake)
                         player.remove_snake(snake)
             self.game_mutex.release()
+            self.drawing_manager.draw_food(self.food)
             self.drawing_manager.draw_snakes(self.all_snakes)
 

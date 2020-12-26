@@ -8,9 +8,11 @@ class FoodManager:
         self.collision_manager = collision_manager
 
     def generate_food(self, points_worth, steps_worth, all_snakes, all_food, table_width, table_height, food_size, is_super_food=False):
+        random_upper_coeficient_x = table_width / food_size
+        random_upper_coeficient_y = table_height / food_size
         while True:
-            generated_x = random.randint(0, table_width - food_size)
-            generated_y = random.randint(0, table_height - food_size)
+            generated_x = random.randint(0, random_upper_coeficient_x) * food_size
+            generated_y = random.randint(0, random_upper_coeficient_y) * food_size
 
 
             generated_food = Food(generated_x, generated_y, food_size, food_size, points_worth, steps_worth, is_super_food)
