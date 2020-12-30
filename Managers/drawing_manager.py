@@ -18,3 +18,9 @@ class DrawingManager:
 
     def reset_turn_time(self):
         self.score_board.reset_timer()
+
+    def stop_turn_time(self):
+        self.score_board.kill_timer()
+
+    def add_winner(self, player):
+        self.score_board.set_winner(player)

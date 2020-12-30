@@ -29,6 +29,8 @@ class MainWindow(QMainWindow):
 
         self.game = game
 
+        self.winner = None
+
     def generate_window_layout(self):
         splitter = QSplitter(Qt.Horizontal)
         splitter.setEnabled(False)
@@ -38,8 +40,9 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(splitter)
 
     def keyPressEvent(self, event):
-        if self.game is None:
-            pass
+        self.winner = self.scoreboard.winner
+        if self.game is None or self.winner is not None:
+            return None
         key = event.key()
 
         if key == Qt.Key_Left:
@@ -56,6 +59,10 @@ class MainWindow(QMainWindow):
 
         elif key == Qt.Key_Tab:
             self.game.change_snake()
+
+    #@property
+    #def set_winner(self, player):
+        #self.winner = player
 
     @property
     def get_gameboard(self):

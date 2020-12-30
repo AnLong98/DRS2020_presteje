@@ -28,6 +28,7 @@ class Game:
         self.drawing_manager.add_player_to_scoreboard(self.players)
         self.alive_players_count = len(self.players)
         self.players_finished_turn = 0
+        self.winner = None
         self.game_mutex = Lock()
 
     def set_active_player(self, active_player):
@@ -62,6 +63,21 @@ class Game:
             if snake.steps != snake.played_steps:
                 return not None
         return None
+
+    def is_it_over(self):
+        if self.active_player.snakes is not None:
+            return None
+        count = 0
+        for player in self.players:
+            if player.snakes is not None and player.user_name != self.active_player.user_name:
+                count += 1
+        if count == 1:
+            self.winner = self.shift_players_manager.shift_player(self.players, self.active_player)
+            self.drawing_manager.add_winner(self.winner)
+            self.drawing_manager.stop_turn_time()
+        else:
+            return None
+
 
     def finish_players_turn(self):
         self.players_finished_turn += 1
@@ -101,6 +117,7 @@ class Game:
                     self.all_snakes.remove(snake)
                 self.alive_players_count -= 1
                 self.active_player.snakes = None
+                self.is_it_over()
                 self.game_mutex.release()
                 self.change_player()
                 self.game_mutex.acquire()
@@ -109,6 +126,7 @@ class Game:
             elif collision_result != CollisionDetectionResult.NO_COLLISION:
                 self.all_snakes.remove(self.active_snake)
                 self.active_player.remove_snake(self.active_snake)
+                self.is_it_over()
                 self.game_mutex.release()
                 self.change_player()
                 self.game_mutex.acquire()

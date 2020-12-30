@@ -51,6 +51,8 @@ class User:
 
   def remove_snake(self, snake):
     self.snakes.remove(snake)
+    if not self.snakes:
+      self.snakes = None
 
   def add_snake(self, snake):
     self.snakes.append(snake)

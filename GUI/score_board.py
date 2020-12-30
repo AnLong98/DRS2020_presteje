@@ -85,8 +85,8 @@ class TimerFrame(QFrame):
             self.reset_timer()
             self.game.change_player()
 
-
-
+    def kill_timer(self):
+        self.killTimer(self.qTimer.timerId())
 
 
 class ButtonFrame(QFrame):
@@ -111,6 +111,8 @@ class ScoreBoard(QFrame):
         self.qTimer.start()
         self.timer_frame = timer_frame
 
+        self.winner = None
+
         # if self.players:
         #     self.getPlayersData()
 
@@ -121,6 +123,13 @@ class ScoreBoard(QFrame):
 
     def reset_timer(self):
         self.timer_frame.reset_timer()
+
+    def kill_timer(self):
+        self.timer_frame.kill_timer()
+
+
+    def set_winner(self, player):
+        self.winner = player
 
     @property
     def get_painter(self):
