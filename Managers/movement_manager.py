@@ -11,10 +11,6 @@ class KeyPressed:
 
 class MovementManager:
     def set_snake_direction(self, key_pressed, active_snake):
-        # morace da ide u svaki if ukoliko se funkcija advance_game bude pozivala i kada
-        # neki tasteri osim ova 4 budu pritisnuti
-        if active_snake.steps == active_snake.played_steps:
-            return None
         active_snake.increase_played_steps()
 
         if key_pressed == KeyPressed.LEFT:

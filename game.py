@@ -57,6 +57,12 @@ class Game:
                 for snake in player.snakes:
                     snake.played_steps = 0
 
+    def check_player_steps(self):
+        for snake in self.active_player.snakes:
+            if snake.steps != snake.played_steps:
+                return not None
+        return None
+
     def finish_players_turn(self):
         self.players_finished_turn += 1
         if self.players_finished_turn >= self.alive_players_count:
@@ -68,7 +74,8 @@ class Game:
         self.game_mutex.acquire()
         snake_tail_x = self.active_snake.snake_parts[-1].x_coordinate
         snake_tail_y = self.active_snake.snake_parts[-1].y_coordinate
-        if self.movement_manager.set_snake_direction(key_pressed, self.active_snake) is None:  # radi optimizacije
+        if self.active_snake.steps != self.active_snake.played_steps:
+            self.movement_manager.set_snake_direction(key_pressed, self.active_snake)
             collision_result, object_collided = self.collision_manager.check_moving_snake_collision(self.active_snake, self.all_snakes, self.food, self.table_width, self.table_height)
             if collision_result == CollisionDetectionResult.FOOD_COLLISION:
                 self.food.remove(object_collided)
@@ -117,3 +124,12 @@ class Game:
             self.drawing_manager.draw_food(self.food)
             self.drawing_manager.draw_snakes(self.all_snakes)
 
+        elif self.check_player_steps() is None:  # ako igrac vise nema koraka ni sa jednom zmijom
+            self.game_mutex.release()
+            self.change_player()
+            self.game_mutex.acquire()
+            self.drawing_manager.reset_turn_time()
+            self.game_mutex.release()
+
+        else:
+            self.game_mutex.release()
