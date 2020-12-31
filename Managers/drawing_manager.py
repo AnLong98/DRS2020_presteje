@@ -24,3 +24,9 @@ class DrawingManager:
 
     def add_winner(self, player):
         self.score_board.set_winner(player)
+
+    def set_active_player_on_score_board(self, active_player):
+        self.score_board.set_active_player_on_button_frame(active_player)
+
+    def set_active_snake_on_score_board(self, active_snake):
+        self.score_board.set_active_snake_on_button_frame(active_snake)

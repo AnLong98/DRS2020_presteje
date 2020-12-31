@@ -33,10 +33,12 @@ class Game:
 
     def set_active_player(self, active_player):
         self.active_player = active_player
+        self.drawing_manager.set_active_player_on_score_board(self.active_player)
 
     def set_active_snake(self, active_snake):
         self.active_snake = active_snake
         self.drawing_manager.change_head(active_snake)
+        self.drawing_manager.set_active_snake_on_score_board(self.active_snake)
 
     def change_player(self):
         self.game_mutex.acquire()

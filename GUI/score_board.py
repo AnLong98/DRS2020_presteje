@@ -90,11 +90,69 @@ class TimerFrame(QFrame):
 
 
 class ButtonFrame(QFrame):
-    def __init__(self):
+    def __init__(self, active_player, active_snake):
         super(QFrame, self).__init__()
+
+        self.active_player = active_player
+        self.active_snake = active_snake
+        self.scores = []
 
         self.setFixedSize(240, 400)
         self.setStyleSheet('background-color: #bababa')
+
+        self.define_frame_style()
+
+        self.qTimer = QTimer()
+        self.qTimer.setInterval(140)
+        # connect timeout signal to signal handler
+        self.qTimer.timeout.connect(self.update_scores)
+        # start timer
+        self.qTimer.start()
+
+    def set_active_player_(self, active_player):
+        self.active_player = active_player
+
+    def set_active_snake_(self, active_snake):
+        self.active_snake = active_snake
+
+    def define_frame_style(self):
+        layout = QVBoxLayout()
+        font1 = QFont('Arial', 11.5)
+        font2 = QFont('Arial', 17)
+
+        label1 = QLabel("Active player: ", self)
+        label1.setFont(font1)
+        label1.setStyleSheet("color: #6e6e6e")
+
+        label1_1 = QLabel("", self)
+        label1_1.setFont(font2)
+        label1_1.setStyleSheet("color: #6e6e6e")
+
+        label2 = QLabel("The number of remaining steps\nof the active snake: ", self)
+        label2.setFont(font1)
+        label2.setStyleSheet("color: #6e6e6e")
+
+        label2_1 = QLabel("", self)
+        label2_1.setFont(font2)
+        label2_1.setStyleSheet("color: #6e6e6e")
+
+        self.scores.append([label1, label1_1, label2, label2_1])
+        layout.addWidget(label1)
+        layout.addWidget(label1_1)
+        layout.addWidget(label2)
+        layout.addWidget(label2_1)
+
+        layout.addStretch(1)
+        self.setLayout(layout)
+
+    def update_scores(self):
+        for labels in self.scores:
+            labels[1].setStyleSheet("color: " + self.active_player.color)
+            labels[3].setStyleSheet("color: " + self.active_player.color)
+            #labels[1].setStyleSheet("font-weight: bold")
+            #labels[3].setStyleSheet("font-weight: bold")
+            labels[1].setText(self.active_player.user_name)
+            labels[3].setText(str(self.active_snake.steps - self.active_snake.played_steps))
 
 
 class ScoreBoard(QFrame):
@@ -112,6 +170,9 @@ class ScoreBoard(QFrame):
         self.timer_frame = timer_frame
 
         self.winner = None
+        self.active_player = None
+        self.active_snake = None
+        self.button_frame = ButtonFrame(self.active_player, self.active_snake)
 
         # if self.players:
         #     self.getPlayersData()
@@ -143,6 +204,18 @@ class ScoreBoard(QFrame):
     def get_scoreboard_width(self):
         return self.width()
 
+    @property
+    def get_scoreboard_width(self):
+        return self.width()
+
+    def set_active_player_on_button_frame(self, active_player):
+        self.active_player = active_player
+        self.button_frame.set_active_player_(active_player)
+
+    def set_active_snake_on_button_frame(self, active_snake):
+        self.active_snake = active_snake
+        self.button_frame.set_active_snake_(active_snake)
+
     def getPlayersData(self):
         if self.players:
             self.vbox = QVBoxLayout()
@@ -150,7 +223,7 @@ class ScoreBoard(QFrame):
             self.splitter.setEnabled(False)
             self.splitter.addWidget(PlayerFrame(self.players))
             self.splitter.addWidget(self.timer_frame)
-            self.splitter.addWidget(ButtonFrame())
+            self.splitter.addWidget(self.button_frame)
             self.vbox.addWidget(self.splitter)
             self.setLayout(self.vbox)
             self.qTimer.stop()

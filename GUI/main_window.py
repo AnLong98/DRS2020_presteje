@@ -266,6 +266,9 @@ if __name__ == "__main__":
     game.set_active_player(player_1)
     game.set_active_snake(snake)
 
+    score_board.set_active_player_on_button_frame(player_1)
+    score_board.set_active_snake_on_button_frame(snake)
+
     timer.set_game(game)
 
     window = MainWindow(game_board, score_board, game)
