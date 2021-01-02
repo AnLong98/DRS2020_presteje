@@ -24,7 +24,7 @@ class ClientNetworkReceiver(NetworkManager, Thread):
 
     def run(self):
         readable_sockets = [self.socket]
-        while(True):
+        while True:
             read, write, error = select.select(readable_sockets, [], [], 0)
             if not read:
                 continue
@@ -38,6 +38,15 @@ class ClientNetworkReceiver(NetworkManager, Thread):
 
             elif flag == NetworkPackageFlag.PLAYERS:
                 self.drawing_manager.update_players(message)
+
+            elif flag == NetworkPackageFlag.STOP_INPUT:
+                self.drawing_manager.stop_input()
+
+            elif flag == NetworkPackageFlag.START_INPUT:
+                self.drawing_manager.start_input()
+
+            elif flag == NetworkPackageFlag.RESET_TIMER:
+                self.drawing_manager.reset_turn_time()
 
             elif flag == NetworkPackageFlag.GAME_OVER:
                 #game is over, do some game over things here

@@ -22,3 +22,11 @@ class DrawingManager:
     def update_players(self, players):
         #TODO: Add code here to update all player-related info: snakes, remaining steps, score
         pass
+
+    def stop_input(self):
+        #TODO: Add code here to supress sending of pressed keys to server
+        pass
+
+    def start_input(self):
+        # TODO: Add code here to activate sending of pressed keys to server
+        pass

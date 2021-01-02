@@ -8,6 +8,10 @@ class NetworkPackageFlag:
     KEY = 3
     USERNAME = 4
     GAME_OVER = 5
+    STOP_INPUT = 6
+    START_INPUT = 7
+    START_TIMER = 8
+    RESET_TIMER = 9
 
 
 class NetworkManager:
