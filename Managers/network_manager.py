@@ -7,6 +7,7 @@ class NetworkPackageFlag:
     FOOD = 2
     KEY = 3
     USERNAME = 4
+    GAME_OVER = 5
 
 
 class NetworkManager:

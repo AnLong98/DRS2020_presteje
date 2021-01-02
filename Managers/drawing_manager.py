@@ -18,3 +18,7 @@ class DrawingManager:
 
     def reset_turn_time(self):
         self.score_board.reset_timer()
+
+    def update_players(self, players):
+        #TODO: Add code here to update all player-related info: snakes, remaining steps, score
+        pass
