@@ -69,14 +69,17 @@ class Game:
     def is_it_over(self):
         if self.active_player.snakes is not None:
             return None
-        count = 0
+        count = 0  # aktivnom igracu su sve zmije None
         for player in self.players:
             if player.snakes is not None and player.user_name != self.active_player.user_name:
                 count += 1
         if count == 1:
-            self.winner = self.shift_players_manager.shift_player(self.players, self.active_player)
+            self.winner = self.shift_players_manager.shift_player(self.players, self.active_player)  # aktivan igrac je i dalje isti, samo sto smo rekli ko je winner
             self.drawing_manager.add_winner(self.winner)
-            self.drawing_manager.stop_turn_time()
+            self.drawing_manager.stop_turn_time()  # kill timmer -> ne radi
+            self.game_mutex.release()
+            self.change_player()
+            self.game_mutex.acquire()
         else:
             return None
 
@@ -92,7 +95,7 @@ class Game:
         self.game_mutex.acquire()
         snake_tail_x = self.active_snake.snake_parts[-1].x_coordinate
         snake_tail_y = self.active_snake.snake_parts[-1].y_coordinate
-        if self.active_snake.steps != self.active_snake.played_steps:
+        if self.active_snake.steps != self.active_snake.played_steps:  # ako igrac ima koraka sa trenutnom zmijom
             self.movement_manager.set_snake_direction(key_pressed, self.active_snake)
             collision_result, object_collided = self.collision_manager.check_moving_snake_collision(self.active_snake, self.all_snakes, self.food, self.table_width, self.table_height)
             if collision_result == CollisionDetectionResult.FOOD_COLLISION:
@@ -119,20 +122,20 @@ class Game:
                     self.all_snakes.remove(snake)
                 self.alive_players_count -= 1
                 self.active_player.snakes = None
-                self.is_it_over()
-                self.game_mutex.release()
-                self.change_player()
-                self.game_mutex.acquire()
-                self.drawing_manager.reset_turn_time()
+                if self.is_it_over() is None:
+                    self.game_mutex.release()
+                    self.change_player()
+                    self.game_mutex.acquire()
+                    self.drawing_manager.reset_turn_time()
 
             elif collision_result != CollisionDetectionResult.NO_COLLISION:
                 self.all_snakes.remove(self.active_snake)
                 self.active_player.remove_snake(self.active_snake)
-                self.is_it_over()
-                self.game_mutex.release()
-                self.change_player()
-                self.game_mutex.acquire()
-                self.drawing_manager.reset_turn_time()
+                if self.is_it_over() is None:
+                    self.game_mutex.release()
+                    self.change_player()
+                    self.game_mutex.acquire()
+                    self.drawing_manager.reset_turn_time()
 
             trapped_snakes = self.collision_manager.get_trapped_enemy_snakes(self.all_snakes, self.table_width, self.table_height, self.active_player)
             for snake in trapped_snakes:
@@ -140,16 +143,13 @@ class Game:
                     if snake.owner_name == player.user_name:
                         self.all_snakes.remove(snake)
                         player.remove_snake(snake)
-            self.game_mutex.release()
-            self.drawing_manager.draw_food(self.food)
-            self.drawing_manager.draw_snakes(self.all_snakes)
 
-        elif self.check_player_steps() is None:  # ako igrac vise nema koraka ni sa jednom zmijom
-            self.game_mutex.release()
-            self.change_player()
-            self.game_mutex.acquire()
-            self.drawing_manager.reset_turn_time()
-            self.game_mutex.release()
+            if self.check_player_steps() is None:
+                self.game_mutex.release()
+                self.change_player()
+                self.game_mutex.acquire()
+                self.drawing_manager.reset_turn_time()
 
-        else:
-            self.game_mutex.release()
+        self.game_mutex.release()
+        self.drawing_manager.draw_food(self.food)
+        self.drawing_manager.draw_snakes(self.all_snakes)
