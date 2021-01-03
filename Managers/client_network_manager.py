@@ -1,10 +1,10 @@
 from threading import Thread
 import socket
 import select
-from Managers.network_manager import NetworkManager, NetworkPackageFlag
+from Managers.network_manager import SocketManager, NetworkPackageFlag
 
 
-class ClientNetworkSender(NetworkManager):
+class ClientSocketSender(SocketManager):
     def __init__(self, socket):
         super().__init__(socket)
 
@@ -16,9 +16,10 @@ class ClientNetworkSender(NetworkManager):
         self.send_message(NetworkPackageFlag.KEY, key)
 
 
-class ClientNetworkReceiver(NetworkManager, Thread):
+class ClientSocketReceiver(SocketManager, Thread):
     def __init__(self, socket, drawing_manager):
-        super().__init__(socket)
+        Thread.__init__(self)
+        SocketManager.__init__(self, socket)
         self.drawing_manager = drawing_manager
 
 

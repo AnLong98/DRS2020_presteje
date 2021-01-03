@@ -12,9 +12,10 @@ class NetworkPackageFlag:
     START_INPUT = 7
     START_TIMER = 8
     RESET_TIMER = 9
+    USERNAME_INVALID = 10
 
 
-class NetworkManager:
+class SocketManager:
     def __init__(self, socket):
         self.socket = socket
 

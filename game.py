@@ -65,6 +65,7 @@ class Game:
             self.players_finished_turn = 0
 
     def advance_game(self, key_pressed):
+        #TODO: Add game loop here that will take pressed keys from queue and process them
         self.game_mutex.acquire()
         snake_tail_x = self.active_snake.snake_parts[-1].x_coordinate
         snake_tail_y = self.active_snake.snake_parts[-1].y_coordinate

@@ -1,18 +1,17 @@
 import socket
+import select
+import copy
 from threading import Thread
 from queue import Queue
-from Managers.network_manager import NetworkManager
-
-class SendRequest:
-    def __init__(self, data, network_flag):
-        self.data = data
-        self.network_flag = network_flag
+from Managers.network_manager import SocketManager, NetworkPackageFlag
+from Managers.server_network_helpers import SocketInfo, ClientCommand, SendRequest
 
 
-class ServerNetworkSender(NetworkManager, Thread):
+class ServerSocketSender(SocketManager, Thread):
     _sentinel = object()
     def __init__(self, socket, queue):
-        super().__init__(socket)
+        Thread.__init__(self)
+        SocketManager.__init__(self, socket)
         self.queue = queue
 
     def run(self):
@@ -24,17 +23,108 @@ class ServerNetworkSender(NetworkManager, Thread):
             self.send_message(message.data, message.network_flag)
 
 
-class ServerNetworkReceiver:
+class ServerNetworkReceiver(Thread):
+    _sentinel = object()
+    def __init__(self, clients_dict, queue):
+        Thread.__init__(self)
+        self.queue = queue
+        self.clients_dict = clients_dict
+        self.sockets = []
+        self.socket_to_info_dict = {}
+        for username, socket in clients_dict:
+            self.sockets.append(socket)
+            self.socket_to_info_dict[socket] = SocketInfo(SocketManager(socket), username)
+
+    def run(self):
+        while True:
+            read, write, error = select.select(self.sockets, [], [], 0)
+            if not read:
+                continue
+            for readable in read:
+                message, flag = self.socket_to_info_dict[readable].socket_manager.recv_message()
+                self.queue.put(ClientCommand(message, self.socket_to_info_dict[readable].username))
+
+
+
+class ServerNetworkManager:
     HOST = ''  # Symbolic name meaning all available interfaces
     PORT = 50005  # Arbitrary non-privileged port
+    def __init__(self, clients_number):
+        self.clients_dict = self.__await_client_connections(clients_number)
+        self.client_out_queue_dict = self.__create_client_senders(self.clients_dict)
 
-    def await_client_connections(self, clients_number):
+    def __await_client_connections(self, clients_number):
         clients = []
+        clients_dict = {}
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.bind((self.HOST, self.PORT))
             s.listen(clients_number)
             for i in range(1, clients_number):
                 conn, addr = s.accept()
-                clients.append(conn)
+                conn.setblocking(True)
+                clients.append(SocketManager(copy.copy(conn)))
 
-            return clients
+            # receive client user names
+            for client_socket in clients:
+                username, flag = client_socket.recv_message()
+                if flag != NetworkPackageFlag.USERNAME:
+                    return None # protocol error
+
+                if username in clients_dict:
+                    #TODO: Add some code to prevent multiple users form having same username
+                    pass
+                else:
+                    clients_dict[username] = client_socket.socket
+                    client_socket.socket.setblocking(False)
+
+            return clients_dict
+
+    def __create_client_senders(self, clients_dict):
+        client_queues_dict = {}
+
+        for username, client_socket in clients_dict:
+            client_queues_dict[username] = Queue()
+            ServerSocketSender(client_socket, client_queues_dict[username]).start()
+
+        return client_queues_dict
+
+    def get_reading_queue(self):
+        recv_queue = Queue()
+        ServerNetworkReceiver(self.clients_dict, recv_queue).start()
+        return recv_queue
+
+    def send_state_to_players(self, food, players):
+        food_message = SendRequest(food, NetworkPackageFlag.FOOD)
+        players_message = SendRequest(players, NetworkPackageFlag.PLAYERS)
+        for key, value in self.client_out_queue_dict:
+            value.put(food_message)
+            value.put(players_message)
+
+    def notify_start_input(self, username):
+        input_message = SendRequest(1, NetworkPackageFlag.START_INPUT)
+        if username not in self.client_out_queue_dict:
+            return
+
+        self.client_out_queue_dict[username].put(input_message)
+
+    def notify_stop_input(self, username):
+        input_message = SendRequest(1, NetworkPackageFlag.STOP_INPUT)
+        if username not in self.client_out_queue_dict:
+            return
+
+        self.client_out_queue_dict[username].put(input_message)
+
+    def notify_reset_timer(self):
+        timer_message = SendRequest(1, NetworkPackageFlag.RESET_TIMER)
+        for key, value in self.client_out_queue_dict:
+            value.put(timer_message)
+
+    def notify_start_timer(self):
+        timer_message = SendRequest(1, NetworkPackageFlag.START_TIMER)
+        for key, value in self.client_out_queue_dict:
+            value.put(timer_message)
+
+
+
+
+
