@@ -83,6 +83,17 @@ class Game:
         else:
             return None
 
+    def is_it_over2(self):
+        for player in self.players:
+            if player.snakes is not None and player.user_name != self.active_player.user_name:
+                return None
+
+        self.winner = self.shift_players_manager.shift_player(self.players, self.active_player)  # aktivan igrac je i dalje isti, samo sto smo rekli ko je winner
+        self.drawing_manager.add_winner(self.winner)
+        self.drawing_manager.stop_turn_time()  # kill timmer -> ne radi
+        self.game_mutex.release()
+        self.change_player()
+        self.game_mutex.acquire()
 
     def finish_players_turn(self):
         self.players_finished_turn += 1
@@ -138,11 +149,14 @@ class Game:
                     self.drawing_manager.reset_turn_time()
 
             trapped_snakes = self.collision_manager.get_trapped_enemy_snakes(self.all_snakes, self.table_width, self.table_height, self.active_player)
-            for snake in trapped_snakes:
-                for player in self.players:
-                    if snake.owner_name == player.user_name:
-                        self.all_snakes.remove(snake)
-                        player.remove_snake(snake)
+            if trapped_snakes:
+                for snake in trapped_snakes:
+                    for player in self.players:
+                        if snake.owner_name == player.user_name:
+                            self.all_snakes.remove(snake)
+                            player.remove_snake(snake)
+
+                self.is_it_over2()
 
             if self.check_player_steps() is None:
                 self.game_mutex.release()
