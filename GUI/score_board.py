@@ -59,7 +59,6 @@ class TimerFrame(QFrame):
         self.time.setFont(QFont('Arial', 25))
         vbox.addWidget(self.time)
         self.setLayout(vbox)
-        self.game = None
 
         self.qTimer = QTimer()  # pocinje tajmer da radi i da odbrojava vreme, svake 1 sec poziva funkciju koja smanjuje elapsed_time
         self.qTimer.setInterval(1000)
@@ -69,8 +68,6 @@ class TimerFrame(QFrame):
         # start timer
         self.qTimer.start()
 
-    def set_game(self, game):
-        self.game = game
 
     def reset_timer(self):
         self.qTimer.stop()
@@ -78,15 +75,15 @@ class TimerFrame(QFrame):
         self.time.setText("Time left: " + str(self.elapsedTime))
         self.qTimer.start()
 
+    def stop_timer(self):
+        self.qTimer.stop()
+
+
     def start_timer(self):
         self.time.setText("Time left: " + str(self.elapsedTime))
         self.elapsedTime = self.elapsedTime - 1
         if self.elapsedTime == -1:
             self.reset_timer()
-            self.game.change_player()
-
-
-
 
 
 class ButtonFrame(QFrame):

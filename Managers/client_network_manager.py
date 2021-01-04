@@ -49,6 +49,12 @@ class ClientSocketReceiver(SocketManager, Thread):
             elif flag == NetworkPackageFlag.RESET_TIMER:
                 self.drawing_manager.reset_turn_time()
 
+            elif flag == NetworkPackageFlag.ACTIVE_SNAKE:
+                self.drawing_manager.change_head(message)
+
+            elif flag == NetworkPackageFlag.ACTIVE_PLAYER:
+                self.drawing_manager.set_active_player(message)
+
             elif flag == NetworkPackageFlag.GAME_OVER:
                 #game is over, do some game over things here
                 return

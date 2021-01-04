@@ -12,7 +12,9 @@ class NetworkPackageFlag:
     START_INPUT = 7
     START_TIMER = 8
     RESET_TIMER = 9
-    USERNAME_INVALID = 10
+    ACTIVE_PLAYER = 10
+    ACTIVE_SNAKE = 12
+    USERNAME_INVALID = 11
 
 
 class SocketManager:

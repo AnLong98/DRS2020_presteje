@@ -7,6 +7,7 @@ class KeyPressed:
     RIGHT = 2
     UP = 3
     DOWN = 4
+    TAB = 5
 
 
 class MovementManager:

@@ -52,6 +52,15 @@ class ServerNetworkManager:
     def __init__(self, clients_number):
         self.clients_dict = self.__await_client_connections(clients_number)
         self.client_out_queue_dict = self.__create_client_senders(self.clients_dict)
+        self.recv_queue = self.__get_reading_queue()
+
+    @property
+    def get_recv_queue(self):
+        return self.recv_queue
+
+    @property
+    def get_client_names(self):
+        return self.clients_dict.keys()
 
     def __await_client_connections(self, clients_number):
         clients = []
@@ -88,7 +97,7 @@ class ServerNetworkManager:
 
         return client_queues_dict
 
-    def get_reading_queue(self):
+    def __get_reading_queue(self):
         recv_queue = Queue()
         ServerNetworkReceiver(self.clients_dict, recv_queue).start()
         return recv_queue
@@ -124,6 +133,15 @@ class ServerNetworkManager:
         for key, value in self.client_out_queue_dict:
             value.put(timer_message)
 
+    def notify_active_player(self, player):
+        player_message = SendRequest(player, NetworkPackageFlag.ACTIVE_PLAYER)
+        for key, value in self.client_out_queue_dict:
+            value.put(player_message)
+
+    def notify_active_snake(self, snake):
+        snake_message = SendRequest(snake, NetworkPackageFlag.ACTIVE_SNAKE)
+        for key, value in self.client_out_queue_dict:
+            value.put(snake_message)
 
 
 

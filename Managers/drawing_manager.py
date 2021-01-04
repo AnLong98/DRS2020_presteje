@@ -1,8 +1,9 @@
 
 class DrawingManager:
-    def __init__(self, game_board, score_board):
+    def __init__(self, game_board, score_board, main_window):
         self.game_board = game_board
         self.score_board = score_board
+        self.main_window = main_window
 
     def draw_snakes(self, snakes):
         self.game_board.update_snakes(snakes)
@@ -24,9 +25,11 @@ class DrawingManager:
         pass
 
     def stop_input(self):
-        #TODO: Add code here to supress sending of pressed keys to server
-        pass
+        self.main_window.deactivate_sending()
 
     def start_input(self):
-        # TODO: Add code here to activate sending of pressed keys to server
+        self.main_window.activate_sending()
+
+    def set_active_player(self, player):
+        # TODO: Add code here to set active player
         pass
