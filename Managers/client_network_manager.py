@@ -10,21 +10,22 @@ class ClientSocketSender(SocketManager):
 
 
     def send_game_request(self, username):
-        self.send_message(NetworkPackageFlag.USERNAME, username)
+        self.send_message( username, NetworkPackageFlag.USERNAME)
 
     def send_pressed_key(self, key):
-        self.send_message(NetworkPackageFlag.KEY, key)
+        self.send_message(key, NetworkPackageFlag.KEY)
 
 
 class ClientSocketReceiver(SocketManager, Thread):
-    def __init__(self, socket, drawing_manager):
+    def __init__(self, socketc, drawing_manager):
         Thread.__init__(self)
-        SocketManager.__init__(self, socket)
+        SocketManager.__init__(self, socketc)
         self.drawing_manager = drawing_manager
+        self.socketc = socketc
 
 
     def run(self):
-        readable_sockets = [self.socket]
+        readable_sockets = [self.socketc]
         while True:
             read, write, error = select.select(readable_sockets, [], [], 0)
             if not read:
@@ -45,6 +46,9 @@ class ClientSocketReceiver(SocketManager, Thread):
 
             elif flag == NetworkPackageFlag.START_INPUT:
                 self.drawing_manager.start_input()
+
+            elif flag == NetworkPackageFlag.START_TIMER:
+                self.drawing_manager.start_timer()
 
             elif flag == NetworkPackageFlag.RESET_TIMER:
                 self.drawing_manager.reset_turn_time()

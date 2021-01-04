@@ -1,4 +1,3 @@
-import socket
 import pickle
 import struct
 
@@ -18,8 +17,8 @@ class NetworkPackageFlag:
 
 
 class SocketManager:
-    def __init__(self, socket):
-        self.socket = socket
+    def __init__(self, socketc):
+        self.socket = socketc
 
     def send_message(self, message, package_flag):
         message_bytes = pickle.dumps(message)
@@ -37,11 +36,11 @@ class SocketManager:
         message = pickle.loads(data)
         return message, message_flag
 
-    def __recvall(self, sock, len):
+    def __recvall(self, sock, length):
         # Helper function to recv n bytes or return None if EOF is hit
         data = bytearray()
-        while len(data) < len:
-            packet = sock.recv(len - len(data))
+        while len(data) < length:
+            packet = sock.recv(length - len(data))
             if not packet:
                 return None
             data.extend(packet)

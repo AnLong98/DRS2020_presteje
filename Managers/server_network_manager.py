@@ -1,6 +1,5 @@
 import socket
 import select
-import copy
 from threading import Thread
 from queue import Queue
 from Managers.network_manager import SocketManager, NetworkPackageFlag
@@ -31,9 +30,9 @@ class ServerNetworkReceiver(Thread):
         self.clients_dict = clients_dict
         self.sockets = []
         self.socket_to_info_dict = {}
-        for username, socket in clients_dict:
-            self.sockets.append(socket)
-            self.socket_to_info_dict[socket] = SocketInfo(SocketManager(socket), username)
+        for username in clients_dict.keys():
+            self.sockets.append(clients_dict[username])
+            self.socket_to_info_dict[clients_dict[username]] = SocketInfo(SocketManager(clients_dict[username]), username)
 
     def run(self):
         while True:
@@ -60,18 +59,19 @@ class ServerNetworkManager:
 
     @property
     def get_client_names(self):
-        return self.clients_dict.keys()
+        return list(self.clients_dict.keys())
 
     def __await_client_connections(self, clients_number):
+        sockets = {}
         clients = []
         clients_dict = {}
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.bind((self.HOST, self.PORT))
             s.listen(clients_number)
-            for i in range(1, clients_number):
-                conn, addr = s.accept()
-                conn.setblocking(True)
-                clients.append(SocketManager(copy.copy(conn)))
+            for i in range(0, clients_number):
+                sockets[i], addr = s.accept()
+                #sockets[i].setblocking(True)
+                clients.append(SocketManager(sockets[i]))
 
             # receive client user names
             for client_socket in clients:
@@ -91,9 +91,9 @@ class ServerNetworkManager:
     def __create_client_senders(self, clients_dict):
         client_queues_dict = {}
 
-        for username, client_socket in clients_dict:
+        for username in clients_dict.keys():
             client_queues_dict[username] = Queue()
-            ServerSocketSender(client_socket, client_queues_dict[username]).start()
+            ServerSocketSender(clients_dict[username], client_queues_dict[username]).start()
 
         return client_queues_dict
 
@@ -105,9 +105,9 @@ class ServerNetworkManager:
     def send_state_to_players(self, food, players):
         food_message = SendRequest(food, NetworkPackageFlag.FOOD)
         players_message = SendRequest(players, NetworkPackageFlag.PLAYERS)
-        for key, value in self.client_out_queue_dict:
-            value.put(food_message)
-            value.put(players_message)
+        for username in self.client_out_queue_dict.keys():
+            self.client_out_queue_dict[username].put(food_message)
+            self.client_out_queue_dict[username].put(players_message)
 
     def notify_start_input(self, username):
         input_message = SendRequest(1, NetworkPackageFlag.START_INPUT)
@@ -125,23 +125,23 @@ class ServerNetworkManager:
 
     def notify_reset_timer(self):
         timer_message = SendRequest(1, NetworkPackageFlag.RESET_TIMER)
-        for key, value in self.client_out_queue_dict:
-            value.put(timer_message)
+        for username in self.client_out_queue_dict.keys():
+            self.client_out_queue_dict[username].put(timer_message)
 
     def notify_start_timer(self):
         timer_message = SendRequest(1, NetworkPackageFlag.START_TIMER)
-        for key, value in self.client_out_queue_dict:
-            value.put(timer_message)
+        for username in self.client_out_queue_dict.keys():
+            self.client_out_queue_dict[username].put(timer_message)
 
     def notify_active_player(self, player):
         player_message = SendRequest(player, NetworkPackageFlag.ACTIVE_PLAYER)
-        for key, value in self.client_out_queue_dict:
-            value.put(player_message)
+        for username in self.client_out_queue_dict.keys():
+            self.client_out_queue_dict[username].put(player_message)
 
     def notify_active_snake(self, snake):
         snake_message = SendRequest(snake, NetworkPackageFlag.ACTIVE_SNAKE)
-        for key, value in self.client_out_queue_dict:
-            value.put(snake_message)
+        for username in self.client_out_queue_dict.keys():
+            self.client_out_queue_dict[username].put(snake_message)
 
 
 

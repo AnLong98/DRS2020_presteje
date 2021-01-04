@@ -183,7 +183,7 @@ if __name__ == "__main__":
     snake_part_manager = SnakePartManager(part_width, part_height, collision_manager)
     shift_players_manager = ShiftPlayersManager()
     network_manager = ServerNetworkManager(clients_number)
-    player_names = network_manager.get_client_names()
+    player_names = network_manager.get_client_names
     table_width = 960
     table_height = 810
 

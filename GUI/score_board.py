@@ -65,9 +65,11 @@ class TimerFrame(QFrame):
         # connect timeout signal to signal handler
         self.time.setText("Time left: " + str(self.elapsedTime))
         self.qTimer.timeout.connect(self.start_timer)
-        # start timer
-        self.qTimer.start()
 
+
+
+    def init_timer(self):
+        self.qTimer.start()
 
     def reset_timer(self):
         self.qTimer.stop()
@@ -118,6 +120,9 @@ class ScoreBoard(QFrame):
 
     def reset_timer(self):
         self.timer_frame.reset_timer()
+
+    def init_timer(self):
+        self.timer_frame.init_timer()
 
     @property
     def get_painter(self):

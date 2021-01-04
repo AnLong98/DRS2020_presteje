@@ -91,10 +91,11 @@ if __name__ == "__main__":
     client_socket.connect((HOST, PORT))
     socket_sender = ClientSocketSender(client_socket)
     socket_sender.send_game_request(username)
+    client_socket.setblocking(False)
 
     window = MainWindow(game_board, score_board, socket_sender)
     drawing_manager = DrawingManager(game_board, score_board, window)
-    socket_receiver = ClientSocketReceiver(drawing_manager, client_socket)
+    socket_receiver = ClientSocketReceiver(client_socket, drawing_manager)
     socket_receiver.start()
     window.show()
 
