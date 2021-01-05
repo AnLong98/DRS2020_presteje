@@ -9,7 +9,7 @@ class DrawingManager:
         self.game_board.update_food(food)
 
     def change_head(self, snake):
-        print("setting head")
+        #TODO: This needs to be fixed
         self.game_board.change_head_color(snake)
 
     def reset_turn_time(self):
@@ -20,7 +20,8 @@ class DrawingManager:
         self.score_board.players = players
         snakes = []
         for player in players:
-            snakes.extend(player.snakes)
+            if player.snakes:
+                snakes.extend(player.snakes)
 
         self.game_board.update_snakes(snakes)
 

@@ -8,6 +8,7 @@ from models import SnakeDirection
 class GameBoard(QFrame):
     def __init__(self):
         super(GameBoard, self).__init__()
+        self.active_snake = None
         self.snakes = []
         self.food = []
         self.define_frame_style()
@@ -55,7 +56,7 @@ class GameBoard(QFrame):
         rect = self.contentsRect()
 
         if snake_part.part_type == SnakePartType.HEAD:
-            if snake == self.active_snake:
+            if snake.is_active:
                 color = QColor('#000000')
             else:
                 color = QColor('#d1d1d1')

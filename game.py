@@ -38,7 +38,10 @@ class Game:
         self.network_manager.notify_active_player(active_player)
 
     def set_active_snake(self, active_snake):
+        if self.active_snake:
+            self.active_snake.set_inactive()
         self.active_snake = active_snake
+        self.active_snake.set_active()
         self.network_manager.notify_active_snake(active_snake)
 
     def change_player(self):
@@ -51,6 +54,7 @@ class Game:
         next_snake = self.active_player.snakes[0]
         self.set_active_snake(next_snake)
         self.reset_played_steps()
+        self.network_manager.send_state_to_players(self.food, self.players)
         self.reset_timer()
         self.game_mutex.release()
 
@@ -90,9 +94,6 @@ class Game:
                 continue
             if command.key == KeyPressed.TAB:
                 self.change_snake()
-
-            print(command.username)
-            print(command.key)
 
             self.game_mutex.acquire()
             snake_tail_x = self.active_snake.snake_parts[-1].x_coordinate

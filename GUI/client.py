@@ -23,6 +23,7 @@ class MainWindow(QMainWindow):
         self.scoreboard = score_board
         self.client_sender = client_sender
         self.sending_active = False
+        self.receiver = None
         self.generate_window_layout()
 
     def generate_window_layout(self):
@@ -63,6 +64,11 @@ class MainWindow(QMainWindow):
     def get_gameboard(self):
         return self.gameboard
 
+
+    def add_receiver_and_start(self, receiver):
+        self.receiver = receiver
+        self.receiver.start()
+
     @property
     def get_scoreboard(self):
         return self.scoreboard
@@ -95,8 +101,8 @@ if __name__ == "__main__":
 
     window = MainWindow(game_board, score_board, socket_sender)
     drawing_manager = DrawingManager(game_board, score_board, window)
-    socket_receiver = ClientSocketReceiver(client_socket, drawing_manager)
-    socket_receiver.start()
+    window.add_receiver_and_start(ClientSocketReceiver(client_socket, drawing_manager))
+
     window.show()
 
     app.exec_()

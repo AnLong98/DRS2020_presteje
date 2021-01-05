@@ -65,11 +65,12 @@ class TimerFrame(QFrame):
         # connect timeout signal to signal handler
         self.time.setText("Time left: " + str(self.elapsedTime))
         self.qTimer.timeout.connect(self.start_timer)
-
+        self.qTimer.start()
 
 
     def init_timer(self):
-        self.qTimer.start()
+        print("timer started")
+
 
     def reset_timer(self):
         self.qTimer.stop()
@@ -137,6 +138,7 @@ class ScoreBoard(QFrame):
         return self.width()
 
     def getPlayersData(self):
+        #TODO This can't work as it is, change it
         if self.players:
             self.vbox = QVBoxLayout()
             self.splitter = QSplitter(Qt.Vertical)

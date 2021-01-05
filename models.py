@@ -25,6 +25,7 @@ class Snake:
     self.played_steps = played_steps
     self.direction = direction
     self.color = color
+    self.is_active = False
 
   def add_snake_part(self, snake_part):
     self.snake_parts.append(snake_part)
@@ -34,6 +35,12 @@ class Snake:
 
   def increase_played_steps(self):
     self.played_steps += 1
+
+  def set_active(self):
+    self.is_active = True
+
+  def set_inactive(self):
+    self.is_active = False
 
 
 class SnakePart(DrawableComponentBase):
