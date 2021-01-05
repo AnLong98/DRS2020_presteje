@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from GUI.game_board import GameBoard
-from GUI.score_board import ScoreBoard
+from GUI.score_board import ScoreBoard, PlayerFrame
 from Managers.client_network_manager import ClientSocketSender, ClientSocketReceiver
 
 from Managers.drawing_manager import DrawingManager
@@ -84,8 +84,6 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     game_board = GameBoard()
-    timer = TimerFrame()
-    score_board = ScoreBoard(timer)
 
     username = input()
 
@@ -99,10 +97,12 @@ if __name__ == "__main__":
     socket_sender.send_game_request(username)
     client_socket.setblocking(False)
 
+    score_board = ScoreBoard()
     window = MainWindow(game_board, score_board, socket_sender)
     drawing_manager = DrawingManager(game_board, score_board, window)
     window.add_receiver_and_start(ClientSocketReceiver(client_socket, drawing_manager))
 
     window.show()
+
 
     app.exec_()

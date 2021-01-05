@@ -17,13 +17,13 @@ class DrawingManager:
 
     def update_players(self, players):
         #TODO: Add code here to update all player-related info: snakes, remaining steps, score
-        self.score_board.players = players
         snakes = []
         for player in players:
             if player.snakes:
                 snakes.extend(player.snakes)
 
         self.game_board.update_snakes(snakes)
+        self.score_board.update_players(players)
 
     def stop_input(self):
         self.main_window.deactivate_sending()

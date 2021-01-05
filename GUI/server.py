@@ -173,7 +173,7 @@ class ServerInitializer:
 if __name__ == "__main__":
     part_width = 15
     part_height = 15
-    clients_number = 2
+    clients_number = 3
 
 
     # init game related things hardcoded for prototype
