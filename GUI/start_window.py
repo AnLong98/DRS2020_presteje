@@ -6,7 +6,7 @@ from PyQt5.QtGui import *
 class StartWindow(QDialog):
     def __init__(self):
         super(QDialog, self).__init__()
-        self.setFixedSize(800, 600)
+        self.setFixedSize(800, 800)
         self.setWindowTitle("Snake Game Settings")
 
         self.gameStarted = False
@@ -20,25 +20,42 @@ class StartWindow(QDialog):
         self.numberConformationButton = QPushButton('Confirm Selection', self)
         self.numberConformationButton.setToolTip('Continue with current Selection')
         self.numberConformationButton.setFont(QFont('Arial', 12))
+        self.numberConformationButton.setMaximumHeight(200)
+        self.numberConformationButton.setMaximumWidth(250)
         self.numberConformationButton.clicked.connect(self.GeneratePlayerInputFields)
 
         self.errorLabel = QLabel(self)
         self.errorLabel.setFont(QFont('Arial', 12))
+
+
         self.gridLayout = QVBoxLayout()
         self.gridLayout.addStretch(1)
+
+        self.label = QLabel("", self)
+        self.mainWindowPicture = QPixmap("snake_game_1533210447.jpg")
+        self.label.setPixmap(self.mainWindowPicture)
+
+        self.gridLayout.addWidget(self.label)
+        self.gridLayout.setAlignment(self.label, Qt.AlignHCenter)
         self.gridLayout.addLayout(playerNumberComponent)
+        self.gridLayout.setAlignment(playerNumberComponent, Qt.AlignHCenter)
         self.gridLayout.addLayout(snakeNumberComponent)
-        self.gridLayout.addStretch()
+        self.gridLayout.setAlignment(snakeNumberComponent, Qt.AlignHCenter)
+        self.gridLayout.addStretch(1)
         self.gridLayout.addWidget(self.numberConformationButton)
+        self.gridLayout.setAlignment(self.numberConformationButton, Qt.AlignHCenter)
         self.gridLayout.addWidget(self.errorLabel)
-        self.gridLayout.addStretch(5)
+        self.gridLayout.setAlignment(self.errorLabel, Qt.AlignHCenter)
+        self.gridLayout.addStretch(4)
         self.setLayout(self.gridLayout)
 
     # adds player input fields to the input
     def GeneratePlayerInputFields(self):
         for i in range(self.playerCount.value()):
             self.gridLayout.addStretch(1)
-            self.gridLayout.addLayout(self.PlayerInputComponent(i))
+            playerInputComponent = self.PlayerInputComponent(i)
+            self.gridLayout.addLayout(playerInputComponent)
+            self.gridLayout.setAlignment(playerInputComponent, Qt.AlignHCenter)
             self.gridLayout.addStretch(1)
         self.numberConformationButton.disconnect()
         self.numberConformationButton.setEnabled(False)
@@ -50,6 +67,7 @@ class StartWindow(QDialog):
         self.startGameButton.setFont(QFont('Arial', 12))
         self.startGameButton.clicked.connect(self.InitiateSnakeGame)
         self.gridLayout.addWidget(self.startGameButton)
+        self.gridLayout.setAlignment(self.startGameButton, Qt.AlignHCenter)
         self.gridLayout.addStretch()
 
     # used for player number input
@@ -60,6 +78,8 @@ class StartWindow(QDialog):
         self.playerCount.setGeometry(100, 100, 100, 40)
         self.playerCount.setMinimum(2)
         self.playerCount.setMaximum(4)
+        self.playerCount.setMaximumWidth(250)
+        self.playerCount.setMaximumHeight(200)
         self.playerCount.setFont(QFont('Arial', 12))
 
         hbox = QVBoxLayout()
@@ -74,6 +94,8 @@ class StartWindow(QDialog):
         self.snakeCountLabel.setFont(QFont('Arial', 12))
         self.snakeCount = QSpinBox(self)
         self.snakeCount.setGeometry(100, 100, 100, 40)
+        self.snakeCount.setMaximumHeight(200)
+        self.snakeCount.setMaximumWidth(250)
         self.snakeCount.setMinimum(1)
         self.snakeCount.setMaximum(4)
         self.snakeCount.setFont(QFont('Arial', 12))
@@ -89,17 +111,21 @@ class StartWindow(QDialog):
         playerNameLabel = QLabel(f"Player {playerNumber} Name: ", self)
         playerNameLabel.setFont(QFont('Arial', 12))
         playerNameInputBox = QLineEdit(self)
+        playerNameInputBox.setMaximumHeight(200)
+        playerNameInputBox.setMaximumWidth(250)
         playerNameInputBox.setFont(QFont('Arial', 12))
         self.playerInputFields.append(playerNameInputBox)
 
         hbox = QHBoxLayout()
         hbox.addWidget(playerNameLabel)
+        hbox.setAlignment(playerNameLabel, Qt.AlignRight)
         hbox.addWidget(playerNameInputBox)
+        hbox.setAlignment(playerNameInputBox, Qt.AlignLeft)
         return hbox
 
     def InitiateSnakeGame(self):
         uniqueNames = [_input.text() for _input in self.playerInputFields]
-        if "" in uniqueNames:
+        if '' in uniqueNames:
             self.errorLabel.setText("Player Name Can't be left Empty")
         elif len(uniqueNames) != len(set(uniqueNames)):
             self.errorLabel.setText("Player Names Must be Unique")
