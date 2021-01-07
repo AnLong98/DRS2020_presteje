@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from GUI.game_board import GameBoard
 from GUI.score_board import ScoreBoard
+from GUI.start_window import StartWindow
 from Managers.collision_manager import CollisionManager
 
 from Managers.drawing_manager import DrawingManager
@@ -80,8 +81,14 @@ class MainWindow(QMainWindow):
     def get_mainwindow_width(self):
         return self.width()
 
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+
+    # uncomment to open the start window
+    #startWindow = StartWindow()
+    #startWindow.exec()
+
     game_board = GameBoard()
     timer = TimerFrame()
     score_board = ScoreBoard(timer)
@@ -102,7 +109,6 @@ if __name__ == "__main__":
     food = []
     all_snakes = []
 
-    #create Player 1 hardcoded
     snakes_player1 = []
     snakeParts = [
         SnakePart(210, 45, 15, 15, SnakePartType.HEAD)
@@ -115,7 +121,6 @@ if __name__ == "__main__":
         , SnakePart(105, 45, 15, 15, SnakePartType.BODY)
         , SnakePart(90, 45, 15, 15, SnakePartType.BODY)
         , SnakePart(75, 45, 15, 15, SnakePartType.BODY)
-
     ]
     snake = Snake(snakeParts, 'Stefan', 10, 0, SnakeDirection.RIGHT, "#fff200")
     snakes_player1.append(snake)
@@ -238,7 +243,6 @@ if __name__ == "__main__":
 
     player_4 = User(snakes_player4, 0, "Beba", "#fa5700") #SVETLO PLAVA BOJA IGRACA 4
 
-
     players = []
 
     players.append(player_1)
@@ -260,7 +264,6 @@ if __name__ == "__main__":
     #Uncomment for testing
     #for i in range(0, 200):
        #food.append(food_manager.generate_food(1, 1, all_snakes, food, table_width, table_height, 15, True)) #generate superfood
-
 
     game = Game(players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, food_manager, shift_players_manager, table_width, table_height )
     game.set_active_player(player_1)
