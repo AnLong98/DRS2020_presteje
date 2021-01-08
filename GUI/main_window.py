@@ -1,10 +1,12 @@
 import sys
+import copy
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from GUI.game_board import GameBoard
 from GUI.score_board import ScoreBoard
 from GUI.start_window import StartWindow
+from GUI.finish_window import FinishWindow
 from Managers.collision_manager import CollisionManager
 
 from Managers.drawing_manager import DrawingManager
@@ -30,6 +32,8 @@ class MainWindow(QMainWindow):
 
         self.game = game
 
+        self.game_deep_copy = None
+
         self.winner = None
 
     def generate_window_layout(self):
@@ -43,7 +47,9 @@ class MainWindow(QMainWindow):
     def keyPressEvent(self, event):
         self.winner = self.scoreboard.winner
         if self.game is None or self.winner is not None:
-            return None
+            self.close()
+            finishWindow = FinishWindow(self.winner.user_name)
+            finishWindow.exec()
         key = event.key()
 
         if key == Qt.Key_Left:
@@ -88,6 +94,8 @@ if __name__ == "__main__":
     # uncomment to open the start window
     #startWindow = StartWindow()
     #startWindow.exec()
+
+    shallow_copy_object = None
 
     game_board = GameBoard()
     timer = TimerFrame()
@@ -269,6 +277,9 @@ if __name__ == "__main__":
     game.set_active_player(player_1)
     game.set_active_snake(snake)
 
+    game_state = copy.deepcopy(players)
+    game_state = copy.deepcopy(all_snakes)
+
     score_board.set_active_player_on_button_frame(player_1)
     score_board.set_active_snake_on_button_frame(snake)
 
@@ -276,5 +287,4 @@ if __name__ == "__main__":
 
     window = MainWindow(game_board, score_board, game)
     window.show()
-
     app.exec_()

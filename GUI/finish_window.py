@@ -25,7 +25,7 @@ class FinishWindow(QDialog):
         self.restartButton.setFont(QFont('Arial', 12))
         self.restartButton.setMaximumWidth(200)
         # call the method for restarting the game
-        #self.restartButton.clicked.connect(self.GeneratePlayerInputFields)
+        #self.restartButton.clicked.connect(self.RestartGame)
 
         self.exitButton = QPushButton("Exit", self)
         self.exitButton.setFixedSize(100, 50)
@@ -52,3 +52,5 @@ class FinishWindow(QDialog):
     def ExitGame(self):
         self.close()
 
+    def RestartGame(self):
+        return NotImplemented

@@ -134,3 +134,4 @@ class StartWindow(QDialog):
             self.playerNames = [label.text() for label in self.playerInputFields]
             self.gameStarted = True
             self.close()
+
