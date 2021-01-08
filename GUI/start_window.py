@@ -1,4 +1,3 @@
-import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -134,4 +133,3 @@ class StartWindow(QDialog):
             self.playerNames = [label.text() for label in self.playerInputFields]
             self.gameStarted = True
             self.close()
-
