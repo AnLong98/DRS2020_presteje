@@ -31,7 +31,7 @@ class StartWindow(QDialog):
         self.gridLayout.addStretch(1)
 
         self.label = QLabel("", self)
-        self.mainWindowPicture = QPixmap("snake_game_1533210447.jpg")
+        self.mainWindowPicture = QPixmap("GUI\\snake_game_1533210447.jpg")
         self.label.setPixmap(self.mainWindowPicture)
 
         self.gridLayout.addWidget(self.label)
