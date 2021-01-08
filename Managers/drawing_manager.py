@@ -11,7 +11,7 @@ class DrawingManager:
         self.game_board.update_food(food)
 
     def add_player_to_scoreboard(self, players):
-        self.score_board.players = players
+        self.score_board.update_players(players)
 
     def change_head(self, snake):
         self.game_board.change_head_color(snake)

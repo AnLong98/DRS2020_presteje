@@ -2,11 +2,16 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
+
 class FinishWindow(QDialog):
-    def __init__(self, winnerName, players, snakes_count):
+    def __init__(self, winnerName, game):
         super(QDialog, self).__init__()
         self.setFixedSize(600, 250)
         self.setWindowTitle("Snake Game Results")
+
+        self.restarted = False
+
+        self.game = game
 
         self.layout = QVBoxLayout()
 
@@ -23,14 +28,14 @@ class FinishWindow(QDialog):
         self.restartButton.setFont(QFont('Arial', 12))
         self.restartButton.setMaximumWidth(200)
         # call the method for restarting the game
-        #self.restartButton.clicked.connect(self.RestartGame(players, snakes_count))
+        self.restartButton.clicked.connect(self.restart_game)
 
         self.exitButton = QPushButton("Exit", self)
         self.exitButton.setFixedSize(100, 50)
         self.exitButton.setToolTip('Exit the game')
         self.exitButton.setFont(QFont('Arial', 12))
         self.exitButton.setMaximumWidth(200)
-        self.exitButton.clicked.connect(self.ExitGame)
+        self.exitButton.clicked.connect(self.exit_game)
 
         hbox.addWidget(self.restartButton)
         hbox.addWidget(self.exitButton)
@@ -47,8 +52,10 @@ class FinishWindow(QDialog):
         self.layout.addStretch(1)
         self.setLayout(self.layout)
 
-    def ExitGame(self):
+    def exit_game(self):
+        self.game.exit_game()
         self.close()
 
-    def RestartGame(self, players, snakes_count):
-        pass
+    def restart_game(self):
+        self.game.restart_game()
+        self.close()

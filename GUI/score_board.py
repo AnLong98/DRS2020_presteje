@@ -160,7 +160,7 @@ class ScoreBoard(QFrame):
         super(ScoreBoard, self).__init__()
         self.define_frame_style()
         self.players = []
-
+        self.player_frame = None
         self.qTimer = QTimer()
         self.qTimer.setInterval(100)
         # connect timeout signal to signal handler
@@ -173,9 +173,13 @@ class ScoreBoard(QFrame):
         self.active_player = None
         self.active_snake = None
         self.button_frame = ButtonFrame(self.active_player, self.active_snake)
-
         # if self.players:
         #     self.getPlayersData()
+
+    def update_players(self, players):
+        self.players = players
+        if self.player_frame is not None:
+            self.player_frame.players = players
 
     def define_frame_style(self):
         self.setFixedSize(240, 810)
@@ -221,7 +225,8 @@ class ScoreBoard(QFrame):
             self.vbox = QVBoxLayout()
             self.splitter = QSplitter(Qt.Vertical)
             self.splitter.setEnabled(False)
-            self.splitter.addWidget(PlayerFrame(self.players))
+            self.player_frame = PlayerFrame(self.players)
+            self.splitter.addWidget(self.player_frame)
             self.splitter.addWidget(self.timer_frame)
             self.splitter.addWidget(self.button_frame)
             self.vbox.addWidget(self.splitter)

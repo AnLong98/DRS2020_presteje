@@ -8,16 +8,16 @@ from Managers.collision_manager import CollisionManager
 from Managers.drawing_manager import DrawingManager
 from Managers.food_manager import FoodManager
 from Managers.movement_manager import MovementManager
-from game import Game
 from models import Snake, SnakeDirection, User
 from Managers.snake_part_manager import SnakePartManager
 from Managers.shift_players_manager import ShiftPlayersManager
 from GUI.score_board import TimerFrame
 from GUI.main_window import MainWindow
+from game import Game
 
 from player_snakes import PlayerSnakes
 
-class InitializeGame:
+class InGameInitializer:
     def __init__(self, players, snakes):
 
         self.players = players
@@ -34,9 +34,9 @@ class InitializeGame:
         part_width = 15
         part_height = 15
 
-        # init game related things hardcoded for prototype
+
         collision_manager = CollisionManager()
-        food_manager = FoodManager(collision_manager)
+        self.food_manager = FoodManager(collision_manager)
         drawing_manager = DrawingManager(self.game_board, self.score_board)
         movement_manager = MovementManager()
         snake_part_manager = SnakePartManager(part_width, part_height, collision_manager)
@@ -62,12 +62,12 @@ class InitializeGame:
 
 
         for i in range(0, 30):
-            food.append(food_manager.generate_food(1, 1, all_snakes, food, table_width, table_height, 15))
+            food.append(self.food_manager.generate_food(1, 1, all_snakes, food, table_width, table_height, 15))
 
-        food.append(food_manager.generate_food(1, 1, all_snakes, food, table_width, table_height, 15,
+        food.append(self.food_manager.generate_food(1, 1, all_snakes, food, table_width, table_height, 15,
                                                True))  # generate superfood
 
-        self.game = Game(all_players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, food_manager, shift_players_manager, table_width, table_height )
+        self.game = Game(all_players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, self.food_manager, shift_players_manager, table_width, table_height, self)
         self.game.set_active_player(all_players[0])
         self.game.set_active_snake(all_players[0].snakes[0])
 
@@ -76,11 +76,31 @@ class InitializeGame:
 
         timer.set_game(self.game)
 
+        self.last_players = copy.deepcopy(all_players)
+        self.last_snakes = copy.deepcopy(all_snakes)
+
+
+    def restart_game(self):
+        self.copy_last_players = copy.deepcopy(self.last_players)
+        self.copy_last_snakes = copy.deepcopy(self.last_snakes)
+        self.game.players = self.copy_last_players
+        food = []
+
+        for i in range(0, 30):
+            food.append(self.food_manager.generate_food(1, 1, self.copy_last_snakes, food, self.game.table_width, self.game.table_height, 15))
+
+        food.append(self.food_manager.generate_food(1, 1, self.copy_last_snakes, food, self.game.table_width, self.game.table_height, 15,
+                                               True))  # generate superfood
+        self.game.food = food
+
+        self.score_board.set_active_player_on_button_frame(self.copy_last_players[0])
+        self.score_board.set_active_snake_on_button_frame(self.copy_last_players[0].snakes[0])
+
+    def exit_game(self):
+        self.window.close()
 
     def start_main(self):
         app = QApplication(sys.argv)
-        window = MainWindow(self.game_board, self.score_board, self.game)
-        window.starting_players = copy.deepcopy(self.players)
-        window.starting_snake_count = copy.deepcopy(self.snakes_count)
-        window.show()
+        self.window = MainWindow(self.game_board, self.score_board, self.game)
+        self.window.show()
         app.exec_()

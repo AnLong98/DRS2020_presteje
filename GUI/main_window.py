@@ -6,7 +6,7 @@ from PyQt5.QtGui import *
 # from GUI.game_board import GameBoard
 # from GUI.score_board import ScoreBoard
 # from GUI.start_window import StartWindow
-from GUI.finish_window import FinishWindow
+#from GUI.finish_window import FinishWindow
 #from Managers.collision_manager import CollisionManager
 #
 # from Managers.drawing_manager import DrawingManager
@@ -50,11 +50,6 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(splitter)
 
     def keyPressEvent(self, event):
-        self.winner = self.scoreboard.winner
-        if self.game is None or self.winner is not None:
-            self.close()
-            finishWindow = FinishWindow(self.winner.user_name, self.starting_players, self.starting_snake_count)
-            finishWindow.exec()
         key = event.key()
 
         if key == Qt.Key_Left:

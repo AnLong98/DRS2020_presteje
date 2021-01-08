@@ -1,4 +1,3 @@
-from Managers.collision_manager import CollisionDetectionResult
 from models import SnakePart, SnakeDirection, Snake, DrawableComponentBase
 from models import SnakePartType
 import random
