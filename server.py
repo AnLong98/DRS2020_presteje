@@ -1,11 +1,14 @@
 from Managers.collision_manager import CollisionManager
 from Managers.food_manager import FoodManager
 from Managers.movement_manager import MovementManager
-from Managers.server_network_manager import ServerNetworkManager
+from Models.snake import Snake, SnakeDirection
+from Models.snake_part import SnakePart, SnakePartType
+from Models.user import User
+from Network.Server.server_network_manager import ServerNetworkManager
 from Managers.shift_players_manager import ShiftPlayersManager
 from Managers.snake_part_manager import SnakePartManager
 from game import Game
-from models import SnakePart, SnakePartType, Snake, SnakeDirection, User
+
 
 
 class ServerInitializer:
@@ -182,6 +185,7 @@ if __name__ == "__main__":
     movement_manager = MovementManager()
     snake_part_manager = SnakePartManager(part_width, part_height, collision_manager)
     shift_players_manager = ShiftPlayersManager()
+    print("Server is up and running")
     network_manager = ServerNetworkManager(clients_number)
     player_names = network_manager.get_client_names
     table_width = 960
@@ -209,3 +213,5 @@ if __name__ == "__main__":
     game = Game(players, food, collision_manager, network_manager, movement_manager, snake_part_manager, food_manager,
                 shift_players_manager, table_width, table_height)
     game.run_game()
+    print("Game has started")
+

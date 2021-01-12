@@ -1,48 +1,11 @@
 import socket
-import select
-from threading import Thread
+import threading
 from queue import Queue
-from Managers.network_manager import SocketManager, NetworkPackageFlag
-from Managers.server_network_helpers import SocketInfo, ClientCommand, SendRequest
 
-
-class ServerSocketSender(SocketManager, Thread):
-    _sentinel = object()
-    def __init__(self, socket, queue):
-        Thread.__init__(self)
-        SocketManager.__init__(self, socket)
-        self.queue = queue
-
-    def run(self):
-        while True:
-            message = self.queue.get()
-
-            if message == self._sentinel:
-                return
-            self.send_message(message.data, message.network_flag)
-
-
-class ServerNetworkReceiver(Thread):
-    _sentinel = object()
-    def __init__(self, clients_dict, queue):
-        Thread.__init__(self)
-        self.queue = queue
-        self.clients_dict = clients_dict
-        self.sockets = []
-        self.socket_to_info_dict = {}
-        for username in clients_dict.keys():
-            self.sockets.append(clients_dict[username])
-            self.socket_to_info_dict[clients_dict[username]] = SocketInfo(SocketManager(clients_dict[username]), username)
-
-    def run(self):
-        while True:
-            read, write, error = select.select(self.sockets, [], [], 0)
-            if not read:
-                continue
-            for readable in read:
-                message, flag = self.socket_to_info_dict[readable].socket_manager.recv_message()
-                self.queue.put(ClientCommand(message, self.socket_to_info_dict[readable].username))
-
+from Network.Server.server_network_receiver import ServerNetworkReceiver
+from Network.Server.server_network_sender import ServerSocketSender
+from Network.socket_manager import SocketManager, NetworkPackageFlag
+from Network.Server.server_network_helpers import SendRequest
 
 
 class ServerNetworkManager:
@@ -50,57 +13,76 @@ class ServerNetworkManager:
     PORT = 50005  # Arbitrary non-privileged port
     def __init__(self, clients_number):
         self.clients_dict = self.__await_client_connections(clients_number)
-        self.client_out_queue_dict = self.__create_client_senders(self.clients_dict)
-        self.recv_queue = self.__get_reading_queue()
+        self.client_out_queue_dict, self.client_senders_dict  = self.__create_client_senders(self.clients_dict)
+        self.receiver_exit_event = threading.Event()
+        self.recv_queue, self.receiver = self.__get_reading_queue_and_receiver(self.receiver_exit_event)
+
 
     @property
     def get_recv_queue(self):
         return self.recv_queue
 
+
     @property
     def get_client_names(self):
         return list(self.clients_dict.keys())
 
+
     def __await_client_connections(self, clients_number):
         sockets = {}
         clients = []
-        clients_dict = {}
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.bind((self.HOST, self.PORT))
             s.listen(clients_number)
             for i in range(0, clients_number):
                 sockets[i], addr = s.accept()
-                #sockets[i].setblocking(True)
                 clients.append(SocketManager(sockets[i]))
 
-            # receive client user names
-            for client_socket in clients:
+            return self.__await_client_usernames(clients)
+
+
+    def __await_client_usernames(self, client_socket_managers):
+        clients_dict = {}
+
+        # receive client user names
+        for client_socket in client_socket_managers:
+            username_not_unique = True
+            while username_not_unique:
                 username, flag = client_socket.recv_message()
                 if flag != NetworkPackageFlag.USERNAME:
-                    return None # protocol error
+                    return None  # protocol error
 
-                if username in clients_dict:
-                    #TODO: Add some code to prevent multiple users form having same username
-                    pass
+                if username in clients_dict: #Notify the user his name is not unique
+                    client_socket.send_message(1, NetworkPackageFlag.USERNAME_INVALID)
+                    continue
                 else:
                     clients_dict[username] = client_socket.socket
                     client_socket.socket.setblocking(False)
+                    print("User " + username + " has joined the game.")
+                    break
 
-            return clients_dict
+        return clients_dict
+
 
     def __create_client_senders(self, clients_dict):
         client_queues_dict = {}
+        client_senders_dict = {}
 
         for username in clients_dict.keys():
             client_queues_dict[username] = Queue()
-            ServerSocketSender(clients_dict[username], client_queues_dict[username]).start()
+            client_senders_dict[username] = ServerSocketSender(clients_dict[username], client_queues_dict[username])
+            client_senders_dict[username].setDaemon(True)
+            client_senders_dict[username].start()
 
-        return client_queues_dict
 
-    def __get_reading_queue(self):
+        return client_queues_dict, client_senders_dict
+
+    def __get_reading_queue_and_receiver(self, receiver_exit_event):
         recv_queue = Queue()
-        ServerNetworkReceiver(self.clients_dict, recv_queue).start()
-        return recv_queue
+        receiver = ServerNetworkReceiver(self.clients_dict, recv_queue, receiver_exit_event)
+        receiver.setDaemon(True)
+        receiver.start()
+        return recv_queue, receiver
 
     def send_state_to_players(self, food, players):
         food_message = SendRequest(food, NetworkPackageFlag.FOOD)
@@ -143,6 +125,20 @@ class ServerNetworkManager:
         for username in self.client_out_queue_dict.keys():
             self.client_out_queue_dict[username].put(snake_message)
 
+    def shutdown_user(self, username):
+        if username in self.client_senders_dict.keys() and username in self.client_out_queue_dict.keys():
+            sentinel = self.client_senders_dict[username].sentinel
+            self.client_out_queue_dict[username].put(sentinel)
+            self.client_senders_dict.pop(username)
+            self.client_out_queue_dict.pop(username)
+
+    def shutdown_all_user_connections(self):
+        if not self.receiver_exit_event.is_set():
+            self.receiver_exit_event.set() #Shutdown receiver
+        for username in self.client_out_queue_dict.keys():
+            self.client_out_queue_dict[username].put(self.client_senders_dict[username].sentinel)
+            self.client_senders_dict.pop(username)
+            self.client_out_queue_dict.pop(username)
 
 
 

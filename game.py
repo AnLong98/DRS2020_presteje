@@ -89,6 +89,7 @@ class Game:
             #skip if issuer is not active player
             if command.key is None:
                 #TODO: disconnect player
+                self.network_manager.shutdown_user(command.username)
                 print('Umro Pantelija')
             if command.username != self.active_player.user_name:
                 continue

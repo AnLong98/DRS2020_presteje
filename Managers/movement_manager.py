@@ -1,5 +1,5 @@
-from models import SnakeDirection
-from models import SnakePartType
+from Models.snake import SnakeDirection
+from Models.snake_part import SnakePartType
 
 
 class KeyPressed:

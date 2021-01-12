@@ -1,7 +1,7 @@
-from threading import Thread
 import socket
+from threading import Thread
 import select
-from Managers.network_manager import SocketManager, NetworkPackageFlag
+from Network.socket_manager import SocketManager, NetworkPackageFlag
 
 
 class ClientSocketSender(SocketManager):
@@ -10,31 +10,59 @@ class ClientSocketSender(SocketManager):
 
 
     def send_game_request(self, username):
-        self.send_message( username, NetworkPackageFlag.USERNAME)
+        try:
+            self.send_message( username, NetworkPackageFlag.USERNAME)
+            return True
+        except Exception as exc:
+            self.shutdown()
+            return False
 
     def send_pressed_key(self, key):
-        self.send_message(key, NetworkPackageFlag.KEY)
+        try:
+            self.send_message(key, NetworkPackageFlag.KEY)
+            return True
+        except Exception as exc:
+            self.shutdown()
+            return False
 
 
 class ClientSocketReceiver(SocketManager, Thread):
-    def __init__(self, socketc, drawing_manager):
+    def __init__(self, socketc, drawing_manager, exit_event):
         Thread.__init__(self)
         SocketManager.__init__(self, socketc)
         self.drawing_manager = drawing_manager
         self.socketc = socketc
+        self.exit_event = exit_event
 
 
     def run(self):
         readable_sockets = [self.socketc]
-        while True:
-            read, write, error = select.select(readable_sockets, [], [], 0)
+        while not self.exit_event.is_set():
+            read, write, error = select.select(readable_sockets, [], readable_sockets, 0)
+
+            if error:
+                print('Error occured on select')
+                self.shutdown()
+                self.exit_event.set()
+                self.drawing_manager.close_window()
+                return
+
             if not read:
                 continue
-
-            message, flag = self.recv_message()
-            if not message or not flag:
-                # handle disconnect
+            try:
+                message, flag = self.recv_message()
+            except Exception as exc:
+                self.shutdown()
+                print("Error occured on receive %s", exc)
+                self.exit_event.set()
+                self.drawing_manager.close_window()
                 return
+
+            if not message or not flag:
+                self.exit_event.set()
+                self.drawing_manager.close_window()
+                return
+
             if flag == NetworkPackageFlag.FOOD:
                 self.drawing_manager.draw_food(message)
 
@@ -62,6 +90,10 @@ class ClientSocketReceiver(SocketManager, Thread):
             elif flag == NetworkPackageFlag.GAME_OVER:
                 #game is over, do some game over things here
                 return
+            elif flag == NetworkPackageFlag.USERNAME_INVALID:
+                #TODO Handle username not unique
+                print("username not unique")
+                continue
 
 
 

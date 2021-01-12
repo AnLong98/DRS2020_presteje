@@ -1,7 +1,9 @@
-from Managers.collision_manager import CollisionDetectionResult
-from models import SnakePart, SnakeDirection, Snake, DrawableComponentBase
-from models import SnakePartType
+
 import random
+
+from Models.drawable_component_base import DrawableComponentBase
+from Models.snake import SnakeDirection, Snake
+from Models.snake_part import SnakePart, SnakePartType
 
 
 class SnakePartManager:

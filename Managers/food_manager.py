@@ -1,7 +1,8 @@
 import random
 
 from Managers.collision_manager import CollisionDetectionResult
-from models import Food
+from Models.food import Food
+
 
 class FoodManager:
     def __init__(self,  collision_manager):

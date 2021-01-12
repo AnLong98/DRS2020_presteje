@@ -1,4 +1,4 @@
-from models import DrawableComponentBase
+from Models.drawable_component_base import DrawableComponentBase
 
 
 class CollisionDetectionResult:

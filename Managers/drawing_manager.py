@@ -36,3 +36,6 @@ class DrawingManager:
 
     def set_active_player(self, player):
         pass
+
+    def close_window(self):
+        self.main_window.close()
