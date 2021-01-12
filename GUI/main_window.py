@@ -50,6 +50,9 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(splitter)
 
     def keyPressEvent(self, event):
+        self.winner = self.scoreboard.winner
+        if self.game is None or self.winner is not None:
+            return None
         key = event.key()
 
         if key == Qt.Key_Left:
