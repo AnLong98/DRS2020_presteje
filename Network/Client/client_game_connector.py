@@ -27,7 +27,7 @@ class ClientGameConnector:
                 socket_sender = ClientSocketSender(client_socket)
                 client_recv = SocketManager(client_socket)
                 break
-            except:
+            except Exception:
                 server_parameters_window.error_label.setText("Invalid IP or PORT, please enter again.")
                 server_parameters_window.exec()
 
