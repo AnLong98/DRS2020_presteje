@@ -9,6 +9,7 @@ class ClientStartWindow(QDialog):
         self.setWindowTitle("Username input")
         self.username = None
         self.player_input_field()
+        self.username_field.setFocus()
 
 
     def player_input_field(self):
@@ -20,21 +21,28 @@ class ClientStartWindow(QDialog):
         self.error_label.setStyleSheet("QLabel { color: red; }")
 
         self.username_field = QLineEdit()
+        self.username_field.setFixedWidth(120)
         self.button = QPushButton('Confirm', self)
         self.button.setFont(QFont("Arial", 12))
         self.button.setMaximumWidth(70)
         self.button.setMaximumHeight(30)
 
         username_row = QHBoxLayout()
+        username_row.addStretch()
         username_row.addWidget(self.username_label)
         username_row.addWidget(self.username_field)
+        username_row.addStretch()
 
         error_row = QHBoxLayout()
+        error_row.addStretch()
         error_row.addWidget(self.error_label)
+        error_row.addStretch()
 
         button_row = QHBoxLayout()
         self.button.clicked.connect(self.confirm_username)
+        button_row.addStretch()
         button_row.addWidget(self.button)
+        button_row.addStretch()
 
         layout = QVBoxLayout()
         layout.addLayout(username_row)
@@ -49,3 +57,6 @@ class ClientStartWindow(QDialog):
         else:
          self.username = self.username_field.text()
          self.close()
+
+    def close_window(self):
+        self.close()

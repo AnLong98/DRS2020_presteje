@@ -4,17 +4,16 @@ import threading
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+
+from GUI.client_start_window import ClientStartWindow
 from GUI.game_board import GameBoard
 from GUI.score_board import ScoreBoard
-from Network.Client.client_network_manager import ClientSocketSender, ClientSocketReceiver
+from Network.Client.client_game_connector import ClientGameConnector
+from Network.Client.client_network_manager import ClientSocketReceiver
 
 from Managers.drawing_manager import DrawingManager
 
 from Managers.movement_manager import KeyPressed
-
-from GUI.client_start_window import ClientStartWindow
-
-from Network.socket_manager import SocketManager, NetworkPackageFlag
 
 
 class MainWindow(QMainWindow):
@@ -95,31 +94,13 @@ if __name__ == "__main__":
 
     game_board = GameBoard()
 
-    #init game related things hardcoded for prototype
-    #TODO: Let client input these parameters
-    HOST = socket.gethostbyname(socket.gethostname())  # Current PC's IP address
-    PORT = 50005  # The same port as used by the server
+    conn_result = ClientGameConnector().connect()
+    if not conn_result:
+        sys.exit()
 
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((HOST, PORT))
-    socket_sender = ClientSocketSender(client_socket)
-    client_recv = SocketManager(client_socket)
-    while True:
-        client_window = ClientStartWindow()
-        client_window.exec()
-
-        username = client_window.username
-        if username is None:
-            sys.exit()
-        socket_sender.send_game_request(username)
-
-        response = client_recv.recv_message()
-        print(response[1])
-
-        if response[1] != NetworkPackageFlag.USERNAME_INVALID:
-            client_socket.setblocking(False)
-            break
-
+    client_socket = conn_result[0]
+    socket_sender = conn_result[1]
+    username = conn_result[2]
 
     score_board = ScoreBoard()
     exit_event = threading.Event()
