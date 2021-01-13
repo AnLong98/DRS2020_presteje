@@ -96,25 +96,27 @@ if __name__ == "__main__":
     game_board = GameBoard()
 
     #init game related things hardcoded for prototype
-    HOST = 'localhost'  # The remote host
+    #TODO: Let client input these parameters
+    HOST = socket.gethostbyname(socket.gethostname())  # Current PC's IP address
     PORT = 50005  # The same port as used by the server
 
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((HOST, PORT))
     socket_sender = ClientSocketSender(client_socket)
-
+    client_recv = SocketManager(client_socket)
     while True:
         client_window = ClientStartWindow()
         client_window.exec()
 
         username = client_window.username
+        if username is None:
+            sys.exit()
         socket_sender.send_game_request(username)
 
-        client_recv = SocketManager(client_socket)
-        np = NetworkPackageFlag()
         response = client_recv.recv_message()
+        print(response[1])
 
-        if response[1] != np.USERNAME_INVALID:
+        if response[1] != NetworkPackageFlag.USERNAME_INVALID:
             client_socket.setblocking(False)
             break
 

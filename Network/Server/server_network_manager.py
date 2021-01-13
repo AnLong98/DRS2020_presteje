@@ -9,10 +9,8 @@ from Network.Server.server_network_helpers import SendRequest
 
 
 class ServerNetworkManager:
-    HOST = ''  # Symbolic name meaning all available interfaces
-    PORT = 50005  # Arbitrary non-privileged port
-    def __init__(self, clients_number):
-        self.clients_dict = self.__await_client_connections(clients_number)
+    def __init__(self, clients_number, network_connector):
+        self.clients_dict = network_connector.await_client_connections(clients_number)
         self.client_out_queue_dict, self.client_senders_dict  = self.__create_client_senders(self.clients_dict)
         self.receiver_exit_event = threading.Event()
         self.recv_queue, self.receiver = self.__get_reading_queue_and_receiver(self.receiver_exit_event)
@@ -26,44 +24,6 @@ class ServerNetworkManager:
     @property
     def get_client_names(self):
         return list(self.clients_dict.keys())
-
-
-    def __await_client_connections(self, clients_number):
-        sockets = {}
-        clients = []
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.bind((self.HOST, self.PORT))
-            s.listen(clients_number)
-            for i in range(0, clients_number):
-                sockets[i], addr = s.accept()
-                clients.append(SocketManager(sockets[i]))
-
-            return self.__await_client_usernames(clients)
-
-
-    def __await_client_usernames(self, client_socket_managers):
-        clients_dict = {}
-
-        # receive client user names
-        for client_socket in client_socket_managers:
-            username_not_unique = True
-            while username_not_unique:
-                username, flag = client_socket.recv_message()
-                if flag != NetworkPackageFlag.USERNAME:
-                    return None  # protocol error
-
-                if username in clients_dict: #Notify the user his name is not unique
-                    client_socket.send_message(1, NetworkPackageFlag.USERNAME_INVALID)
-                    continue
-                else:
-                    client_socket.send_message(1, NetworkPackageFlag.USERNAME_VALID)
-                    clients_dict[username] = client_socket.socket
-                    client_socket.socket.setblocking(False)
-                    print("User " + username + " has joined the game.")
-                    break
-
-        return clients_dict
-
 
     def __create_client_senders(self, clients_dict):
         client_queues_dict = {}
