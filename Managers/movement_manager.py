@@ -12,31 +12,30 @@ class KeyPressed:
 
 class MovementManager:
     def set_snake_direction(self, key_pressed, active_snake):
-        # morace da ide u svaki if ukoliko se funkcija advance_game bude pozivala i kada
-        # neki tasteri osim ova 4 budu pritisnuti
-        if active_snake.steps == active_snake.played_steps:
-            return None
-        active_snake.increase_played_steps()
 
         if key_pressed == KeyPressed.LEFT:
             if active_snake.direction != SnakeDirection.RIGHT:
                 active_snake.direction = SnakeDirection.LEFT
                 self.move_active_snake(active_snake)
+                active_snake.increase_played_steps()
 
         elif key_pressed == KeyPressed.RIGHT:
             if active_snake.direction != SnakeDirection.LEFT:
                 active_snake.direction = SnakeDirection.RIGHT
                 self.move_active_snake(active_snake)
+                active_snake.increase_played_steps()
 
         elif key_pressed == KeyPressed.UP:
             if active_snake.direction != SnakeDirection.DOWN:
                 active_snake.direction = SnakeDirection.UP
                 self.move_active_snake(active_snake)
+                active_snake.increase_played_steps()
 
         elif key_pressed == KeyPressed.DOWN:
             if active_snake.direction != SnakeDirection.UP:
                 active_snake.direction = SnakeDirection.DOWN
                 self.move_active_snake(active_snake)
+                active_snake.increase_played_steps()
 
 
     def move_active_snake(self, active_snake):

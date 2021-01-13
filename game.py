@@ -69,6 +69,13 @@ class Game:
                 for snake in player.snakes:
                     snake.played_steps = 0
 
+
+    def check_player_steps(self):
+        for snake in self.active_player.snakes:
+            if snake.steps != snake.played_steps:
+                return not None
+        return None
+
     def finish_players_turn(self):
         self.players_finished_turn += 1
         if self.players_finished_turn >= self.alive_players_count:
@@ -105,59 +112,67 @@ class Game:
             self.game_mutex.acquire()
             if command.key == KeyPressed.TAB:
                 self.change_snake()
+            elif self.active_snake.steps != self.active_snake.played_steps:  # ako igrac ima koraka sa trenutnom zmijom
+                snake_tail_x = self.active_snake.snake_parts[-1].x_coordinate
+                snake_tail_y = self.active_snake.snake_parts[-1].y_coordinate
+                if self.movement_manager.set_snake_direction(command.key, self.active_snake) is not None:
+                    self.game_mutex.release()
+                    continue
 
-            snake_tail_x = self.active_snake.snake_parts[-1].x_coordinate
-            snake_tail_y = self.active_snake.snake_parts[-1].y_coordinate
-            if self.movement_manager.set_snake_direction(command.key, self.active_snake) is not None:
-                self.game_mutex.release()
-                continue
-
-            collision_result, object_collided = self.collision_manager.check_moving_snake_collision(self.active_snake)
-            if collision_result == CollisionDetectionResult.FOOD_COLLISION:
-                self.food.remove(object_collided)
-                self.active_snake.increase_steps(object_collided.steps_worth)
-                self.active_player.increase_points(object_collided.points_worth)
-                self.snake_part_manager.increase_snake(self.active_snake, snake_tail_x, snake_tail_y)
-
-
-                generated_food = self.food_manager.generate_food(object_collided.points_worth, object_collided.steps_worth,
-                                                                self.table_width,self.table_height, object_collided.width,
-                                                                 object_collided.is_super_food)
-                self.food.append(generated_food)
+                collision_result, object_collided = self.collision_manager.check_moving_snake_collision(self.active_snake)
+                if collision_result == CollisionDetectionResult.FOOD_COLLISION:
+                    self.food.remove(object_collided)
+                    self.active_snake.increase_steps(object_collided.steps_worth)
+                    self.active_player.increase_points(object_collided.points_worth)
+                    self.snake_part_manager.increase_snake(self.active_snake, snake_tail_x, snake_tail_y)
 
 
-                if object_collided.is_super_food:
-                    snake = self.snake_part_manager.generate_snake_for_player(self.active_player, self.table_width,
-                                                                              self.table_height, 5)
-                    self.active_player.add_snake(snake)
-                    self.all_snakes.append(snake)
+                    generated_food = self.food_manager.generate_food(object_collided.points_worth, object_collided.steps_worth,
+                                                                    self.table_width,self.table_height, object_collided.width,
+                                                                     object_collided.is_super_food)
+                    self.food.append(generated_food)
 
-            elif collision_result == CollisionDetectionResult.FRIENDLY_COLLISION or collision_result == CollisionDetectionResult.AUTO_COLLISION:
-                for snake in self.active_player.snakes:
-                    self.all_snakes.remove(snake)
-                self.alive_players_count -= 1
-                self.active_player.snakes = None
-                self.game_mutex.release()
-                self.change_player()
-                self.game_mutex.acquire()
-                self.reset_timer()
 
-            elif collision_result != CollisionDetectionResult.NO_COLLISION:
-                self.all_snakes.remove(self.active_snake)
-                self.active_player.remove_snake(self.active_snake)
-                self.game_mutex.release()
-                self.change_player()
-                self.game_mutex.acquire()
-                self.reset_timer()
+                    if object_collided.is_super_food:
+                        snake = self.snake_part_manager.generate_snake_for_player(self.active_player, self.table_width,
+                                                                                  self.table_height, 5)
+                        self.active_player.add_snake(snake)
+                        self.all_snakes.append(snake)
 
-            trapped_snakes = self.collision_manager.get_trapped_enemy_snakes(self.active_player)
-            for snake in trapped_snakes:
-                for player in self.players:
-                    if snake.owner_name == player.user_name:
+                elif collision_result == CollisionDetectionResult.FRIENDLY_COLLISION or collision_result == CollisionDetectionResult.AUTO_COLLISION:
+                    for snake in self.active_player.snakes:
                         self.all_snakes.remove(snake)
-                        player.remove_snake(snake)
+                    self.alive_players_count -= 1
+                    self.active_player.snakes = None
+                    self.game_mutex.release()
+                    self.change_player()
+                    self.game_mutex.acquire()
+                    self.reset_timer()
+
+                elif collision_result != CollisionDetectionResult.NO_COLLISION:
+                    self.all_snakes.remove(self.active_snake)
+                    self.active_player.remove_snake(self.active_snake)
+                    self.game_mutex.release()
+                    self.change_player()
+                    self.game_mutex.acquire()
+                    self.reset_timer()
+
+                trapped_snakes = self.collision_manager.get_trapped_enemy_snakes(self.active_player)
+                for snake in trapped_snakes:
+                    for player in self.players:
+                        if snake.owner_name == player.user_name:
+                            self.all_snakes.remove(snake)
+                            player.remove_snake(snake)
+
+
+                if self.check_player_steps() is None:
+                    self.game_mutex.release()
+                    self.change_player()
+                    self.game_mutex.acquire()
+                    self.reset_timer()
 
             self.network_manager.send_state_to_players(self.food, self.players)
+            self.network_manager.notify_active_player(self.active_player)
             self.game_mutex.release()
 
 

@@ -35,7 +35,11 @@ class DrawingManager:
         self.score_board.init_timer()
 
     def set_active_player(self, player):
-        pass
+        self.score_board.set_active_player_on_information_frame(player)
 
     def close_window(self):
         self.main_window.close()
+
+    def add_winner(self, player):
+        self.score_board.set_winner(player)
+
