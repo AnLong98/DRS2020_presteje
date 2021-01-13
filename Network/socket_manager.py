@@ -15,6 +15,7 @@ class NetworkPackageFlag:
     ACTIVE_PLAYER = 10
     ACTIVE_SNAKE = 12
     USERNAME_INVALID = 11
+    USERNAME_VALID = 13
 
 
 class SocketManager:

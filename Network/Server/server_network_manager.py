@@ -56,6 +56,7 @@ class ServerNetworkManager:
                     client_socket.send_message(1, NetworkPackageFlag.USERNAME_INVALID)
                     continue
                 else:
+                    client_socket.send_message(1, NetworkPackageFlag.USERNAME_VALID)
                     clients_dict[username] = client_socket.socket
                     client_socket.socket.setblocking(False)
                     print("User " + username + " has joined the game.")
