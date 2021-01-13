@@ -104,6 +104,7 @@ class InformationFrame(QFrame):
 
         self.active_player = None
         self.active_snake = None
+        self.color = None
         self.scores = []
 
         self.setFixedSize(240, 400)
@@ -157,8 +158,10 @@ class InformationFrame(QFrame):
 
     def update_scores(self):
         for labels in self.scores:
-            labels[1].setStyleSheet("color: " + self.active_player.color)
-            labels[3].setStyleSheet("color: " + self.active_player.color)
+            if self.color != self.active_player.color:
+                labels[1].setStyleSheet("color: " + self.active_player.color)
+                labels[3].setStyleSheet("color: " + self.active_player.color)
+                self.color = self.active_player.color
             labels[1].setText(self.active_player.user_name)
             labels[3].setText(str(self.active_snake.steps - self.active_snake.played_steps))
 

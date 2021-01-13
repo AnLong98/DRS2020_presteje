@@ -19,12 +19,15 @@ class Game:
         self.table_height = table_height
         self.all_snakes = []
         self.active_player = players[0]
-        for player in players:
-            self.all_snakes += player.snakes
+        #for player in players:
+            #self.all_snakes += player.snakes
+        for player in self.players:
+            self.all_snakes.extend(player.snakes)
 
         self.active_snake = None
         self.alive_players_count = len(self.players)
         self.players_finished_turn = 0
+        self.winner = None
         self.game_timer = Timer(10.0, self.change_player)
         self.game_mutex = Lock()
 
@@ -69,12 +72,45 @@ class Game:
                 for snake in player.snakes:
                     snake.played_steps = 0
 
-
     def check_player_steps(self):
         for snake in self.active_player.snakes:
             if snake.steps != snake.played_steps:
                 return not None
         return None
+
+    def is_it_over(self):
+        if self.active_player.snakes is not None:
+            return None
+        count = 0  # aktivnom igracu su sve zmije None
+        for player in self.players:
+            if player.snakes is not None and player.user_name != self.active_player.user_name:
+                count += 1
+        if count == 1:
+            self.winner = self.shift_players_manager.shift_player(self.players, self.active_player)  # aktivan igrac je i dalje isti, samo sto smo rekli ko je winner
+            #self.drawing_manager.add_winner(self.winner)
+            #self.drawing_manager.stop_turn_time()  # kill timmer -> ne radi
+            #self.game_mutex.release()
+            self.change_player()
+
+            self.network_manager.notify_game_over(self.winner, self.players)
+            return 1
+
+        else:
+            return None
+
+    def is_it_over2(self):
+        for player in self.players:
+            if player.snakes is not None and player.user_name != self.active_player.user_name:
+                return None
+
+        self.winner = self.shift_players_manager.shift_player(self.players, self.active_player)  # aktivan igrac je i dalje isti, samo sto smo rekli ko je winner
+        #self.drawing_manager.add_winner(self.winner)
+        #self.drawing_manager.stop_turn_time()  # kill timmer -> ne radi
+        #self.game_mutex.release()
+        self.change_player()
+
+        self.network_manager.notify_game_over(self.winner, self.players)
+        return 1
 
     def finish_players_turn(self):
         self.players_finished_turn += 1
@@ -144,25 +180,30 @@ class Game:
                         self.all_snakes.remove(snake)
                     self.alive_players_count -= 1
                     self.active_player.snakes = None
-                    self.game_mutex.release()
-                    self.change_player()
-                    self.game_mutex.acquire()
-                    self.reset_timer()
+                    if self.is_it_over() is None:
+                        self.game_mutex.release()
+                        self.change_player()
+                        self.game_mutex.acquire()
+                        self.reset_timer()
 
                 elif collision_result != CollisionDetectionResult.NO_COLLISION:
                     self.all_snakes.remove(self.active_snake)
                     self.active_player.remove_snake(self.active_snake)
-                    self.game_mutex.release()
-                    self.change_player()
-                    self.game_mutex.acquire()
-                    self.reset_timer()
+                    if self.is_it_over() is None:
+                        self.game_mutex.release()
+                        self.change_player()
+                        self.game_mutex.acquire()
+                        self.reset_timer()
 
                 trapped_snakes = self.collision_manager.get_trapped_enemy_snakes(self.active_player)
-                for snake in trapped_snakes:
-                    for player in self.players:
-                        if snake.owner_name == player.user_name:
-                            self.all_snakes.remove(snake)
-                            player.remove_snake(snake)
+                if trapped_snakes:
+                    for snake in trapped_snakes:
+                        for player in self.players:
+                            if snake.owner_name == player.user_name:
+                                self.all_snakes.remove(snake)
+                                player.remove_snake(snake)
+
+                    self.is_it_over2()
 
 
                 if self.check_player_steps() is None:
