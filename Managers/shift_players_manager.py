@@ -17,4 +17,3 @@ class ShiftPlayersManager:
         next_snake = active_player.snakes[next_snake_index]
         return next_snake
 
-# Pedja 23.12.2020 Razmisliti da li nam ovaj kod zaista zasluzuje da stoji u posebnoj klasi.

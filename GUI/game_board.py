@@ -1,8 +1,8 @@
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from models import Snake, SnakePart, SnakePartType, DrawableComponentBase
-from models import SnakeDirection
+
+from Models.snake_part import SnakePartType
 
 
 class GameBoard(QFrame):

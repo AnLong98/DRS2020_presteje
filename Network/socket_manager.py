@@ -1,4 +1,5 @@
 import pickle
+import socket
 import struct
 
 class NetworkPackageFlag:
@@ -45,3 +46,7 @@ class SocketManager:
                 return None
             data.extend(packet)
         return data
+
+    def shutdown(self):
+        self.socket.shutdown(socket.SHUT_RDWR)
+        self.socket.close()

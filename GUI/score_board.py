@@ -18,7 +18,6 @@ class PlayerFrame(QFrame):
 
 
     def create_layout(self):
-        print("paint player frame called")
         for i in range(0, 4):
             self.name_labels.append(QLabel("Player: -", self))
             self.name_labels[i].setFont(QFont('Arial', 17))

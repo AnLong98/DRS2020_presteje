@@ -1,4 +1,4 @@
-from models import DrawableComponentBase
+from Models.drawable_component_base import DrawableComponentBase
 
 
 class CollisionDetectionResult:
@@ -11,11 +11,17 @@ class CollisionDetectionResult:
 
 
 class CollisionManager:
-    def check_moving_snake_collision(self, moving_snake, all_snakes, all_food, table_length, table_height):
+    def __init__(self, all_snakes, all_food, table_length, table_height):
+        self.all_food = all_food
+        self.all_snakes = all_snakes
+        self.table_length = table_length
+        self.table_height = table_height
+
+    def check_moving_snake_collision(self, moving_snake):
         snake_head = moving_snake.snake_parts[0]
 
         #check if snake head collided with window border
-        if self.check_component_to_wall_collision(snake_head, wall_width=table_length, wall_height=table_height):
+        if self.check_component_to_wall_collision(snake_head):
             return CollisionDetectionResult.WALL_COLLISION, None
 
         #check if snake collided with itself
@@ -23,12 +29,12 @@ class CollisionManager:
             return CollisionDetectionResult.AUTO_COLLISION, moving_snake
 
         #check for collision with food
-        for food in all_food:
+        for food in self.all_food:
             if self.check_components_collision(food, snake_head):
                 return CollisionDetectionResult.FOOD_COLLISION, food
 
         #check for collision with other snakes:
-        for snake in all_snakes:
+        for snake in self.all_snakes:
             is_colliding = self.check_head_to_body_collision(snake_head, snake)
             if is_colliding and snake.owner_name == moving_snake.owner_name:
                 return CollisionDetectionResult.FRIENDLY_COLLISION, snake
@@ -58,28 +64,28 @@ class CollisionManager:
         return False
 
 
-    def check_component_to_wall_collision(self, drawable_component, wall_width, wall_height):
-        if drawable_component.x_coordinate + drawable_component.width > wall_width or drawable_component.x_coordinate < 0:
+    def check_component_to_wall_collision(self, drawable_component):
+        if drawable_component.x_coordinate + drawable_component.width > self.table_length or drawable_component.x_coordinate < 0:
             return True
-        if drawable_component.y_coordinate + drawable_component.height > wall_height or drawable_component.y_coordinate < 0:
+        if drawable_component.y_coordinate + drawable_component.height > self.table_height or drawable_component.y_coordinate < 0:
             return True
 
         return False
 
 
-    def is_coordinate_colliding(self, all_snakes, all_food, table_width, table_height, drawable_component):
+    def is_coordinate_colliding(self, drawable_component):
 
         # check if component collided with window border
-        if self.check_component_to_wall_collision(drawable_component, wall_width=table_width, wall_height=table_height):
+        if self.check_component_to_wall_collision(drawable_component):
             return True
 
         # check for collision with food
-        for food in all_food:
+        for food in self.all_food:
             if self.check_components_collision(food, drawable_component):
                 return True
 
         # check for collision with other snakes:
-        for snake in all_snakes:
+        for snake in self.all_snakes:
             for snake_part in snake.snake_parts:
                 is_colliding = self.check_components_collision(snake_part, drawable_component)
                 if is_colliding:
@@ -87,14 +93,14 @@ class CollisionManager:
 
         return False
 
-    def is_snake_side_blocked(self, all_snakes, table_width, table_height, side_drawable_component, snake_owner):
+    def is_snake_side_blocked(self, side_drawable_component, snake_owner):
 
         # check if component collided with window border
-        if self.check_component_to_wall_collision(side_drawable_component, wall_width=table_width, wall_height=table_height):
+        if self.check_component_to_wall_collision(side_drawable_component):
             return CollisionDetectionResult.WALL_COLLISION
 
         # check for collision with other snakes:
-        for snake in all_snakes:
+        for snake in self.all_snakes:
             for snake_part in snake.snake_parts:
                 is_colliding = self.check_components_collision(snake_part, side_drawable_component)
                 if is_colliding and snake.owner_name == snake_owner:
@@ -111,31 +117,31 @@ class CollisionManager:
 
         return False
 
-    def get_trapped_enemy_snakes(self, all_snakes, table_width, table_height, current_player):
+    def get_trapped_enemy_snakes(self, current_player):
         trapped_snakes = []
-        for snake in all_snakes:
+        for snake in self.all_snakes:
             if snake.owner_name == current_player.user_name:
                 continue
-            if self.is_snake_surrounded(snake, all_snakes, table_width, table_height):
+            if self.is_snake_surrounded(snake):
                 trapped_snakes.append(snake)
 
         return trapped_snakes
 
-    def check_generated_food_collision(self, all_snakes, all_food, table_width, table_height, generated_food):
+    def check_generated_food_collision(self, generated_food):
 
         # check if food collided with window border
-        if self.check_component_to_wall_collision(generated_food, wall_width=table_width, wall_height=table_height):
+        if self.check_component_to_wall_collision(generated_food):
             return CollisionDetectionResult.WALL_COLLISION, None
 
         # check for collision with other food
-        for food in all_food:
+        for food in self.all_food:
             if food == generated_food:
                 continue
             if self.check_components_collision(food, generated_food):
                 return CollisionDetectionResult.FOOD_COLLISION, food
 
         # check for collision with other snakes:
-        for snake in all_snakes:
+        for snake in self.all_snakes:
             is_colliding = self.check_head_to_body_collision(generated_food, snake)
             if is_colliding:
                 return CollisionDetectionResult.ENEMY_COLLISION, snake
@@ -144,7 +150,7 @@ class CollisionManager:
 
 
 
-    def is_snake_surrounded(self, snake, all_snakes, table_width, table_height):
+    def is_snake_surrounded(self, snake):
         collision_results = []
 
         snake_head = snake.snake_parts[0]
@@ -164,8 +170,7 @@ class CollisionManager:
                                                            snake_head.height))  # head moving down
 
         for snake_side in head_move_coordinates:
-            collision_results.append(self.is_snake_side_blocked(all_snakes, table_width, table_height,
-                                                               snake_side, snake.owner_name))
+            collision_results.append(self.is_snake_side_blocked(snake_side, snake.owner_name))
             if collision_results[-1] == CollisionDetectionResult.NO_COLLISION:
                 return False
 
