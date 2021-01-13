@@ -12,6 +12,9 @@ from Managers.drawing_manager import DrawingManager
 
 from Managers.movement_manager import KeyPressed
 
+from GUI.client_start_window import ClientStartWindow
+from GUI.client_finish_window import ClientFinishWindow
+
 
 class MainWindow(QMainWindow):
     def __init__(self, game_board, score_board, client_sender, exit_event, player_username):
@@ -88,10 +91,17 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+
     game_board = GameBoard()
 
-    print("Type in your username: ")
-    username = input()
+    players = ["stefan", "taska", "maska"]
+    client_fin = ClientFinishWindow("stefan", players)
+    client_fin.exec()
+
+    client_window = ClientStartWindow()
+    client_window.exec()
+
+    username = client_window.username
 
     #init game related things hardcoded for prototype
     HOST = 'localhost'  # The remote host
