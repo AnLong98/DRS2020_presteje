@@ -94,10 +94,6 @@ if __name__ == "__main__":
 
     game_board = GameBoard()
 
-    players = ["stefan", "taska", "maska"]
-    client_fin = ClientFinishWindow("stefan", players)
-    client_fin.exec()
-
     client_window = ClientStartWindow()
     client_window.exec()
 
