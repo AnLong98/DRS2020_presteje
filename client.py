@@ -13,7 +13,8 @@ from Managers.drawing_manager import DrawingManager
 from Managers.movement_manager import KeyPressed
 
 from GUI.client_start_window import ClientStartWindow
-from GUI.client_finish_window import ClientFinishWindow
+
+from Network.socket_manager import SocketManager, NetworkPackageFlag
 
 
 class MainWindow(QMainWindow):
@@ -94,11 +95,6 @@ if __name__ == "__main__":
 
     game_board = GameBoard()
 
-    client_window = ClientStartWindow()
-    client_window.exec()
-
-    username = client_window.username
-
     #init game related things hardcoded for prototype
     HOST = 'localhost'  # The remote host
     PORT = 50005  # The same port as used by the server
@@ -106,8 +102,22 @@ if __name__ == "__main__":
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((HOST, PORT))
     socket_sender = ClientSocketSender(client_socket)
-    socket_sender.send_game_request(username)
-    client_socket.setblocking(False)
+
+    while True:
+        client_window = ClientStartWindow()
+        client_window.exec()
+
+        username = client_window.username
+        socket_sender.send_game_request(username)
+
+        client_recv = SocketManager(client_socket)
+        np = NetworkPackageFlag()
+        response = client_recv.recv_message()
+
+        if response[1] != np.USERNAME_INVALID:
+            client_socket.setblocking(False)
+            break
+
 
     score_board = ScoreBoard()
     exit_event = threading.Event()

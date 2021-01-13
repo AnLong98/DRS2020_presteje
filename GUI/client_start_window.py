@@ -14,6 +14,11 @@ class ClientStartWindow(QDialog):
     def player_input_field(self):
         self.username_label = QLabel("Username: ")
         self.username_label.setFont(QFont("Arial", 12))
+
+        self.error_label = QLabel(self)
+        self.error_label.setFont(QFont("Arial", 12))
+        self.error_label.setStyleSheet("QLabel { color: red; }")
+
         self.username_field = QLineEdit()
         self.button = QPushButton('Confirm', self)
         self.button.setFont(QFont("Arial", 12))
@@ -24,6 +29,8 @@ class ClientStartWindow(QDialog):
         username_row.addWidget(self.username_label)
         username_row.addWidget(self.username_field)
 
+        error_row = QHBoxLayout()
+        error_row.addWidget(self.error_label)
 
         button_row = QHBoxLayout()
         self.button.clicked.connect(self.confirm_username)
@@ -31,10 +38,14 @@ class ClientStartWindow(QDialog):
 
         layout = QVBoxLayout()
         layout.addLayout(username_row)
+        layout.addLayout(error_row)
         layout.addLayout(button_row)
 
         self.setLayout(layout)
 
     def confirm_username(self):
-        self.username = self.username_field.text()
-        self.close()
+        if len(self.username_field.text()) == 0:
+            self.error_label.setText("Player name can't be an empty string.")
+        else:
+         self.username = self.username_field.text()
+         self.close()
