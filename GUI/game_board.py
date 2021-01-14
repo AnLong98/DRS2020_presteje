@@ -8,11 +8,15 @@ from Models.snake_part import SnakePartType
 class GameBoard(QFrame):
     def __init__(self):
         super(GameBoard, self).__init__()
-        self.active_snake = None
         self.snakes = []
         self.food = []
         self.active_player = None
         self.define_frame_style()
+        self.qTimer = QTimer()
+        self.qTimer.setInterval(50)
+        # connect timeout signal to signal handler
+        self.qTimer.timeout.connect(self.update)
+        self.qTimer.start()
 
     def define_frame_style(self):
         self.setFixedSize(960, 810)
@@ -35,20 +39,18 @@ class GameBoard(QFrame):
     def square_height(self):
         return 15
 
-    def update_snakes(self, snakes):
+    def set_snakes(self, snakes):
         self.snakes = snakes
-        self.update()
 
-    def update_active_player(self, player):
+    def set_active_player(self, player):
         self.active_player = player
-        self.update()
 
-    def update_food(self, food):
+    def set_food(self, food):
         self.food = food
-        self.update()
 
     def paintEvent(self, event):
-        qp = QPainter(self)
+        qp = QPainter()
+        qp.begin(self)
         active_player_name = ''
 
         if self.active_player:
@@ -65,6 +67,7 @@ class GameBoard(QFrame):
 
         for f in self.food:
             self.draw_square_food(qp, f)
+        qp.end()
 
     def draw_square(self, qp, snake_part, snake):
         rect = self.contentsRect()
@@ -88,7 +91,3 @@ class GameBoard(QFrame):
 
         qp.fillRect(rect.left() + food.x_coordinate, food.y_coordinate, self.square_width() - 1, self.square_height() - 1,
                     color)
-
-    def change_head_color(self, snake):
-        self.active_snake = snake
-        self.update()

@@ -112,13 +112,6 @@ class InformationFrame(QFrame):
 
         self.define_frame_style()
 
-        #self.qTimer = QTimer()
-        #self.qTimer.setInterval(140)
-        # connect timeout signal to signal handler
-        #self.qTimer.timeout.connect(self.update_scores)
-        # start timer
-        #self.qTimer.start()
-
     def set_active_player_(self, active_player):
         self.active_player = active_player
         for snake in active_player.snakes:

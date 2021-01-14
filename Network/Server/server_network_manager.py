@@ -50,12 +50,15 @@ class ServerNetworkManager:
         for username in self.client_out_queue_dict.keys():
             self.client_out_queue_dict[username].put(food_message)
 
-    def send_state_to_players(self, food, players):
-        food_message = SendRequest(food, NetworkPackageFlag.FOOD)
-        players_message = SendRequest(players, NetworkPackageFlag.PLAYERS)
+    def send_players_to_players(self, players):
+        message = SendRequest(players, NetworkPackageFlag.PLAYERS)
         for username in self.client_out_queue_dict.keys():
-            self.client_out_queue_dict[username].put(food_message)
-            self.client_out_queue_dict[username].put(players_message)
+            self.client_out_queue_dict[username].put(message)
+
+    def send_state_to_players(self, food, players, active_player):
+        message = SendRequest([food, players, active_player], NetworkPackageFlag.GAME_STATE)
+        for username in self.client_out_queue_dict.keys():
+            self.client_out_queue_dict[username].put(message)
 
     def notify_start_input(self, username):
         input_message = SendRequest(1, NetworkPackageFlag.START_INPUT)
@@ -93,11 +96,6 @@ class ServerNetworkManager:
         player_message = SendRequest(winner_and_players, NetworkPackageFlag.GAME_OVER)
         for username in self.client_out_queue_dict.keys():
             self.client_out_queue_dict[username].put(player_message)
-
-    def notify_active_snake(self, snake):
-        snake_message = SendRequest(snake, NetworkPackageFlag.ACTIVE_SNAKE)
-        for username in self.client_out_queue_dict.keys():
-            self.client_out_queue_dict[username].put(snake_message)
 
     def shutdown_user(self, username):
         if username in self.client_senders_dict.keys() and username in self.client_out_queue_dict.keys():

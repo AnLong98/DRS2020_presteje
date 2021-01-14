@@ -38,14 +38,12 @@ class Game:
 
     def set_active_player(self, active_player):
         self.active_player = active_player
-        self.network_manager.notify_active_player(active_player)
 
     def set_active_snake(self, active_snake):
         if self.active_snake:
             self.active_snake.set_inactive()
         self.active_snake = active_snake
         self.active_snake.set_active()
-        self.network_manager.notify_active_snake(active_snake)
 
     def change_player(self):
         self.game_mutex.acquire()
@@ -57,7 +55,8 @@ class Game:
         next_snake = self.active_player.snakes[0]
         self.set_active_snake(next_snake)
         self.reset_played_steps()
-        self.network_manager.send_state_to_players(self.food, self.players)
+        #self.network_manager.notify_active_player(self.active_player)
+        self.network_manager.send_state_to_players(self.food, self.players, self.active_player)
         self.reset_timer()
         self.game_mutex.release()
 
@@ -129,11 +128,11 @@ class Game:
 
     def run_game(self):
         #send initial game parameters to all clients
-        self.network_manager.send_state_to_players(self.food, self.players)
         self.set_active_player(self.players[0])
         self.set_active_snake(self.players[0].snakes[0])
         self.network_manager.notify_start_timer()
         self.game_timer.start()
+        self.network_manager.send_state_to_players(self.food, self.players, self.active_player)
         self.network_manager.notify_start_input(self.active_player.user_name)
 
         while True:
@@ -206,9 +205,11 @@ class Game:
                     for snake in trapped_snakes:
                         for player in self.players:
                             if snake.owner_name == player.user_name:
-                                print("Killing snake " + str(snake.snake_parts[0].x_coordinate) + " " + str(snake.snake_parts[0].y_coordinate) )
                                 self.all_snakes.remove(snake)
                                 player.remove_snake(snake)
+                    self.network_manager.notify_active_player(self.active_player)
+                    self.network_manager.send_players_to_players(self.players)
+
 
                     if self.is_it_over2() != None:
                         return # TODO::Add more logic
@@ -219,6 +220,7 @@ class Game:
                     self.change_player()
                     self.game_mutex.acquire()
                     self.reset_timer()
+
 
             self.network_manager.notify_active_player(self.active_player)
             self.game_mutex.release()

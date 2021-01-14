@@ -1,4 +1,7 @@
+import errno
+import socket
 import threading
+from datetime import datetime
 from threading import Thread
 import select
 
@@ -53,9 +56,19 @@ class ClientSocketReceiver(SocketManager, Thread):
                 continue
             try:
                 message, flag = self.recv_message()
+            except socket.error as e:
+                if e.args[0] == errno.EWOULDBLOCK:
+                    print('EWOULDBLOCK')
+                    continue
+                else:
+                    self.shutdown()
+                    print("Error occurred on receive ", e)
+                    self.exit_event.set()
+                    self.drawing_manager.close_window()
+                    return
             except Exception as exc:
                 self.shutdown()
-                print("Error occured on receive %s", exc)
+                print("Error occurred on receive ", exc)
                 self.exit_event.set()
                 self.drawing_manager.close_window()
                 return
@@ -66,14 +79,10 @@ class ClientSocketReceiver(SocketManager, Thread):
                 return
 
             if flag == NetworkPackageFlag.FOOD:
-                thread = threading.Thread(target=self.drawing_manager.draw_food, args=(message, ))
-                thread.setDaemon(True)
-                thread.start()
+                self.drawing_manager.draw_food(message)
 
             elif flag == NetworkPackageFlag.PLAYERS:
-                thread = threading.Thread(target=self.drawing_manager.update_players, args=(message, ))
-                thread.setDaemon(True)
-                thread.start()
+                self.drawing_manager.update_players(message)
 
             elif flag == NetworkPackageFlag.STOP_INPUT:
                 self.drawing_manager.stop_input()
@@ -87,13 +96,14 @@ class ClientSocketReceiver(SocketManager, Thread):
             elif flag == NetworkPackageFlag.RESET_TIMER:
                 self.drawing_manager.reset_turn_time()
 
-            elif flag == NetworkPackageFlag.ACTIVE_SNAKE:
-                self.drawing_manager.change_head(message)
-
             elif flag == NetworkPackageFlag.ACTIVE_PLAYER:
-                thread = threading.Thread(target=self.drawing_manager.set_active_player, args=(message, ))
-                thread.setDaemon(True)
-                thread.start()
+                self.drawing_manager.set_active_player(message)
+
+            elif flag == NetworkPackageFlag.GAME_STATE:
+                food = message[0]
+                players = message[1]
+                active_p = message[2]
+                self.drawing_manager.update_game_state(players, food, active_p)
 
             elif flag == NetworkPackageFlag.GAME_OVER:
                 #game is over, do some game over things here

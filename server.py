@@ -81,7 +81,7 @@ if __name__ == "__main__":
     for player in players:
         all_snakes.extend(player.snakes)
 
-    for i in range(0, 150):
+    for i in range(0, 30):
         food.append(food_manager.generate_food(1, 1, 15, all_snakes, food))
 
     food.append(

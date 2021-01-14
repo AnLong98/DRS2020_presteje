@@ -16,6 +16,7 @@ class NetworkPackageFlag:
     ACTIVE_SNAKE = 12
     USERNAME_INVALID = 11
     USERNAME_VALID = 13
+    GAME_STATE = 14
 
 
 class SocketManager:
@@ -24,7 +25,7 @@ class SocketManager:
 
     def send_message(self, message, package_flag):
         message_bytes = pickle.dumps(message)
-        print('Sending ' + str(len(message_bytes)))
+        print('Sending ' + str(len(message_bytes)) + "FLAG " + str(package_flag))
         message_size = struct.pack(">I", len(message_bytes))
         flag = struct.pack(">I", package_flag)
         network_message = message_size + flag + message_bytes
@@ -50,5 +51,8 @@ class SocketManager:
         return data
 
     def shutdown(self):
-        self.socket.shutdown(socket.SHUT_RDWR)
-        self.socket.close()
+        try:
+            self.socket.shutdown(socket.SHUT_RDWR)
+            self.socket.close()
+        finally:
+            print('Socket closed')
