@@ -83,7 +83,7 @@ class ServerNetworkManager:
 
     def notify_game_over(self, winner, all_players):
         winner_and_players = []
-        winner_and_players.append(winner)
+        winner_and_players.append([winner])
         winner_and_players.append(all_players)  # [winner, [all_players]]
         player_message = SendRequest(winner_and_players, NetworkPackageFlag.GAME_OVER)
         for username in self.client_out_queue_dict.keys():

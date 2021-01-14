@@ -188,6 +188,8 @@ class Game:
                         self.change_player()
                         self.game_mutex.acquire()
                         self.reset_timer()
+                    else:
+                        return # TODO::Add more logic
 
                 elif collision_result != CollisionDetectionResult.NO_COLLISION:
                     self.all_snakes.remove(self.active_snake)
@@ -207,7 +209,8 @@ class Game:
                                 self.all_snakes.remove(snake)
                                 player.remove_snake(snake)
 
-                    self.is_it_over2()
+                    if self.is_it_over2() != None:
+                        return # TODO::Add more logic
 
 
                 if self.check_player_steps() is None:

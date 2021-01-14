@@ -1,6 +1,8 @@
 import socket
 from threading import Thread
 import select
+
+from GUI.client_finish_window import ClientFinishWindow
 from Network.socket_manager import SocketManager, NetworkPackageFlag
 
 
@@ -89,7 +91,9 @@ class ClientSocketReceiver(SocketManager, Thread):
 
             elif flag == NetworkPackageFlag.GAME_OVER:
                 #game is over, do some game over things here
-                return
+                self.drawing_manager.stop_input()
+                ClientFinishWindow(message[0],message[1]).show()
+                continue
             elif flag == NetworkPackageFlag.USERNAME_INVALID:
                 #TODO Handle username not unique
                 print("username not unique")
