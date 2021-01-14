@@ -8,10 +8,6 @@ class DrawingManager:
     def draw_food(self, food):
         self.game_board.update_food(food)
 
-    def change_head(self, snake):
-        #TODO: This needs to be fixed
-        self.game_board.change_head_color(snake)
-
     def reset_turn_time(self):
         self.score_board.reset_timer()
 
@@ -35,6 +31,7 @@ class DrawingManager:
         self.score_board.init_timer()
 
     def set_active_player(self, player):
+        self.game_board.update_active_player(player)
         self.score_board.set_active_player_on_information_frame(player)
 
     def close_window(self):
@@ -42,4 +39,7 @@ class DrawingManager:
 
     def add_winner(self, player):
         self.score_board.set_winner(player)
+
+    def change_head(self, snake):
+        self.game_board.change_head_color(snake)
 

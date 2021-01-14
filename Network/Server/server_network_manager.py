@@ -45,6 +45,11 @@ class ServerNetworkManager:
         receiver.start()
         return recv_queue, receiver
 
+    def send_food_to_players(self, food):
+        food_message = SendRequest(food, NetworkPackageFlag.FOOD)
+        for username in self.client_out_queue_dict.keys():
+            self.client_out_queue_dict[username].put(food_message)
+
     def send_state_to_players(self, food, players):
         food_message = SendRequest(food, NetworkPackageFlag.FOOD)
         players_message = SendRequest(players, NetworkPackageFlag.PLAYERS)

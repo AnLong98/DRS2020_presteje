@@ -11,6 +11,7 @@ class GameBoard(QFrame):
         self.active_snake = None
         self.snakes = []
         self.food = []
+        self.active_player = None
         self.define_frame_style()
 
     def define_frame_style(self):
@@ -38,14 +39,27 @@ class GameBoard(QFrame):
         self.snakes = snakes
         self.update()
 
+    def update_active_player(self, player):
+        self.active_player = player
+        self.update()
+
     def update_food(self, food):
         self.food = food
         self.update()
 
     def paintEvent(self, event):
         qp = QPainter(self)
+        active_player_name = ''
+
+        if self.active_player:
+            active_player_name = self.active_player.user_name
+            for snake in self.active_player.snakes:
+                for part in snake.snake_parts:
+                    self.draw_square(qp, part, snake)
 
         for snake in self.snakes:
+            if snake.owner_name == active_player_name:
+                continue
             for part in snake.snake_parts:
                 self.draw_square(qp, part, snake)
 
