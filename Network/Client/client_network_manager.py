@@ -1,4 +1,4 @@
-import socket
+import threading
 from threading import Thread
 import select
 
@@ -66,10 +66,14 @@ class ClientSocketReceiver(SocketManager, Thread):
                 return
 
             if flag == NetworkPackageFlag.FOOD:
-                self.drawing_manager.draw_food(message)
+                thread = threading.Thread(target=self.drawing_manager.draw_food, args=(message, ))
+                thread.setDaemon(True)
+                thread.start()
 
             elif flag == NetworkPackageFlag.PLAYERS:
-                self.drawing_manager.update_players(message)
+                thread = threading.Thread(target=self.drawing_manager.update_players, args=(message, ))
+                thread.setDaemon(True)
+                thread.start()
 
             elif flag == NetworkPackageFlag.STOP_INPUT:
                 self.drawing_manager.stop_input()
@@ -87,16 +91,14 @@ class ClientSocketReceiver(SocketManager, Thread):
                 self.drawing_manager.change_head(message)
 
             elif flag == NetworkPackageFlag.ACTIVE_PLAYER:
-                self.drawing_manager.set_active_player(message)
+                thread = threading.Thread(target=self.drawing_manager.set_active_player, args=(message, ))
+                thread.setDaemon(True)
+                thread.start()
 
             elif flag == NetworkPackageFlag.GAME_OVER:
                 #game is over, do some game over things here
                 self.drawing_manager.stop_input()
                 ClientFinishWindow(message[0],message[1]).show()
-                continue
-            elif flag == NetworkPackageFlag.USERNAME_INVALID:
-                #TODO Handle username not unique
-                print("username not unique")
                 continue
 
 

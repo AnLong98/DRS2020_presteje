@@ -176,6 +176,7 @@ class Game:
                                                                                   self.all_snakes, self.food)
                         self.active_player.add_snake(snake)
                         self.all_snakes.append(snake)
+                    self.network_manager.send_food_to_players(self.food)
 
                 elif collision_result == CollisionDetectionResult.FRIENDLY_COLLISION or\
                         collision_result == CollisionDetectionResult.AUTO_COLLISION:
@@ -219,7 +220,6 @@ class Game:
                     self.game_mutex.acquire()
                     self.reset_timer()
 
-            self.network_manager.send_state_to_players(self.food, self.players)
             self.network_manager.notify_active_player(self.active_player)
             self.game_mutex.release()
 

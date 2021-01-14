@@ -24,6 +24,7 @@ class SocketManager:
 
     def send_message(self, message, package_flag):
         message_bytes = pickle.dumps(message)
+        print('Sending ' + str(len(message_bytes)))
         message_size = struct.pack(">I", len(message_bytes))
         flag = struct.pack(">I", package_flag)
         network_message = message_size + flag + message_bytes
