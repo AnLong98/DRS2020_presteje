@@ -19,7 +19,6 @@ class SnakePartManager:
         new_part = SnakePart(snake_tail_previous_x, snake_tail_previous_y, self.part_width, self.part_height, SnakePartType.BODY)
         active_snake.add_snake_part(new_part)
 
-
     def generate_snake_for_player(self, player,  snake_size, all_snakes, all_food):
         random_upper_coeficient_x = self.table_width / self.part_width
         random_upper_coeficient_y = self.table_height / self.part_height
@@ -37,7 +36,6 @@ class SnakePartManager:
                 snake_size -= 1
                 if self.generate_body_elements_for_snake(snake_size, elements_stack, all_snakes, all_food):
                     return self.create_snake_from_drawable_components(elements_stack, player)
-
 
 
     def generate_body_elements_for_snake(self, elements_to_generate,elements_stack, all_snakes, all_food):
@@ -62,7 +60,7 @@ class SnakePartManager:
                 if is_found:
                     return True
                 else:
-                    # since left side is dead end we need to look further
+                    # since this side is dead end we need to look further
                     elements_stack.pop()
                     elements_to_generate += 1
         return False

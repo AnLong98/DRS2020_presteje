@@ -1,4 +1,7 @@
+from functools import partial
+
 from Models.drawable_component_base import DrawableComponentBase
+import multiprocessing
 
 
 class CollisionDetectionResult:
@@ -14,31 +17,64 @@ class CollisionManager:
     def __init__(self, table_length, table_height):
         self.table_length = table_length
         self.table_height = table_height
+        self.collision_detection_pool = multiprocessing.Pool(5)
 
     def check_moving_snake_collision(self, moving_snake, all_snakes, all_food):
         snake_head = moving_snake.snake_parts[0]
 
-        #check if snake head collided with window border
-        if self.check_component_to_wall_collision(snake_head):
+        #Delegate detection to pool workers
+        food_collision_result = self.collision_detection_pool.apply_async(self.is_colliding_with_food,
+                                                                          args=(snake_head, all_food))
+
+        wall_collision_result = self.collision_detection_pool.apply_async(self.check_component_to_wall_collision,
+                                                                          args=(snake_head, ))
+
+        self_collision_result = self.collision_detection_pool.apply_async(self.check_head_to_body_collision,
+                                                                          args=(snake_head, moving_snake))
+
+        other_snakes_collision_result = self.collision_detection_pool.apply_async(self.check_snake_to_snakes_collision,
+                                                                                  args=(moving_snake, all_snakes))
+
+        #Get results form workers
+        result = food_collision_result.get()
+        if result[0]:
+            return CollisionDetectionResult.FOOD_COLLISION, all_food[result[1]]
+
+        result = wall_collision_result.get()
+        if result:
             return CollisionDetectionResult.WALL_COLLISION, None
 
-        #check if snake collided with itself
-        if self.check_head_to_body_collision(snake_head, moving_snake):
+        result = self_collision_result.get()
+        if result:
             return CollisionDetectionResult.AUTO_COLLISION, moving_snake
 
-        #check for collision with food
-        for food in all_food:
-            if self.check_components_collision(food, snake_head):
-                return CollisionDetectionResult.FOOD_COLLISION, food
+        result = other_snakes_collision_result.get()
+        if result[0] != CollisionDetectionResult.NO_COLLISION:
+            return result[0], all_snakes[result[1]]
 
-        #check for collision with other snakes:
+        return CollisionDetectionResult.NO_COLLISION, None
+
+
+    def is_colliding_with_food(self, drawable_component, all_food):
+        i = 0
+        for food in all_food:
+            if self.check_components_collision(food, drawable_component):
+                return True, i
+            i += 1
+        return False, None
+
+
+    def check_snake_to_snakes_collision(self, moving_snake, all_snakes):
+        snake_head = moving_snake.snake_parts[0]
+        i = 0
+        # check for collision with other snakes:
         for snake in all_snakes:
             is_colliding = self.check_head_to_body_collision(snake_head, snake)
             if is_colliding and snake.owner_name == moving_snake.owner_name:
-                return CollisionDetectionResult.FRIENDLY_COLLISION, snake
+                return CollisionDetectionResult.FRIENDLY_COLLISION, i
             elif is_colliding and snake.owner_name != moving_snake.owner_name:
-                return CollisionDetectionResult.ENEMY_COLLISION, snake
-
+                return CollisionDetectionResult.ENEMY_COLLISION, i
+            i += 1
         return CollisionDetectionResult.NO_COLLISION, None
 
 
@@ -98,7 +134,6 @@ class CollisionManager:
         if self.check_component_to_wall_collision(drawable_component):
             return True
 
-        # check for collision with food
         for food in all_food:
             if self.check_components_collision(food, drawable_component):
                 return True
@@ -177,3 +212,11 @@ class CollisionManager:
                 return True
 
         return False
+
+    def __getstate__(self):
+        self_dict = self.__dict__.copy()
+        del self_dict['collision_detection_pool']
+        return self_dict
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)

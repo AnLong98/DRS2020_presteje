@@ -40,7 +40,7 @@ class ClientSocketReceiver(SocketManager, Thread):
     def run(self):
         readable_sockets = [self.socketc]
         while not self.exit_event.is_set():
-            read, write, error = select.select(readable_sockets, [], readable_sockets, 0)
+            read, write, error = select.select(readable_sockets, [], readable_sockets, 1)
 
             if error:
                 print('Error occured on select')
