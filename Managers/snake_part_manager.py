@@ -7,7 +7,9 @@ from Models.snake_part import SnakePart, SnakePartType
 
 
 class SnakePartManager:
-    def __init__(self, part_width, part_height, collision_manager):
+    def __init__(self, part_width, part_height, collision_manager, table_width, table_height):
+        self.table_width  = table_width
+        self.table_height = table_height
         self.part_width = part_width
         self.part_height = part_height
         self.collision_manager = collision_manager
@@ -18,9 +20,9 @@ class SnakePartManager:
         active_snake.add_snake_part(new_part)
 
 
-    def generate_snake_for_player(self, player, table_width, table_height, snake_size):
-        random_upper_coeficient_x = table_width / self.part_width
-        random_upper_coeficient_y = table_height / self.part_height
+    def generate_snake_for_player(self, player,  snake_size, all_snakes, all_food):
+        random_upper_coeficient_x = self.table_width / self.part_width
+        random_upper_coeficient_y = self.table_height / self.part_height
         #generate free starting position
         while True:
             elements_stack = []
@@ -29,16 +31,16 @@ class SnakePartManager:
 
             new_part = DrawableComponentBase(generated_x, generated_y, self.part_width, self.part_height)
 
-            is_colliding = self.collision_manager.is_coordinate_colliding(new_part)
+            is_colliding = self.collision_manager.is_coordinate_colliding(all_snakes, all_food, new_part)
             if not is_colliding:
                 elements_stack.append(new_part)
                 snake_size -= 1
-                if self.generate_body_elements_for_snake(snake_size, elements_stack):
+                if self.generate_body_elements_for_snake(snake_size, elements_stack, all_snakes, all_food):
                     return self.create_snake_from_drawable_components(elements_stack, player)
 
 
 
-    def generate_body_elements_for_snake(self, elements_to_generate,elements_stack):
+    def generate_body_elements_for_snake(self, elements_to_generate,elements_stack, all_snakes, all_food):
 
         left_side = (-1, 0)
         right_side = (1, 0)
@@ -49,12 +51,13 @@ class SnakePartManager:
 
         for side in sides_to_check:
             if self.generate_drawable_component_on_tile(elements_stack, side[0] * self.part_width,
-                                                        side[1] * self.part_height):
+                                                        side[1] * self.part_height, all_snakes, all_food):
                 elements_to_generate -= 1
                 if elements_to_generate == 0:
                     return True
                 # search this side of the branch for free spots
-                is_found = self.generate_body_elements_for_snake(elements_to_generate,elements_stack)
+                is_found = self.generate_body_elements_for_snake(elements_to_generate, elements_stack,
+                                                                 all_snakes, all_food)
                 # return back if found enough free spots
                 if is_found:
                     return True
@@ -65,13 +68,13 @@ class SnakePartManager:
         return False
 
 
-    def generate_drawable_component_on_tile(self, elements_stack, x_delta, y_delta):
+    def generate_drawable_component_on_tile(self, elements_stack, x_delta, y_delta, all_snakes, all_food):
         previous_part_x = elements_stack[-1].x_coordinate
         previous_part_y = elements_stack[-1].y_coordinate
         # check if down side is free
         part = DrawableComponentBase(previous_part_x + x_delta, previous_part_y + y_delta,
                                      self.part_width, self.part_height)
-        is_colliding = self.collision_manager.is_coordinate_colliding(part)
+        is_colliding = self.collision_manager.is_coordinate_colliding(all_snakes, all_food, part)
 
         is_colliding = is_colliding or self.collision_manager.is_colliding_with_marked_locations(part, elements_stack)
 
