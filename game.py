@@ -55,7 +55,6 @@ class Game:
         next_snake = self.active_player.snakes[0]
         self.set_active_snake(next_snake)
         self.reset_played_steps()
-        #self.network_manager.notify_active_player(self.active_player)
         self.network_manager.send_state_to_players(self.food, self.players, self.active_player)
         self.reset_timer()
         self.game_mutex.release()
@@ -175,7 +174,6 @@ class Game:
                                                                                   self.all_snakes, self.food)
                         self.active_player.add_snake(snake)
                         self.all_snakes.append(snake)
-                    self.network_manager.send_food_to_players(self.food)
 
                 elif collision_result == CollisionDetectionResult.FRIENDLY_COLLISION or\
                         collision_result == CollisionDetectionResult.AUTO_COLLISION:
@@ -207,8 +205,6 @@ class Game:
                             if snake.owner_name == player.user_name:
                                 self.all_snakes.remove(snake)
                                 player.remove_snake(snake)
-                    self.network_manager.notify_active_player(self.active_player)
-                    self.network_manager.send_players_to_players(self.players)
 
 
                     if self.is_it_over2() != None:
@@ -221,8 +217,7 @@ class Game:
                     self.game_mutex.acquire()
                     self.reset_timer()
 
-
-            self.network_manager.notify_active_player(self.active_player)
+            self.network_manager.send_state_to_players(self.food, self.players, self.active_player)
             self.game_mutex.release()
 
 

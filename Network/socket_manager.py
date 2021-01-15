@@ -1,3 +1,4 @@
+import errno
 import pickle
 import socket
 import struct
@@ -29,7 +30,7 @@ class SocketManager:
         message_size = struct.pack(">I", len(message_bytes))
         flag = struct.pack(">I", package_flag)
         network_message = message_size + flag + message_bytes
-        self.socket.sendall(network_message)
+        self.__sendall(self.socket, network_message)
 
     def recv_message(self):
         msglen = self.socket.recv(4)
@@ -44,11 +45,32 @@ class SocketManager:
         # Helper function to recv n bytes or return None if EOF is hit
         data = bytearray()
         while len(data) < length:
-            packet = sock.recv(length - len(data))
-            if not packet:
-                return None
-            data.extend(packet)
+            try:
+                packet = sock.recv(length - len(data))
+                if not packet:
+                    return None
+                data.extend(packet)
+            except socket.error as e:
+                if e.args[0] == errno.EWOULDBLOCK:
+                    print('EWOULDBLOCK MANAGER')
+                    continue
+                else:
+                    raise e  # rethrow for app level manager to handle
+
         return data
+
+    def __sendall(self, sock, data):
+        length_to_send = len(data)
+        sent_total = 0
+        while sent_total < length_to_send:
+            try:
+                sent_total += sock.send(data)
+            except socket.error as e:
+                if e.args[0] == errno.EWOULDBLOCK:
+                    print('EWOULDBLOCK MANAGER SEND')
+                    continue
+                else:
+                    raise e #rethrow for app level manager to handle
 
     def shutdown(self):
         try:

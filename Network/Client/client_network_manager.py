@@ -56,16 +56,6 @@ class ClientSocketReceiver(SocketManager, Thread):
                 continue
             try:
                 message, flag = self.recv_message()
-            except socket.error as e:
-                if e.args[0] == errno.EWOULDBLOCK:
-                    print('EWOULDBLOCK')
-                    continue
-                else:
-                    self.shutdown()
-                    print("Error occurred on receive ", e)
-                    self.exit_event.set()
-                    self.drawing_manager.close_window()
-                    return
             except Exception as exc:
                 self.shutdown()
                 print("Error occurred on receive ", exc)

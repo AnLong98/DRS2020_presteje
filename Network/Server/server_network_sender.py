@@ -25,14 +25,6 @@ class ServerSocketSender(SocketManager, Thread):
                 try:
                      self.send_message(message.data, message.network_flag)
                      break
-                except socket.error as e:
-                    if e.args[0] == errno.EWOULDBLOCK:
-                        print('EWOULDBLOCK')
-                        time.sleep(1)  # short delay, no tight loops
-                    else:
-                        print("Client sender disconnected %s", e)
-                        self.shutdown()
-                        return
                 except Exception as exc:
                     print("Client sender disconnected %s", exc)
                     self.shutdown()

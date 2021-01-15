@@ -22,6 +22,7 @@ class DrawingManager:
         self.game_board.set_food(food)
         self.game_board.set_active_player(active_player)
         self.score_board.set_active_player_on_information_frame(active_player)
+        self.game_board.update()
 
     def update_players(self, players):
         snakes = []

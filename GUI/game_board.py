@@ -12,11 +12,11 @@ class GameBoard(QFrame):
         self.food = []
         self.active_player = None
         self.define_frame_style()
-        self.qTimer = QTimer()
-        self.qTimer.setInterval(50)
+       # self.qTimer = QTimer()
+        #self.qTimer.setInterval(50)
         # connect timeout signal to signal handler
-        self.qTimer.timeout.connect(self.update)
-        self.qTimer.start()
+      #  self.qTimer.timeout.connect(self.update)
+       # self.qTimer.start()
 
     def define_frame_style(self):
         self.setFixedSize(960, 810)
