@@ -30,7 +30,7 @@ class SnakePartManager:
 
             new_part = DrawableComponentBase(generated_x, generated_y, self.part_width, self.part_height)
 
-            is_colliding = self.collision_manager.is_coordinate_colliding(all_snakes, all_food, new_part)
+            is_colliding = self.collision_manager.is_component_colliding_with_any(all_snakes, all_food, new_part)
             if not is_colliding:
                 elements_stack.append(new_part)
                 snake_size -= 1
@@ -72,7 +72,7 @@ class SnakePartManager:
         # check if down side is free
         part = DrawableComponentBase(previous_part_x + x_delta, previous_part_y + y_delta,
                                      self.part_width, self.part_height)
-        is_colliding = self.collision_manager.is_coordinate_colliding(all_snakes, all_food, part)
+        is_colliding = self.collision_manager.is_component_colliding_with_any(all_snakes, all_food, part)
 
         is_colliding = is_colliding or self.collision_manager.is_colliding_with_marked_locations(part, elements_stack)
 

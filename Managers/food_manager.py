@@ -19,7 +19,7 @@ class FoodManager:
 
 
             generated_food = Food(generated_x, generated_y, food_size, food_size, points_worth, steps_worth, is_super_food)
-            if not self.collision_manager.is_coordinate_colliding(all_snakes, all_food, generated_food):
+            if not self.collision_manager.is_component_colliding_with_any(all_snakes, all_food, generated_food):
                 return generated_food
 
 

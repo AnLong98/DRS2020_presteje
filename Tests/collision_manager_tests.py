@@ -57,70 +57,70 @@ class CollisionManagerTests(unittest.TestCase):
 
         self.assertTrue(self.collision_manager.check_head_to_body_collision(snake_head, snake))
 
-    def test__check_components_collision__no_collision__returns_false(self):
+    def test__are_drawable_components_colliding__no_collision__returns_false(self):
         snake_part1 = self.mock_component(10, 10, 10, 10)
         snake_part2 = self.mock_component(21, 21, 10, 10)
 
-        self.assertFalse(self.collision_manager.check_components_collision(snake_part1, snake_part2))
+        self.assertFalse(self.collision_manager.are_drawable_components_colliding(snake_part1, snake_part2))
 
-    def test__check_components_collision__partial_collison_of_squares__returns_true(self):
+    def test__are_drawable_components_colliding__partial_collison_of_squares__returns_true(self):
         snake_part1 = self.mock_component(10, 10, 10, 10)
         snake_part2 = self.mock_component(15, 15, 10, 10)
 
-        self.assertTrue(self.collision_manager.check_components_collision(snake_part1, snake_part2))
+        self.assertTrue(self.collision_manager.are_drawable_components_colliding(snake_part1, snake_part2))
 
-    def test__check_components_collision__full_collison_of_squares__returns_true(self):
+    def test__are_drawable_components_colliding__full_collison_of_squares__returns_true(self):
         snake_part1 = self.mock_component(10, 10, 10, 10)
         snake_part2 = self.mock_component(10, 10, 10, 10)
 
-        self.assertTrue(self.collision_manager.check_components_collision(snake_part1, snake_part2))
+        self.assertTrue(self.collision_manager.are_drawable_components_colliding(snake_part1, snake_part2))
 
-    def test__check_components_collision__collison_of_rectangles_variable_dimensions__returns_true(self):
+    def test__are_drawable_components_colliding__collison_of_rectangles_variable_dimensions__returns_true(self):
         snake_part1 = self.mock_component(10, 3, 5, 6)
         snake_part2 = self.mock_component(13, 7, 3, 6)
 
-        self.assertTrue(self.collision_manager.check_components_collision(snake_part1, snake_part2))
+        self.assertTrue(self.collision_manager.are_drawable_components_colliding(snake_part1, snake_part2))
 
-    def test__check_components_collision__touching_component_no_collision__returns_false(self):
+    def test__are_drawable_components_colliding__touching_component_no_collision__returns_false(self):
         snake_part1 = self.mock_component(0, 0, 4, 5)
         snake_part2 = self.mock_component(5, 0, 4, 5)
 
-        self.assertFalse(self.collision_manager.check_components_collision(snake_part1, snake_part2))
+        self.assertFalse(self.collision_manager.are_drawable_components_colliding(snake_part1, snake_part2))
 
-    def test__check_component_to_wall_collision__no_collision__returns_false(self):
+    def test__is_colliding_with_wall__no_collision__returns_false(self):
         snake_part1 = self.mock_component(0, 0, 4, 5)
 
-        self.assertFalse(self.collision_manager.check_component_to_wall_collision(snake_part1, self.table_width, self.table_height))
+        self.assertFalse(self.collision_manager.is_colliding_with_wall(snake_part1, self.table_width, self.table_height))
 
-    def test__check_component_to_wall_collision__collision_negative_x__returns_true(self):
+    def test__is_colliding_with_wall__collision_negative_x__returns_true(self):
         snake_part1 = self.mock_component(-2, 0, 4, 5)
 
         self.assertTrue(
-            self.collision_manager.check_component_to_wall_collision(snake_part1, self.table_width, self.table_height))
+            self.collision_manager.is_colliding_with_wall(snake_part1, self.table_width, self.table_height))
 
-    def test__check_component_to_wall_collision__collision_x_boundary__returns_true(self):
+    def test__is_colliding_with_wall__collision_x_boundary__returns_true(self):
         snake_part1 = self.mock_component(98, 0, 4, 5)
 
         self.assertTrue(
-            self.collision_manager.check_component_to_wall_collision(snake_part1, self.table_width, self.table_height))
+            self.collision_manager.is_colliding_with_wall(snake_part1, self.table_width, self.table_height))
 
-    def test__check_component_to_wall_collision__collision_y_boundary__returns_true(self):
+    def test__is_colliding_with_wall__collision_y_boundary__returns_true(self):
         snake_part1 = self.mock_component(98, 98, 1, 5)
 
         self.assertTrue(
-            self.collision_manager.check_component_to_wall_collision(snake_part1, self.table_width, self.table_height))
+            self.collision_manager.is_colliding_with_wall(snake_part1, self.table_width, self.table_height))
 
-    def test__check_component_to_wall_collision__collision_negative_y__returns_true(self):
+    def test__is_colliding_with_wall__collision_negative_y__returns_true(self):
         snake_part1 = self.mock_component(98, -1, 1, 5)
 
         self.assertTrue(
-            self.collision_manager.check_component_to_wall_collision(snake_part1, self.table_width, self.table_height))
+            self.collision_manager.is_colliding_with_wall(snake_part1, self.table_width, self.table_height))
 
-    def test__check_component_to_wall_collision__x_y_boundary_collision__returns_true(self):
+    def test__is_colliding_with_wall__x_y_boundary_collision__returns_true(self):
         snake_part1 = self.mock_component(98, 98, 5, 5)
 
         self.assertTrue(
-            self.collision_manager.check_component_to_wall_collision(snake_part1, self.table_width, self.table_height))
+            self.collision_manager.is_colliding_with_wall(snake_part1, self.table_width, self.table_height))
 
     def test__check_moving_snake_collision__wall_collision__returns_wall_collision(self):
         snake_parts = []
