@@ -76,7 +76,7 @@ class Game:
                 return not None
         return None
 
-    def is_it_over(self):
+    def is_it_game_over(self):
         if self.active_player.snakes is not None:
             return None
         count = 0  # aktivnom igracu su sve zmije None
@@ -96,16 +96,21 @@ class Game:
         else:
             return None
 
-    def is_it_over2(self):
+    def is_it_game_over_by_trapping_an_enemy_snake(self):
         for player in self.players:
             if player.snakes is not None and player.user_name != self.active_player.user_name:
                 return None
 
+        '''
         self.winner = self.shift_players_manager.shift_player(self.players, self.active_player)  # aktivan igrac je i dalje isti, samo sto smo rekli ko je winner
         self.game_timer.cancel()
         self.game_mutex.release()
         self.change_player()
         self.game_mutex.acquire()
+        '''
+        self.winner = self.active_player
+        self.game_timer.cancel()
+        self.network_manager.send_state_to_players(self.food, self.players, self.active_player)
 
         self.network_manager.notify_game_over(self.winner, self.players)
         return 1
@@ -181,7 +186,7 @@ class Game:
                         self.all_snakes.remove(snake)
                     self.alive_players_count -= 1
                     self.active_player.snakes = None
-                    if self.is_it_over() is None:
+                    if self.is_it_game_over() is None:
                         self.game_mutex.release()
                         self.change_player()
                         self.game_mutex.acquire()
@@ -192,7 +197,7 @@ class Game:
                 elif collision_result != CollisionDetectionResult.NO_COLLISION:
                     self.all_snakes.remove(self.active_snake)
                     self.active_player.remove_snake(self.active_snake)
-                    if self.is_it_over() is None:
+                    if self.is_it_game_over() is None:
                         self.game_mutex.release()
                         self.change_player()
                         self.game_mutex.acquire()
@@ -207,7 +212,7 @@ class Game:
                                 player.remove_snake(snake)
 
 
-                    if self.is_it_over2() != None:
+                    if self.is_it_game_over_by_trapping_an_enemy_snake() != None:
                         return # TODO::Add more logic
 
 
