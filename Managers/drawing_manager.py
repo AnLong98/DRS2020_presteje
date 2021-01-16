@@ -1,9 +1,10 @@
 
 class DrawingManager:
-    def __init__(self, game_board, score_board, main_window):
+    def __init__(self, game_board, score_board, main_window, repaint):
         self.game_board = game_board
         self.score_board = score_board
         self.main_window = main_window
+        self.repaint_signal = repaint.repaint_signal
 
     def draw_food(self, food):
         self.game_board.set_food(food)
@@ -22,7 +23,7 @@ class DrawingManager:
         self.game_board.set_food(food)
         self.game_board.set_active_player(active_player)
         self.score_board.set_active_player_on_information_frame(active_player)
-        self.game_board.update()
+        self.repaint_signal.emit()
 
     def update_players(self, players):
         snakes = []

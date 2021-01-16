@@ -4,19 +4,19 @@ from PyQt5.QtGui import *
 
 from Models.snake_part import SnakePartType
 
+class Repaint(QObject):
+    repaint_signal = pyqtSignal()
+
 
 class GameBoard(QFrame):
-    def __init__(self):
+    def __init__(self, repaint):
         super(GameBoard, self).__init__()
         self.snakes = []
         self.food = []
         self.active_player = None
         self.define_frame_style()
-       # self.qTimer = QTimer()
-        #self.qTimer.setInterval(50)
-        # connect timeout signal to signal handler
-      #  self.qTimer.timeout.connect(self.update)
-       # self.qTimer.start()
+        self.repaint_signal = repaint.repaint_signal
+        self.repaint_signal.connect(self.update)
 
     def define_frame_style(self):
         self.setFixedSize(960, 810)
