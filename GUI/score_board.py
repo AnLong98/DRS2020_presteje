@@ -121,7 +121,7 @@ class InformationFrame(QFrame):
 
     def define_frame_style(self):
         layout = QVBoxLayout()
-        font1 = QFont('Arial', 11.5)
+        font1 = QFont("Arial", 12)
         font2 = QFont('Arial', 17)
 
         label1 = QLabel("Active player: ", self)

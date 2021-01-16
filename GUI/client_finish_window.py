@@ -15,7 +15,7 @@ class ClientFinishWindow(QDialog):
         self.init_fields()
 
     def init_fields(self):
-        winner_label = QLabel(f"The winner is: {self.winner} ", self)
+        winner_label = QLabel(f"The winner is: {self.winner[0].user_name} ", self)
         winner_label.setFont(QFont("Arial", 25))
 
         winner_row = QHBoxLayout()
@@ -30,7 +30,7 @@ class ClientFinishWindow(QDialog):
         score_label.setFont(QFont("Arial", 25))
         score_row_column.addWidget(score_label)
         for i in range(self.number_of_players):
-            word = QLabel(f"{i + 1}. {self.all_players[i]}", self)
+            word = QLabel(f"{i + 1}. {self.all_players[i].user_name}", self)
             word.setFont(QFont("Arial", 15))
             score_row_column.addWidget(word)
         score_row.addLayout(score_row_column)
