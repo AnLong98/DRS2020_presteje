@@ -98,8 +98,10 @@ class ClientSocketReceiver(SocketManager, Thread):
             elif flag == NetworkPackageFlag.GAME_OVER:
                 #game is over, do some game over things here
                 self.drawing_manager.stop_input()
-                finish_window = ClientFinishWindow(message[0],message[1])
-                finish_window.exec()
+                self.drawing_manager.show_results(message[0], message[1])
+                # finish_window = ClientFinishWindow(message[0],message[1])
+                # finish_window.exec()
+                # call signal that will handle finish window
                 continue
 
 
