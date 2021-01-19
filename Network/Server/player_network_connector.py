@@ -114,10 +114,19 @@ class PlayerNetworkConnector:
             raise Exception("Something is very wrong with listener")
 
     def get_pc_ip(self):
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        ip = s.getsockname()[0]
-        s.shutdown(socket.SHUT_RDWR)
-        s.close()
-        return ip
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            ip = s.getsockname()[0]
+            s.shutdown(socket.SHUT_RDWR)
+            s.close()
+            return ip
+        except Exception as ex:
+            print("Cloud not connect to google DNS ", ex)
+        try:
+            ip = socket.gethostbyname(socket.gethostname())
+            return ip
+        except Exception as ex:
+            print("Cloud not retrieve host IP ", ex)
+        return ""
 
