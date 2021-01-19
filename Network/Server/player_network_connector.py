@@ -18,20 +18,22 @@ class ConnectorHandle:
         self.username = name
 
 class PlayerNetworkConnector:
-    HOST = socket.gethostbyname(socket.gethostname())  # Current PC's IP address
-    PORT = 50005  # Arbitrary non-privileged port
+    HOST = ""  # Current PC's IP address
+    PORT = 0  # Arbitrary non-privileged port
     MAX_CONNECTIONS_LISTEN = 30 #Maximal number of connections for listen socket
 
     def await_client_connections(self, clients_number):
         socket_handle_dict = {}
         clients_dict = {}
+        self.HOST = self.get_pc_ip()
         try:
             listen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             listen_socket.bind((self.HOST, self.PORT))
             listen_socket.listen(self.MAX_CONNECTIONS_LISTEN)
-            print("Server is listening on IP and Port ", self.HOST, self.PORT)
-        except Exception:
-            print("Cloud not listen at server default port. Game aborted!")
+            ip_port = listen_socket.getsockname()
+            print("Server is listening on IP and Port ", ip_port[0], ip_port[1])
+        except Exception as ex:
+            print("Cloud not listen at server default port. Game aborted! ",ex)
             return None
 
         connection_attempts = 0
@@ -110,4 +112,12 @@ class PlayerNetworkConnector:
         if not readable_sockets:
             #This shouldn't ever happen
             raise Exception("Something is very wrong with listener")
+
+    def get_pc_ip(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.shutdown(socket.SHUT_RDWR)
+        s.close()
+        return ip
 
