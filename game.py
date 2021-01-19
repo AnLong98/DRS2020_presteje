@@ -2,7 +2,7 @@ import sys
 from threading import Lock, Timer
 from Managers.collision_manager import CollisionDetectionResult
 from Managers.movement_manager import KeyPressed
-
+from random import randrange
 
 
 class Game:
@@ -28,6 +28,9 @@ class Game:
         self.alive_players_count = len(self.players)
         self.players_finished_turn = 0
         self.winner = None
+        self.deux_ex_machine = None
+        self.timer = Timer(10, self.generate_deux_ex_machine)
+        self.timer.start()
         self.game_timer = Timer(10.0, self.change_player)
         self.game_mutex = Lock()
 
@@ -59,10 +62,34 @@ class Game:
         self.reset_timer()
         self.game_mutex.release()
 
-
     def change_snake(self):
         next_snake = self.shift_players_manager.shift_snakes(self.active_snake, self.active_player)
         self.set_active_snake(next_snake)
+
+    def generate_deux_ex_machine(self):
+        self.timer.cancel()
+        self.deux_ex_machine = self.food_manager.generate_food(0, 0, 15, self.all_snakes, self.food, True)
+        self.food.append(self.deux_ex_machine)
+
+    def activate_deux_ex_machine(self):
+        self.food.pop()  #self.food.remove(self.deux_ex_machine)  # kada radim sa remove kaze mi da ne postoji...
+        self.deux_ex_machine = None
+        self.timer = Timer(10, self.generate_deux_ex_machine)
+        self.timer.start()
+        if randrange(10) % 2 == 0:
+            snake = self.snake_part_manager.generate_snake_for_player(self.active_player, 5,
+                                                                      self.all_snakes, self.food)
+            self.active_player.add_snake(snake)
+            self.all_snakes.append(snake)
+        else:
+            if self.active_snake.steps - self.active_snake.played_steps >= 2:
+                self.active_snake.played_steps = 0
+            elif self.active_snake.steps - self.active_snake.played_steps == 1:
+                self.active_snake.played_steps = 1
+            elif self.active_snake.steps - self.active_snake.played_steps == 0:
+                self.active_snake.played_steps = 2
+            self.active_snake.steps = 2
+            # self.network_manager.send_state_to_players(self.food, self.players, self.active_player)
 
     def reset_played_steps(self):
         for player in self.players:  # ne moze samo prethodnom
@@ -86,6 +113,9 @@ class Game:
         if count == 1:
             self.winner = self.shift_players_manager.shift_player(self.players, self.active_player)  # aktivan igrac je i dalje isti, samo sto smo rekli ko je winner
             self.game_timer.cancel()
+            self.timer.cancel()
+            self.deux_ex_machine = None
+            # ako se ide na play again i odmah je prikaze onda ovde osveziti
             self.game_mutex.release()
             self.change_player()
             self.game_mutex.acquire()
@@ -110,6 +140,8 @@ class Game:
         '''
         self.winner = self.active_player
         self.game_timer.cancel()
+        self.timer.cancel()
+        self.deux_ex_machine = None
         self.network_manager.send_state_to_players(self.food, self.players, self.active_player)
 
         self.network_manager.notify_game_over(self.winner, self.players)
@@ -131,7 +163,7 @@ class Game:
         self.change_player()
 
     def run_game(self):
-        #send initial game parameters to all clients
+        # send initial game parameters to all clients
         self.set_active_player(self.players[0])
         self.set_active_snake(self.players[0].snakes[0])
         self.network_manager.notify_start_timer()
@@ -141,7 +173,7 @@ class Game:
 
         while True:
             command = self.network_manager.get_recv_queue.get()
-            #skip if issuer is not active player
+            # skip if issuer is not active player
             if command.key is None:
                 self.disconnect_player(command.username)
                 print('Umro Pantelija')
@@ -151,7 +183,7 @@ class Game:
             self.game_mutex.acquire()
             if command.key == KeyPressed.TAB:
                 self.change_snake()
-            elif self.active_snake.steps != self.active_snake.played_steps:  # ako igrac ima koraka sa trenutnom zmijom
+            elif self.active_snake.steps > self.active_snake.played_steps:  # ako igrac ima koraka sa trenutnom zmijom
                 snake_tail_x = self.active_snake.snake_parts[-1].x_coordinate
                 snake_tail_y = self.active_snake.snake_parts[-1].y_coordinate
                 if self.movement_manager.set_snake_direction(command.key, self.active_snake) is not None:
@@ -167,18 +199,14 @@ class Game:
                     self.active_player.increase_points(object_collided.points_worth)
                     self.snake_part_manager.increase_snake(self.active_snake, snake_tail_x, snake_tail_y)
 
-
-                    generated_food = self.food_manager.generate_food(object_collided.points_worth, object_collided.steps_worth,
+                    generated_food = self.food_manager.generate_food(object_collided.points_worth,
+                                                                     object_collided.steps_worth,
                                                                      object_collided.width, self.all_snakes, self.food,
                                                                      object_collided.is_super_food)
                     self.food.append(generated_food)
 
-
                     if object_collided.is_super_food:
-                        snake = self.snake_part_manager.generate_snake_for_player(self.active_player, 5,
-                                                                                  self.all_snakes, self.food)
-                        self.active_player.add_snake(snake)
-                        self.all_snakes.append(snake)
+                        self.activate_deux_ex_machine()
 
                 elif collision_result == CollisionDetectionResult.FRIENDLY_COLLISION or\
                         collision_result == CollisionDetectionResult.AUTO_COLLISION:
@@ -192,7 +220,7 @@ class Game:
                         self.game_mutex.acquire()
                         self.reset_timer()
                     else:
-                        return # TODO::Add more logic
+                        return  # TODO::Add more logic
 
                 elif collision_result != CollisionDetectionResult.NO_COLLISION:
                     self.all_snakes.remove(self.active_snake)
@@ -211,10 +239,8 @@ class Game:
                                 self.all_snakes.remove(snake)
                                 player.remove_snake(snake)
 
-
-                    if self.is_it_game_over_by_trapping_an_enemy_snake() != None:
-                        return # TODO::Add more logic
-
+                    if self.is_it_game_over_by_trapping_an_enemy_snake() is not None:
+                        return  # TODO::Add more logic
 
                 if self.check_player_steps() is None:
                     self.game_mutex.release()
