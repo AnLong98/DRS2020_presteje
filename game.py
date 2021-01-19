@@ -67,9 +67,13 @@ class Game:
             self.active_player.add_snake(snake)
             self.all_snakes.append(snake)
         else:
-            if self.active_snake.steps - self.active_snake.played_steps > 1:
+            if self.active_snake.steps - self.active_snake.played_steps >= 2:
                 self.active_snake.played_steps = 0
-            self.active_snake.steps = 2  # 1
+            elif self.active_snake.steps - self.active_snake.played_steps == 1:
+                self.active_snake.played_steps = 1
+            elif self.active_snake.steps - self.active_snake.played_steps == 0:
+                self.active_snake.played_steps = 2
+            self.active_snake.steps = 2
             self.drawing_manager.set_active_snake_on_score_board(self.active_snake)
 
     def set_active_player(self, active_player):
@@ -119,6 +123,8 @@ class Game:
             self.drawing_manager.add_winner(self.winner)
             self.drawing_manager.stop_turn_time()  # kill timmer -> ne radi
             self.timer.cancel()
+            self.deux_ex_machine = None
+            self.drawing_manager.draw_super_food(self.deux_ex_machine)
             #self.game_mutex.release()
             self.change_player()
 
@@ -138,6 +144,8 @@ class Game:
         self.drawing_manager.add_winner(self.winner)
         self.drawing_manager.stop_turn_time()  # kill timmer -> ne radi
         self.timer.cancel()
+        self.deux_ex_machine = None
+        self.drawing_manager.draw_super_food(self.deux_ex_machine)
         #self.game_mutex.release()
         self.change_player()
 
