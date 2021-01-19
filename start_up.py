@@ -28,8 +28,8 @@ class InGameInitializer:
         colors = ["#fff200", "#b87bba", "#3494e3", "#fa5700"]
 
         self.game_board = GameBoard()
-        timer = TimerFrame()
-        self.score_board = ScoreBoard(timer)
+        timer_frame = TimerFrame()
+        self.score_board = ScoreBoard(timer_frame)
 
         part_width = 15
         part_height = 15
@@ -45,6 +45,7 @@ class InGameInitializer:
         table_height = self.game_board.get_gameboard_height
 
         food = []
+        #deus_ex_machina = None
 
         for i in range(len(players)):
             p_snake = ps.all_snakes[i][:snakes]
@@ -60,12 +61,10 @@ class InGameInitializer:
             all_players.append(User(player_snake, 0, players[i], colors[i]))
             all_snakes.extend(player_snake)
 
-
         for i in range(0, 30):
-            food.append(self.food_manager.generate_food(1, 1, all_snakes, food, table_width, table_height, 15))
+            food.append(self.food_manager.generate_food(1, 1, all_snakes, food, None, table_width, table_height, 15))
 
-        food.append(self.food_manager.generate_food(1, 1, all_snakes, food, table_width, table_height, 15,
-                                               True))  # generate superfood
+        #deus_ex_machina = self.food_manager.generate_food(0, 0, all_snakes, food, table_width, table_height, 15, True)  # generate superfood
 
         self.game = Game(all_players, food, collision_manager, drawing_manager, movement_manager, snake_part_manager, self.food_manager, shift_players_manager, table_width, table_height, self)
         self.game.set_active_player(all_players[0])
@@ -74,7 +73,7 @@ class InGameInitializer:
         self.score_board.set_active_player_on_button_frame(all_players[0])
         self.score_board.set_active_snake_on_button_frame(all_players[0].snakes[0])
 
-        timer.set_game(self.game)
+        timer_frame.set_game(self.game)
 
         self.last_players = copy.deepcopy(all_players)
         self.last_snakes = copy.deepcopy(all_snakes)
@@ -85,13 +84,14 @@ class InGameInitializer:
         self.copy_last_snakes = copy.deepcopy(self.last_snakes)
         self.game.players = self.copy_last_players
         food = []
+        #deux_ex_machine = None
 
         for i in range(0, 30):
-            food.append(self.food_manager.generate_food(1, 1, self.copy_last_snakes, food, self.game.table_width, self.game.table_height, 15))
+            food.append(self.food_manager.generate_food(1, 1, self.copy_last_snakes, food, None, self.game.table_width, self.game.table_height, 15))
 
-        food.append(self.food_manager.generate_food(1, 1, self.copy_last_snakes, food, self.game.table_width, self.game.table_height, 15,
-                                               True))  # generate superfood
+        #deus_ex_machina = self.food_manager.generate_food(0, 0, self.copy_last_snakes, food, self.game.table_width, self.game.table_height, 15, True)  # generate superfood
         self.game.food = food
+        #self.game.deux_ex_machine = deus_ex_machina
 
         self.score_board.set_active_player_on_button_frame(self.copy_last_players[0])
         self.score_board.set_active_snake_on_button_frame(self.copy_last_players[0].snakes[0])

@@ -7,7 +7,7 @@ class FoodManager:
     def __init__(self,  collision_manager):
         self.collision_manager = collision_manager
 
-    def generate_food(self, points_worth, steps_worth, all_snakes, all_food, table_width, table_height, food_size, is_super_food=False):
+    def generate_food(self, points_worth, steps_worth, all_snakes, all_food, super_food, table_width, table_height, food_size, is_super_food=False):
         random_upper_coeficient_x = table_width / food_size
         random_upper_coeficient_y = table_height / food_size
         while True:
@@ -18,13 +18,14 @@ class FoodManager:
             generated_food = Food(generated_x, generated_y, food_size, food_size, points_worth, steps_worth, is_super_food)
             if not self.collision_manager.is_coordinate_colliding(all_snakes,
                                                                  all_food,
+                                                                 super_food,
                                                                  table_width,
                                                                  table_height,
                                                                  generated_food):
                 return generated_food
 
 
-    def move_all_food(self, all_snakes, all_food, table_width, table_height):
+    def move_all_food(self, all_snakes, all_food, super_food, table_width, table_height):
         for food in all_food:
             movements_list = [-3, -2, -1, 1, 2, 3]
             food_x = food.x_coordinate
@@ -38,6 +39,7 @@ class FoodManager:
                     food.x_coordinate = food_x + step * 15
                     collision_result, _ = self.collision_manager.check_generated_food_collision(all_snakes,
                                                                                                 all_food,
+                                                                                                super_food,
                                                                                                 table_width,
                                                                                                 table_height,
                                                                                                 food)
@@ -52,6 +54,7 @@ class FoodManager:
                     food.y_coordinate = food_y + step * 15
                     collision_result, _ = self.collision_manager.check_generated_food_collision(all_snakes,
                                                                                                 all_food,
+                                                                                                super_food,
                                                                                                 table_width,
                                                                                                 table_height,
                                                                                                 food)

@@ -10,6 +10,7 @@ class GameBoard(QFrame):
         super(GameBoard, self).__init__()
         self.snakes = []
         self.food = []
+        self.super_food = None
         self.define_frame_style()
 
     def define_frame_style(self):
@@ -41,6 +42,10 @@ class GameBoard(QFrame):
         self.food = food
         self.update()
 
+    def update_super_food(self, super_food):
+        self.super_food = super_food
+        self.update()
+
     def paintEvent(self, event):
         qp = QPainter(self)
 
@@ -50,6 +55,9 @@ class GameBoard(QFrame):
 
         for f in self.food:
             self.draw_square_food(qp, f)
+
+        if self.super_food is not None:
+            self.draw_square_food(qp, self.super_food)
 
     def draw_square(self, qp, snake_part, snake):
         rect = self.contentsRect()

@@ -10,6 +10,9 @@ class DrawingManager:
     def draw_food(self, food):
         self.game_board.update_food(food)
 
+    def draw_super_food(self, super_food):
+        self.game_board.update_super_food(super_food)
+
     def add_player_to_scoreboard(self, players):
         self.score_board.update_players(players)
 
