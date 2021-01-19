@@ -72,7 +72,6 @@ class Game:
         self.food.append(self.deux_ex_machine)
 
     def activate_deux_ex_machine(self):
-        self.food.pop()  #self.food.remove(self.deux_ex_machine)  # kada radim sa remove kaze mi da ne postoji...
         self.deux_ex_machine = None
         self.timer = Timer(10, self.generate_deux_ex_machine)
         self.timer.start()
@@ -195,17 +194,17 @@ class Game:
                                                                                                         self.food)
                 if collision_result == CollisionDetectionResult.FOOD_COLLISION:
                     self.food.remove(object_collided)
-                    self.active_snake.increase_steps(object_collided.steps_worth)
-                    self.active_player.increase_points(object_collided.points_worth)
-                    self.snake_part_manager.increase_snake(self.active_snake, snake_tail_x, snake_tail_y)
+                    if object_collided.is_super_food is not True:
+                        self.active_snake.increase_steps(object_collided.steps_worth)
+                        self.active_player.increase_points(object_collided.points_worth)
+                        self.snake_part_manager.increase_snake(self.active_snake, snake_tail_x, snake_tail_y)
 
-                    generated_food = self.food_manager.generate_food(object_collided.points_worth,
-                                                                     object_collided.steps_worth,
-                                                                     object_collided.width, self.all_snakes, self.food,
-                                                                     object_collided.is_super_food)
-                    self.food.append(generated_food)
-
-                    if object_collided.is_super_food:
+                        generated_food = self.food_manager.generate_food(object_collided.points_worth,
+                                                                         object_collided.steps_worth,
+                                                                         object_collided.width, self.all_snakes, self.food,
+                                                                         object_collided.is_super_food)
+                        self.food.append(generated_food)
+                    else:
                         self.activate_deux_ex_machine()
 
                 elif collision_result == CollisionDetectionResult.FRIENDLY_COLLISION or\
