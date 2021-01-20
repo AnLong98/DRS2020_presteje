@@ -84,8 +84,7 @@ if __name__ == "__main__":
     for i in range(0, 30):
         food.append(food_manager.generate_food(1, 1, 15, all_snakes, food))
 
-    food.append(
-        food_manager.generate_food(1, 1, 15, all_snakes, food, True))  # generate superfood
+    #food.append(food_manager.generate_food(0, 0, 15, all_snakes, food, True))  # generate superfood
 
     # Uncomment for testing
     #for i in range(0, 200):
