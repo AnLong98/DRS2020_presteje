@@ -92,14 +92,19 @@ class ClientSocketReceiver(SocketManager, Thread):
             elif flag == NetworkPackageFlag.GAME_STATE:
                 food = message[0]
                 players = message[1]
+                print("IMENA USERA -- :")
+                for p in players:
+                    print(p.user_name)
                 active_p = message[2]
+                print(f"activ-{active_p.user_name}")
                 self.drawing_manager.update_game_state(players, food, active_p)
 
             elif flag == NetworkPackageFlag.GAME_OVER:
                 #game is over, do some game over things here
                 self.drawing_manager.stop_input()
-                finish_window = ClientFinishWindow(message[0],message[1])
-                finish_window.exec()
+                #finish_window = ClientFinishWindow(message[0],message[1])
+                #finish_window.exec()
+                print("cekaj 30 sekundi i pocinje gejm")
                 continue
 
 
