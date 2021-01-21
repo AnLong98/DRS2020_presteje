@@ -62,6 +62,7 @@ class ServerNetworkManager:
 
     def notify_start_input(self, username):
         input_message = SendRequest(1, NetworkPackageFlag.START_INPUT)
+        print(f"Kucaj - {username}")
         if username not in self.client_out_queue_dict:
             return
 
@@ -69,6 +70,7 @@ class ServerNetworkManager:
 
     def notify_stop_input(self, username):
         input_message = SendRequest(1, NetworkPackageFlag.STOP_INPUT)
+        print(f"Stani - {username}")
         if username not in self.client_out_queue_dict:
             return
 
@@ -103,6 +105,7 @@ class ServerNetworkManager:
             self.client_out_queue_dict[username].put(sentinel)
             self.client_senders_dict.pop(username)
             self.client_out_queue_dict.pop(username)
+            self.clients_dict.pop(username)
 
     def shutdown_all_user_connections(self):
         if not self.receiver_exit_event.is_set():
@@ -111,6 +114,7 @@ class ServerNetworkManager:
             self.client_out_queue_dict[username].put(self.client_senders_dict[username].sentinel)
             self.client_senders_dict.pop(username)
             self.client_out_queue_dict.pop(username)
+            self.clients_dict.pop(username)
 
 
 

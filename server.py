@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 import sys
+import copy
 from Managers.collision_manager import CollisionManager
 from Managers.food_manager import FoodManager
 from Managers.movement_manager import MovementManager
@@ -15,10 +16,11 @@ from game import Game
 from Models.player_snakes import PlayerSnakes
 
 
-class ServerInitializer:
+class GameInitializer:
     def __init__(self):
         self.colors = ["#fff200", "#b87bba", "#3494e3", "#fa5700"]
         self.all_snake_parts = PlayerSnakes()
+        self.all_players = []
 
     def __get_player(self, name, player_number, snake_count):
         player_snake_parts = self.all_snake_parts.all_snakes[player_number][:snake_count]
@@ -37,7 +39,25 @@ class ServerInitializer:
         players = []
         for i in range(number_of_players):
             players.append(self.__get_player(player_names[i], i, snake_count))
+
+        self.all_players = copy.deepcopy(players)
         return players
+
+    def get_players_deepcopy(self):
+        self.last_players = copy.deepcopy(self.all_players)
+        # Append all snakes
+        for player in self.last_players:
+            all_snakes.extend(player.snakes)
+
+        food = []
+
+        for i in range(0, 30):
+            food.append(food_manager.generate_food(1, 1, 15, all_snakes, food))
+
+        food.append(
+            food_manager.generate_food(1, 1, 15, all_snakes, food, False))
+
+        return self.last_players, food
 
 if __name__ == "__main__":
     part_width = 15
@@ -68,7 +88,9 @@ if __name__ == "__main__":
     food = []
     all_snakes = []
 
-    players = ServerInitializer().get_players(clients_number, player_names, snake_count)
+    initializer = GameInitializer()
+
+    players = initializer.get_players(clients_number, player_names, snake_count)
 
     collision_manager = CollisionManager(table_width, table_height)
     food_manager = FoodManager(collision_manager, table_width, table_height)
@@ -91,7 +113,10 @@ if __name__ == "__main__":
         #food.append(food_manager.generate_food(1, 1, all_snakes, food, table_width, table_height, 15,True))  # generate superfood
 
     game = Game(players, food, collision_manager, network_manager, movement_manager, snake_part_manager, food_manager,
-                shift_players_manager, table_width, table_height)
-    game.run_game()
+                shift_players_manager, table_width, table_height, initializer)
+
     print("Game has started")
+    game.run_game()
+
+    print("Cao, server je otisao da spava")
 
