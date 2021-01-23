@@ -130,6 +130,17 @@ class Game:
                 return not None
         return None
 
+    def winner_found_solo(self):
+        self.winner = self.shift_players_manager.shift_player(self.players,
+                                                              self.active_player)
+        self.game_timer.cancel()
+        self.timer.cancel()
+        self.deux_ex_machine = None
+
+        self.network_manager.notify_game_over(self.winner, self.players)
+        time.sleep(3)
+
+
     def winner_found(self):
         self.winner = self.shift_players_manager.shift_player(self.players,
                                                               self.active_player)  # aktivan igrac je i dalje isti, samo sto smo rekli ko je winner
@@ -154,14 +165,14 @@ class Game:
         self.network_manager.notify_game_over(self.winner, self.players)
         time.sleep(3)
 
-    def is_it_over(self):
+    def is_it_over_player_alone(self):
         count = 0
         for player in self.players:
             if player.snakes is not None:
                 count += 1
 
         if count == 1:
-            self.winner_found()
+            self.winner_found_solo()
             return 1
         else:
             return None
@@ -214,6 +225,8 @@ class Game:
             # skip if issuer is not active player
             if command.key is None:
                 self.disconnect_player(command.username)
+                if self.is_it_over_player_alone() is not None:
+                    continue
 
             if command.username != self.active_player.user_name:
                 continue
