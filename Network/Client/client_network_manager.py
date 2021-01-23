@@ -4,10 +4,7 @@ import threading
 from datetime import datetime
 from threading import Thread
 import select
-
-from GUI.client_finish_window import ClientFinishWindow
 from Network.socket_manager import SocketManager, NetworkPackageFlag
-
 
 class ClientSocketSender(SocketManager):
     def __init__(self, socket):

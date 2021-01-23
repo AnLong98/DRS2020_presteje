@@ -23,14 +23,20 @@ class ResultsBoard(QFrame):
         self.all_players = all_players
         self.number_of_players = len(self.all_players)
 
+
+        #self.winner_label = None
+        self.scoreboard_rows = []
+
+        self.define_frame_style()
+
     def define_frame_style(self):
         self.frame_layout = QVBoxLayout()
 
         # creating label for header and winner username
         winner_label_heading = QLabel(f"The game has ended!")
         winner_label_heading.setFont(QFont("Arial", 25))
-        winner_label = QLabel(f"Winner is: {self.winner}")
-        winner_label.setFont(QFont("Arial", 25))
+        self.winner_label = QLabel("", self)
+        self.winner_label.setFont(QFont("Arial", 25))
 
         # creating scoreboard for results
         scoreboard_layout = QHBoxLayout()
@@ -39,11 +45,11 @@ class ResultsBoard(QFrame):
         score_label = QLabel("Results:")
         score_label.setFont(QFont("Arial", 25))
         score_row_column.addWidget(score_label)
-        if len(self.all_players) > 0:
-            for i in range(len(self.all_players)):
-                username_label = QLabel(f"{i + 1}. {self.all_players[i].user_name}", self)
-                username_label.setFont(QFont("Arial", 15))
-                score_row_column.addWidget(username_label)
+        for i in range(4):
+            username_label = QLabel("", self)
+            self.scoreboard_rows.append(username_label)
+            username_label.setFont(QFont("Arial", 15))
+            score_row_column.addWidget(username_label)
         scoreboard_layout.addLayout(score_row_column)
         scoreboard_layout.addStretch()
 
@@ -67,12 +73,17 @@ class ResultsBoard(QFrame):
 
         self.frame_layout.addWidget(winner_label_heading)
         winner_label_heading.setAlignment(Qt.AlignHCenter)
-        self.frame_layout.addWidget(winner_label)
-        winner_label.setAlignment(Qt.AlignHCenter)
+        self.frame_layout.addWidget(self.winner_label)
+        self.winner_label.setAlignment(Qt.AlignHCenter)
         self.frame_layout.addLayout(scoreboard_layout)
         self.frame_layout.addLayout(buttons_layout)
         self.frame_layout.addStretch()
         self.setLayout(self.frame_layout)
+
+    def write_game_results(self):
+        self.winner_label.setText(f"Winner is: {self.winner}")
+        for i, player in enumerate(self.all_players):
+            self.scoreboard_rows[i].setText(f"{i + 1}. {self.all_players[i].user_name}")
 
     def exit_game(self):
         pass
@@ -183,7 +194,6 @@ class StackedFrames(QWidget):
 
         self.define_stacked_widget_style()
 
-
     def define_stacked_widget_style(self):
         self.stack = QStackedWidget(self)
         self.stack.setSizePolicy(QSizePolicy.Maximum,QSizePolicy.Maximum)
@@ -200,10 +210,10 @@ class StackedFrames(QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
 
+
     def display_game_board_frame(self):
         self.stack.setCurrentIndex(0)
 
-
     def display_finish_frame(self):
-        self.finish_stack.define_frame_style()
+        self.finish_stack.write_game_results()
         self.stack.setCurrentIndex(1)
