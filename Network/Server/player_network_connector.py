@@ -120,4 +120,3 @@ class PlayerNetworkConnector:
         s.shutdown(socket.SHUT_RDWR)
         s.close()
         return ip
-

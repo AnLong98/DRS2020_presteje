@@ -62,7 +62,6 @@ class ServerNetworkManager:
 
     def notify_start_input(self, username):
         input_message = SendRequest(1, NetworkPackageFlag.START_INPUT)
-        print(f"Kucaj - {username}")
         if username not in self.client_out_queue_dict:
             return
 
@@ -70,7 +69,6 @@ class ServerNetworkManager:
 
     def notify_stop_input(self, username):
         input_message = SendRequest(1, NetworkPackageFlag.STOP_INPUT)
-        print(f"Stani - {username}")
         if username not in self.client_out_queue_dict:
             return
 
@@ -96,6 +94,11 @@ class ServerNetworkManager:
         winner_and_players.append([winner])
         winner_and_players.append(all_players)  # [winner, [all_players]]
         player_message = SendRequest(winner_and_players, NetworkPackageFlag.GAME_OVER)
+        for username in self.client_out_queue_dict.keys():
+            self.client_out_queue_dict[username].put(player_message)
+
+    def notify_game_restart(self):
+        player_message = SendRequest(1, NetworkPackageFlag.GAME_RESTART)
         for username in self.client_out_queue_dict.keys():
             self.client_out_queue_dict[username].put(player_message)
 

@@ -15,7 +15,6 @@ from GUI.server_start_window import ServerStartWindow
 from game import Game
 from Models.player_snakes import PlayerSnakes
 
-
 class GameInitializer:
     def __init__(self):
         self.colors = ["#fff200", "#b87bba", "#3494e3", "#fa5700"]
@@ -80,6 +79,8 @@ if __name__ == "__main__":
     print("Server is up and running")
 
     network_connector = PlayerNetworkConnector()
+
+
     network_manager = ServerNetworkManager(clients_number, network_connector)
     player_names = network_manager.get_client_names
     table_width = 960
@@ -116,6 +117,7 @@ if __name__ == "__main__":
                 shift_players_manager, table_width, table_height, initializer)
 
     print("Game has started")
+
     game.run_game()
 
     print("Cao, server je otisao da spava")

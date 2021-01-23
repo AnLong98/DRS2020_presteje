@@ -101,6 +101,10 @@ class ClientSocketReceiver(SocketManager, Thread):
                 # call signal that will handle finish window
                 continue
 
+            elif flag == NetworkPackageFlag.GAME_RESTART:
+                self.drawing_manager.show_game_board()
+
+
 
 
 

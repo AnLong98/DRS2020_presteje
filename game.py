@@ -46,6 +46,9 @@ class Game:
             for client in self.network_manager.get_client_names:
                 if player.user_name == client:
                     pl.append(player)
+
+
+        self.network_manager.get_recv_queue.queue.clear()
         self.players = pl
         self.setup_game()
         self.initialize_start_parameters()
@@ -56,6 +59,7 @@ class Game:
         self.network_manager.notify_start_timer()
         self.game_timer.start()
         self.network_manager.send_state_to_players(self.food, self.players, self.active_player)
+        self.network_manager.notify_game_restart()
         self.network_manager.notify_start_input(self.active_player.user_name)
 
     def reset_timer(self):
@@ -138,7 +142,7 @@ class Game:
         self.game_mutex.acquire()
 
         self.network_manager.notify_game_over(self.winner, self.players)
-        time.sleep(30)
+        time.sleep(3)
 
     def winner_found_trapping(self):
         self.winner = self.active_player
@@ -148,7 +152,19 @@ class Game:
         self.network_manager.send_state_to_players(self.food, self.players, self.active_player)
 
         self.network_manager.notify_game_over(self.winner, self.players)
-        time.sleep(30)
+        time.sleep(3)
+
+    def is_it_over(self):
+        count = 0
+        for player in self.players:
+            if player.snakes is not None:
+                count += 1
+
+        if count == 1:
+            self.winner_found()
+            return 1
+        else:
+            return None
 
     def is_it_game_over(self):
         if self.active_player.snakes is not None:
