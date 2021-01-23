@@ -1,10 +1,14 @@
 
 class DrawingManager:
-    def __init__(self, game_board, score_board, main_window, repaint):
-        self.game_board = game_board
+    def __init__(self, game_board, score_board, main_window, repaint, end_game, start_game):
+        self.game_board = game_board.game_stack
+        self.results_board = game_board.finish_stack
         self.score_board = score_board
         self.main_window = main_window
         self.repaint_signal = repaint.repaint_signal
+        self.end_game_signal = end_game.end_game_signal
+        self.start_game_signal = start_game.start_game_signal
+
 
     def draw_food(self, food):
         self.game_board.set_food(food)
@@ -52,4 +56,10 @@ class DrawingManager:
     def add_winner(self, player):
         self.score_board.set_winner(player)
 
+    def show_results(self, winner, all_players):
+        self.results_board.winner = winner[0].user_name
+        self.results_board.all_players = all_players
+        self.end_game_signal.emit()
 
+    def show_game_board(self):
+        self.start_game_signal.emit()

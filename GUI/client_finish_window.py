@@ -1,10 +1,12 @@
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QDialog, QLabel, QHBoxLayout, QVBoxLayout, QPushButton
-
+from PyQt5.QtWidgets import QDialog, QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QWidget
+from PyQt5.QtCore import Qt
 
 class ClientFinishWindow(QDialog):
     def __init__(self, winner, all_players):
         super(QDialog, self).__init__()
+        super(ClientFinishWindow, self).__init__()
+        self.setWindowFlags(self.windowFlags() | Qt.Popup)
         self.setFixedSize(350, 400)
         self.setWindowTitle("Snake Game Results")
 
@@ -15,7 +17,7 @@ class ClientFinishWindow(QDialog):
         self.init_fields()
 
     def init_fields(self):
-        winner_label = QLabel(f"The winner is: {self.winner[0].user_name} ", self)
+        winner_label = QLabel(f"The winner is: {self.winner[0].user_name} ")
         winner_label.setFont(QFont("Arial", 25))
 
         winner_row = QHBoxLayout()
@@ -30,25 +32,26 @@ class ClientFinishWindow(QDialog):
         score_label.setFont(QFont("Arial", 25))
         score_row_column.addWidget(score_label)
         for i in range(self.number_of_players):
-            word = QLabel(f"{i + 1}. {self.all_players[i].user_name}", self)
+            word = QLabel(f"{i + 1}. {self.all_players[i].user_name}")
             word.setFont(QFont("Arial", 15))
             score_row_column.addWidget(word)
         score_row.addLayout(score_row_column)
         score_row.addStretch()
 
         space_row = QHBoxLayout()
-        space_row.addWidget(QLabel("", self))
+        space_row.addWidget(QLabel(""))
 
         button_row = QHBoxLayout()
         button_row.addStretch()
-        button_restart = QPushButton("Restart", self)
+        button_restart = QPushButton("Restart")
         button_restart.setMaximumWidth(100)
         button_restart.setMaximumHeight(50)
+
         button_restart.clicked.connect(self.restart_button)
         button_row.addWidget(button_restart)
         button_row.addStretch()
 
-        button_exit = QPushButton("Exit", self)
+        button_exit = QPushButton("Exit")
         button_exit.setMaximumWidth(100)
         button_exit.setMaximumHeight(50)
         button_exit.clicked.connect(self.exit_button)

@@ -4,10 +4,7 @@ import threading
 from datetime import datetime
 from threading import Thread
 import select
-
-from GUI.client_finish_window import ClientFinishWindow
 from Network.socket_manager import SocketManager, NetworkPackageFlag
-
 
 class ClientSocketSender(SocketManager):
     def __init__(self, socket):
@@ -92,20 +89,21 @@ class ClientSocketReceiver(SocketManager, Thread):
             elif flag == NetworkPackageFlag.GAME_STATE:
                 food = message[0]
                 players = message[1]
-                print("IMENA USERA -- :")
-                for p in players:
-                    print(p.user_name)
                 active_p = message[2]
-                print(f"activ-{active_p.user_name}")
                 self.drawing_manager.update_game_state(players, food, active_p)
 
             elif flag == NetworkPackageFlag.GAME_OVER:
                 #game is over, do some game over things here
                 self.drawing_manager.stop_input()
-                #finish_window = ClientFinishWindow(message[0],message[1])
-                #finish_window.exec()
-                print("cekaj 30 sekundi i pocinje gejm")
+                self.drawing_manager.show_results(message[0], message[1])
+                # finish_window = ClientFinishWindow(message[0],message[1])
+                # finish_window.exec()
+                # call signal that will handle finish window
                 continue
+
+            elif flag == NetworkPackageFlag.GAME_RESTART:
+                self.drawing_manager.show_game_board()
+
 
 
 
