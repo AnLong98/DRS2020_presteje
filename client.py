@@ -6,7 +6,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
 from GUI.client_start_window import ClientStartWindow
-from GUI.game_board import GameBoard, Repaint
+from GUI.game_board import GameBoard, Repaint, EndGame, StartGame, StackedFrames
 from GUI.score_board import ScoreBoard
 from Network.Client.client_game_connector import ClientGameConnector
 from Network.Client.client_network_manager import ClientSocketReceiver
@@ -93,7 +93,10 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     repaint = Repaint()
-    game_board = GameBoard(repaint)
+    end_game = EndGame()
+    start_game = StartGame()
+    #game_board = GameBoard(repaint)
+    stacked_frames = StackedFrames(start_game, end_game, repaint, "", [])
 
     conn_result = ClientGameConnector().connect()
     if not conn_result:
@@ -105,8 +108,8 @@ if __name__ == "__main__":
 
     score_board = ScoreBoard()
     exit_event = threading.Event()
-    window = MainWindow(game_board, score_board, socket_sender, exit_event, username)
-    drawing_manager = DrawingManager(game_board, score_board, window, repaint)
+    window = MainWindow(stacked_frames, score_board, socket_sender, exit_event, username)
+    drawing_manager = DrawingManager(stacked_frames, score_board, window, repaint, end_game, start_game)
 
     client_receiver = ClientSocketReceiver(client_socket, drawing_manager, exit_event)
     client_receiver.setDaemon(True)
