@@ -9,7 +9,6 @@ class ClientCommand:
         self.key = key
         self.username = username
 
-
 class SocketInfo:
     def __init__(self, socket_manager, socket_user_name):
         self.socket_manager = socket_manager

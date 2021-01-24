@@ -209,8 +209,6 @@ class StackedFrames(QWidget):
         self.setLayout(hbox)
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-
-
     def display_game_board_frame(self):
         self.stack.setCurrentIndex(0)
 

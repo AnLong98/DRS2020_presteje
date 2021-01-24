@@ -197,8 +197,6 @@ class ScoreBoard(QFrame):
         self.active_player = active_player
         self.information_frame.set_active_player_(active_player)
 
-
-
     @property
     def get_painter(self):
         return self.painter

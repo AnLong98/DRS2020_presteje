@@ -3,15 +3,73 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import sys
 
-class ServerStartWindow(QDialog):
+
+from Managers.collision_manager import CollisionManager
+from Managers.food_manager import FoodManager
+from Managers.movement_manager import MovementManager
+from Managers.shift_players_manager import ShiftPlayersManager
+from Managers.snake_part_manager import SnakePartManager
+from Network.Server.player_network_connector import PlayerNetworkConnector
+from Network.Server.server_network_manager import ServerNetworkManager
+from game import Game
+from game_worker import GameWorker
+from server_initializer import ServerInitializer
+
+class HostingWidget(QObject):
+    hosting_widget_signal = pyqtSignal()
+class InputWidget(QObject):
+    input_widget_signal = pyqtSignal()
+
+class HostingWindow(QWidget):
     def __init__(self):
-        super(QDialog, self).__init__()
+        super(QWidget, self).__init__()
+        self.setFixedSize(400, 300)
+        self.setWindowTitle("Snake Game Hosting Information")
+
+        self.host_address = None
+        self.host_port = None
+        self.define_widget_style()
+
+    def define_widget_style(self):
+        self.host_address_label = QLabel("Hosted on Address:")
+        self.host_address_label.setFont(QFont("Arial", 10))
+        self.host_port_label = QLabel("Hosted on Port:")
+        self.host_port_label.setFont(QFont("Arial", 10))
+
+        self.host_address_field = QLineEdit()
+        self.host_address_field.setFont(QFont("Arial", 10))
+        self.host_address_field.setReadOnly(True)
+        self.host_port_field = QLineEdit()
+        self.host_port_field.setFont(QFont("Arial", 10))
+        self.host_port_field.setReadOnly(True)
+
+        vbox = QVBoxLayout()
+        vbox.addStretch()
+        vbox.addWidget(self.host_address_label)
+        self.host_address_label.setAlignment(Qt.AlignHCenter)
+        vbox.addWidget(self.host_address_field)
+        vbox.addStretch()
+        vbox.addWidget(self.host_port_label)
+        self.host_port_label.setAlignment(Qt.AlignHCenter)
+        vbox.addWidget(self.host_port_field)
+        vbox.addStretch()
+        self.setLayout(vbox)
+
+    def update_qlineedit_values(self):
+        self.host_address_field.setText(self.host_address)
+        self.host_port_field.setText(self.host_port)
+
+
+class InputWindow(QWidget):
+    def __init__(self, hosting_signal):
+        super(QWidget, self).__init__()
         self.setFixedSize(400, 300)
         self.setWindowTitle("Snake Game Settings")
 
         self.player_count = None
         self.snake_count = None
 
+        self.hosting_signal = hosting_signal
         self.setLayout(self.create_window_layuot())
 
     def create_window_layuot(self):
@@ -77,4 +135,54 @@ class ServerStartWindow(QDialog):
     def extract_input_values(self):
         self.player_count = self.player_spinbox.value()
         self.snake_count = self.snake_spinbox.value()
-        self.close()
+        self.hosting_signal.emit()
+
+class ServerStackedWidgets(QWidget):
+    def __init__(self, input_signal, hosting_signal):
+        super(QWidget, self).__init__()
+        self.clients_number = 0
+        self.snake_count = 0
+        self.thread = QThread()
+        self.setMinimumSize(400, 300)
+
+        self.server_input_signal = input_signal.input_widget_signal
+        self.server_input_signal.connect(self.display_server_input_widget)
+
+        self.server_hosting_signal = hosting_signal.hosting_widget_signal
+        self.server_hosting_signal.connect(self.display_server_hosting_widget)
+        self.define_stacked_widget_style()
+        self.stack.setCurrentIndex(0)
+
+    def define_stacked_widget_style(self):
+        self.stack = QStackedWidget(self)
+        self.stack.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+
+        self.server_stack = InputWindow(self.server_hosting_signal)
+        self.stack.addWidget(self.server_stack)
+
+        self.hosting_stack = HostingWindow()
+        self.stack.addWidget(self.hosting_stack)
+
+        hbox = QVBoxLayout()
+        hbox.addWidget(self.stack)
+        self.setLayout(hbox)
+        self.layout().setContentsMargins(0, 0, 0, 0)
+
+    def display_server_input_widget(self):
+        self.stack.setCurrentIndex(0)
+
+    def display_server_hosting_widget(self):
+        self.stack.setCurrentIndex(1)
+
+        network_connector = PlayerNetworkConnector()
+
+        self.hosting_stack.host_port_field.setText(str(network_connector.PORT))
+        self.hosting_stack.host_address_field.setText(str(network_connector.HOST))
+
+        self.worker = GameWorker(self.server_stack.player_count, self.server_stack.snake_count, network_connector)
+
+        self.worker.moveToThread(self.thread)
+        self.thread.started.connect(self.worker.run)
+        self.thread.start()
+
+

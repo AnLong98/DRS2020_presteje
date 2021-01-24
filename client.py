@@ -95,7 +95,6 @@ if __name__ == "__main__":
     repaint = Repaint()
     end_game = EndGame()
     start_game = StartGame()
-    #game_board = GameBoard(repaint)
     stacked_frames = StackedFrames(start_game, end_game, repaint, "", [])
 
     conn_result = ClientGameConnector().connect()
@@ -116,5 +115,4 @@ if __name__ == "__main__":
     client_receiver.start()
 
     window.show()
-
     app.exec_()
