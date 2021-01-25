@@ -8,8 +8,9 @@ from Network.socket_manager import SocketManager
 
 
 class ServerNetworkReceiver(Thread):
-    def __init__(self, clients_dict, queue, exit_event):
+    def __init__(self, clients_dict, queue, exit_event, shutdown_signal):
         Thread.__init__(self)
+        self.shutdown_signal = shutdown_signal
         self.queue = queue
         self.clients_dict = clients_dict
         self.exit_event = exit_event
@@ -53,3 +54,4 @@ class ServerNetworkReceiver(Thread):
         if not self.sockets:
             print("All client's have disconnected. Shutting receiver down")
             self.exit_event.set()
+            self.shutdown_signal.emit()

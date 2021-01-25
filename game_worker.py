@@ -12,11 +12,12 @@ from server_initializer import ServerInitializer
 
 
 class GameWorker(QObject):
-    def __init__(self, clients_number, snake_number, network_connector):
+    def __init__(self, clients_number, snake_number, network_connector, shutdown_signal):
         super().__init__()
         self.clients_number = clients_number
         self.snake_number = snake_number
         self.network_connector = network_connector
+        self.shutdown_signal = shutdown_signal
 
         self.food = []
         self.all_snakes = []
@@ -28,7 +29,7 @@ class GameWorker(QObject):
         table_height = 810
 
         #network_connector = PlayerNetworkConnector()
-        network_manager = ServerNetworkManager(self.clients_number, self.network_connector)
+        network_manager = ServerNetworkManager(self.clients_number, self.network_connector, self.shutdown_signal)
         player_names = network_manager.get_client_names
 
         players = ServerInitializer().get_players(self.clients_number, player_names, self.snake_number)

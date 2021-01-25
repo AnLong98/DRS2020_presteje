@@ -1,24 +1,9 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-import sys
-
-
-from Managers.collision_manager import CollisionManager
-from Managers.food_manager import FoodManager
-from Managers.movement_manager import MovementManager
-from Managers.shift_players_manager import ShiftPlayersManager
-from Managers.snake_part_manager import SnakePartManager
 from Network.Server.player_network_connector import PlayerNetworkConnector
-from Network.Server.server_network_manager import ServerNetworkManager
-from game import Game
 from game_worker import GameWorker
-from server_initializer import ServerInitializer
 
-class HostingWidget(QObject):
-    hosting_widget_signal = pyqtSignal()
-class InputWidget(QObject):
-    input_widget_signal = pyqtSignal()
 
 class HostingWindow(QWidget):
     def __init__(self):
@@ -137,13 +122,17 @@ class InputWindow(QWidget):
         self.snake_count = self.snake_spinbox.value()
         self.hosting_signal.emit()
 
+
 class ServerStackedWidgets(QWidget):
-    def __init__(self, input_signal, hosting_signal):
+    def __init__(self, input_signal, hosting_signal, shutdown_signal):
         super(QWidget, self).__init__()
         self.clients_number = 0
         self.snake_count = 0
         self.thread = QThread()
         self.setMinimumSize(400, 300)
+
+        self.shutdown_signal = shutdown_signal.shutdown_signal
+        self.shutdown_signal.connect(self.close_server_window)
 
         self.server_input_signal = input_signal.input_widget_signal
         self.server_input_signal.connect(self.display_server_input_widget)
@@ -179,10 +168,11 @@ class ServerStackedWidgets(QWidget):
         self.hosting_stack.host_port_field.setText(str(network_connector.PORT))
         self.hosting_stack.host_address_field.setText(str(network_connector.HOST))
 
-        self.worker = GameWorker(self.server_stack.player_count, self.server_stack.snake_count, network_connector)
+        self.worker = GameWorker(self.server_stack.player_count, self.server_stack.snake_count, network_connector, self.shutdown_signal)
 
         self.worker.moveToThread(self.thread)
         self.thread.started.connect(self.worker.run)
         self.thread.start()
 
-
+    def close_server_window(self):
+        self.close()

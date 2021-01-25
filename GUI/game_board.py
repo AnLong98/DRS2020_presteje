@@ -1,19 +1,9 @@
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-import sys
 from Models.snake_part import SnakePartType
 from PyQt5 import QtWidgets
-
-
-class Repaint(QObject):
-    repaint_signal = pyqtSignal()
-
-class EndGame(QObject):
-    end_game_signal = pyqtSignal()
-
-class StartGame(QObject):
-    start_game_signal = pyqtSignal()
+import sys
 
 class ResultsBoard(QFrame):
     def __init__(self, winner, all_players):
@@ -22,7 +12,6 @@ class ResultsBoard(QFrame):
         self.winner = winner
         self.all_players = all_players
         self.number_of_players = len(self.all_players)
-
 
         #self.winner_label = None
         self.scoreboard_rows = []
@@ -90,7 +79,6 @@ class ResultsBoard(QFrame):
 
     def restart_game(self):
         pass
-
 
 class GameBoard(QFrame):
     def __init__(self, repaint):
@@ -174,7 +162,6 @@ class GameBoard(QFrame):
 
         qp.fillRect(rect.left() + food.x_coordinate, food.y_coordinate, self.square_width() - 1, self.square_height() - 1,
                     color)
-
 
 class StackedFrames(QWidget):
     def __init__(self, start_game, end_game, painter, winner, all_players):

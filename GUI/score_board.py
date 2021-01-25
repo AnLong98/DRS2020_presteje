@@ -51,7 +51,6 @@ class PlayerFrame(QFrame):
             self.name_labels.pop(-1)
             self.points_labels.pop(-1)
 
-
 class TimerFrame(QFrame):
     def __init__(self):
         super(QFrame, self).__init__()
@@ -96,7 +95,6 @@ class TimerFrame(QFrame):
         self.elapsedTime = self.elapsedTime - 1
         if self.elapsedTime == -1:
             self.reset_timer()
-
 
 class InformationFrame(QFrame):
     def __init__(self):
@@ -153,7 +151,6 @@ class InformationFrame(QFrame):
         for labels in self.scores:
             labels[1].setText(self.active_player.user_name)
             labels[3].setText(str(self.active_snake.steps - self.active_snake.played_steps))
-
 
 class ScoreBoard(QFrame):
     def __init__(self):

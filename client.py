@@ -4,17 +4,14 @@ import threading
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-
 from GUI.client_start_window import ClientStartWindow
-from GUI.game_board import GameBoard, Repaint, EndGame, StartGame, StackedFrames
 from GUI.score_board import ScoreBoard
 from Network.Client.client_game_connector import ClientGameConnector
 from Network.Client.client_network_manager import ClientSocketReceiver
-
 from Managers.drawing_manager import DrawingManager
-
 from Managers.movement_manager import KeyPressed
-
+from GUI.game_board_signals import *
+from GUI.game_board import StackedFrames
 
 class MainWindow(QMainWindow):
     def __init__(self, game_board, score_board, client_sender, exit_event, player_username):

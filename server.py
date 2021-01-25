@@ -1,14 +1,15 @@
 from PyQt5.QtWidgets import QApplication
+from GUI.server_start_window import ServerStackedWidgets
+from GUI.server_signals import *
 import sys
 
-from GUI.server_start_window import ServerStackedWidgets, InputWidget, HostingWidget
-
 if __name__ == "__main__":
-    input_signal = InputWidget()
-    hosting_sigal = HostingWidget()
+    input_signal = InputSignal()
+    hosting_signal = HostingSignal()
+    shutdown_signal = ShutdownSignal()
 
     app = QApplication(sys.argv)
-    startWindow = ServerStackedWidgets(input_signal, hosting_sigal)
+    startWindow = ServerStackedWidgets(input_signal, hosting_signal, shutdown_signal)
     startWindow.show()
     print("Server is up and running")
     app.exec()
