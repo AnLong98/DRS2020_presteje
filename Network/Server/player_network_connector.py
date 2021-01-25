@@ -19,7 +19,7 @@ class ConnectorHandle:
 
 class PlayerNetworkConnector:
     HOST = socket.gethostbyname(socket.gethostname())  # Current PC's IP address
-    PORT = 50005  # Arbitrary non-privileged port
+    PORT = 50010  # Arbitrary non-privileged port
     MAX_CONNECTIONS_LISTEN = 30 #Maximal number of connections for listen socket
 
     def await_client_connections(self, clients_number):

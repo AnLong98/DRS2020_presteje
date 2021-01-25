@@ -19,6 +19,8 @@ class HostingWidget(QObject):
     hosting_widget_signal = pyqtSignal()
 class InputWidget(QObject):
     input_widget_signal = pyqtSignal()
+class ShutdownWindow(QObject):
+    shutdown_signal = pyqtSignal()
 
 class HostingWindow(QWidget):
     def __init__(self):
@@ -58,7 +60,6 @@ class HostingWindow(QWidget):
     def update_qlineedit_values(self):
         self.host_address_field.setText(self.host_address)
         self.host_port_field.setText(self.host_port)
-
 
 class InputWindow(QWidget):
     def __init__(self, hosting_signal):
@@ -138,12 +139,15 @@ class InputWindow(QWidget):
         self.hosting_signal.emit()
 
 class ServerStackedWidgets(QWidget):
-    def __init__(self, input_signal, hosting_signal):
+    def __init__(self, input_signal, hosting_signal, shutdown_signal):
         super(QWidget, self).__init__()
         self.clients_number = 0
         self.snake_count = 0
         self.thread = QThread()
         self.setMinimumSize(400, 300)
+        self.worker = None
+        self.shutdown_signal = shutdown_signal.shutdown_signal
+        self.shutdown_signal.connect(self.shutdown_server_gui)
 
         self.server_input_signal = input_signal.input_widget_signal
         self.server_input_signal.connect(self.display_server_input_widget)
@@ -179,10 +183,11 @@ class ServerStackedWidgets(QWidget):
         self.hosting_stack.host_port_field.setText(str(network_connector.PORT))
         self.hosting_stack.host_address_field.setText(str(network_connector.HOST))
 
-        self.worker = GameWorker(self.server_stack.player_count, self.server_stack.snake_count, network_connector)
+        self.worker = GameWorker(self.server_stack.player_count, self.server_stack.snake_count, network_connector, self.shutdown_signal)
 
         self.worker.moveToThread(self.thread)
         self.thread.started.connect(self.worker.run)
         self.thread.start()
 
-
+    def shutdown_server_gui(self):
+        self.close()

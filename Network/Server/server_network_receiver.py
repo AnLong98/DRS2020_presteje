@@ -2,19 +2,20 @@ import select
 import socket
 import threading
 from threading import Thread
-
+import sys
 from Network.Server.server_network_helpers import ClientCommand, SocketInfo
 from Network.socket_manager import SocketManager
 
 
 class ServerNetworkReceiver(Thread):
-    def __init__(self, clients_dict, queue, exit_event):
+    def __init__(self, clients_dict, queue, exit_event, shutdown_signal):
         Thread.__init__(self)
         self.queue = queue
         self.clients_dict = clients_dict
         self.exit_event = exit_event
         self.sockets = []
         self.socket_to_info_dict = {}
+        self.shutdown_signal = shutdown_signal
         for username in clients_dict.keys():
             self.sockets.append(clients_dict[username])
             self.socket_to_info_dict[clients_dict[username]] = SocketInfo(SocketManager(clients_dict[username]), username)
@@ -53,3 +54,4 @@ class ServerNetworkReceiver(Thread):
         if not self.sockets:
             print("All client's have disconnected. Shutting receiver down")
             self.exit_event.set()
+            self.shutdown_signal.emit()
