@@ -33,8 +33,10 @@ class PlayerFrame(QFrame):
 
 
     def update_players(self, players):
+
         i = 0
         for player in players:
+            print(player.user_name)
             self.name_labels[i].setText("Player: " + str(player.user_name))
             self.points_labels[i].setText("Points: " + str(player.points))
             if self.should_init: #eliminate flicker
@@ -46,10 +48,12 @@ class PlayerFrame(QFrame):
             return
 
         for j in range(i, 4):
-            self.layout.removeWidget(self.name_labels[-1])
-            self.layout.removeWidget(self.points_labels[-1])
-            self.name_labels.pop(-1)
-            self.points_labels.pop(-1)
+            self.name_labels[j].setText("")
+            self.points_labels[j].setText("")
+            # self.layout.removeWidget(self.name_labels[-1])
+            # self.layout.removeWidget(self.points_labels[-1])
+            # self.name_labels.pop(-1)
+            # self.points_labels.pop(-1)
 
 class TimerFrame(QFrame):
     def __init__(self):

@@ -98,12 +98,18 @@ class ServerNetworkManager:
         for username in self.client_out_queue_dict.keys():
             self.client_out_queue_dict[username].put(player_message)
 
+    def notify_game_restart(self):
+        player_message = SendRequest(1, NetworkPackageFlag.GAME_RESTART)
+        for username in self.client_out_queue_dict.keys():
+            self.client_out_queue_dict[username].put(player_message)
+
     def shutdown_user(self, username):
         if username in self.client_senders_dict.keys() and username in self.client_out_queue_dict.keys():
             sentinel = self.client_senders_dict[username].sentinel
             self.client_out_queue_dict[username].put(sentinel)
             self.client_senders_dict.pop(username)
             self.client_out_queue_dict.pop(username)
+            self.clients_dict.pop(username)
 
     def shutdown_all_user_connections(self):
         if not self.receiver_exit_event.is_set():
@@ -112,6 +118,7 @@ class ServerNetworkManager:
             self.client_out_queue_dict[username].put(self.client_senders_dict[username].sentinel)
             self.client_senders_dict.pop(username)
             self.client_out_queue_dict.pop(username)
+            self.clients_dict.pop(username)
 
 
 

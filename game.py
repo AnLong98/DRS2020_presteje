@@ -1,12 +1,13 @@
 import sys
+import time
 from threading import Lock, Timer
 from Managers.collision_manager import CollisionDetectionResult
 from Managers.movement_manager import KeyPressed
-
+from random import randrange
 
 
 class Game:
-    def __init__(self, players, food, collision_manager, network_manager, movement_manager, snake_part_manager, food_manager, shift_players_manager, table_width, table_height):
+    def __init__(self, players, food, collision_manager, network_manager, movement_manager, snake_part_manager, food_manager, shift_players_manager, table_width, table_height, initializer):
         self.players = players
         self.food = food
         self.collision_manager = collision_manager
@@ -17,10 +18,13 @@ class Game:
         self.shift_players_manager = shift_players_manager
         self.table_width = table_width
         self.table_height = table_height
+        self.initializer = initializer
+        self.setup_game()
+
+    def setup_game(self):
         self.all_snakes = []
-        self.active_player = players[0]
-        #for player in players:
-            #self.all_snakes += player.snakes
+        self.active_player = self.players[0]
+
         for player in self.players:
             self.all_snakes.extend(player.snakes)
 
@@ -28,8 +32,35 @@ class Game:
         self.alive_players_count = len(self.players)
         self.players_finished_turn = 0
         self.winner = None
+        self.deux_ex_machine = None
+        self.timer = Timer(10, self.generate_deux_ex_machine)
+        self.timer.start()
         self.game_timer = Timer(10.0, self.change_player)
         self.game_mutex = Lock()
+
+    def restart_game(self):
+        self.game_timer.cancel()
+        self.players, self.food = self.initializer.get_players_deepcopy()
+        pl = []
+        for player in self.players: #filtriranje players po userame - uzimam samo zive klijente iz network_manager.get_clients_names - property
+            for client in self.network_manager.get_client_names:
+                if player.user_name == client:
+                    pl.append(player)
+
+
+        self.network_manager.get_recv_queue.queue.clear()
+        self.players = pl
+        self.setup_game()
+        self.initialize_start_parameters()
+
+    def initialize_start_parameters(self):
+        self.set_active_player(self.players[0])
+        self.set_active_snake(self.players[0].snakes[0])
+        self.network_manager.notify_start_timer()
+        self.game_timer.start()
+        self.network_manager.send_state_to_players(self.food, self.players, self.active_player)
+        self.network_manager.notify_game_restart()
+        self.network_manager.notify_start_input(self.active_player.user_name)
 
     def reset_timer(self):
         self.game_timer.cancel()
@@ -59,10 +90,33 @@ class Game:
         self.reset_timer()
         self.game_mutex.release()
 
-
     def change_snake(self):
         next_snake = self.shift_players_manager.shift_snakes(self.active_snake, self.active_player)
         self.set_active_snake(next_snake)
+
+    def generate_deux_ex_machine(self):
+        self.timer.cancel()
+        self.deux_ex_machine = self.food_manager.generate_food(0, 0, 15, self.all_snakes, self.food, True)
+        self.food.append(self.deux_ex_machine)
+
+    def activate_deux_ex_machine(self):
+        self.deux_ex_machine = None
+        self.timer = Timer(10, self.generate_deux_ex_machine)
+        self.timer.start()
+        if randrange(10) % 2 == 0:
+            snake = self.snake_part_manager.generate_snake_for_player(self.active_player, 5,
+                                                                      self.all_snakes, self.food)
+            self.active_player.add_snake(snake)
+            self.all_snakes.append(snake)
+        else:
+            if self.active_snake.steps - self.active_snake.played_steps >= 2:
+                self.active_snake.played_steps = 0
+            elif self.active_snake.steps - self.active_snake.played_steps == 1:
+                self.active_snake.played_steps = 1
+            elif self.active_snake.steps - self.active_snake.played_steps == 0:
+                self.active_snake.played_steps = 2
+            self.active_snake.steps = 2
+            # self.network_manager.send_state_to_players(self.food, self.players, self.active_player)
 
     def reset_played_steps(self):
         for player in self.players:  # ne moze samo prethodnom
@@ -76,23 +130,65 @@ class Game:
                 return not None
         return None
 
+    def winner_found_solo(self):
+        self.winner = self.shift_players_manager.shift_player(self.players,
+                                                              self.active_player)
+        self.game_timer.cancel()
+        self.timer.cancel()
+        self.deux_ex_machine = None
+
+        self.network_manager.notify_game_over(self.winner, self.players)
+        time.sleep(3)
+
+
+    def winner_found(self):
+        self.winner = self.shift_players_manager.shift_player(self.players,
+                                                              self.active_player)  # aktivan igrac je i dalje isti, samo sto smo rekli ko je winner
+        self.game_timer.cancel()
+        self.timer.cancel()
+        self.deux_ex_machine = None
+        # ako se ide na play again i odmah je prikaze onda ovde osveziti
+        self.game_mutex.release()
+        self.change_player()
+        self.game_mutex.acquire()
+
+        self.network_manager.notify_game_over(self.winner, self.players)
+        time.sleep(3)
+
+    def winner_found_trapping(self):
+        self.winner = self.active_player
+        self.game_timer.cancel()
+        self.timer.cancel()
+        self.deux_ex_machine = None
+        self.network_manager.send_state_to_players(self.food, self.players, self.active_player)
+
+        self.network_manager.notify_game_over(self.winner, self.players)
+        time.sleep(3)
+
+    def is_it_over_player_alone(self):
+        count = 0
+        for player in self.players:
+            if player.snakes is not None:
+                count += 1
+
+        if count == 1:
+            self.winner_found_solo()
+            return 1
+        else:
+            return None
+
     def is_it_game_over(self):
         if self.active_player.snakes is not None:
             return None
         count = 0  # aktivnom igracu su sve zmije None
         for player in self.players:
-            if player.snakes is not None and player.user_name != self.active_player.user_name:
-                count += 1
+            if player.snakes is not None:
+                if player.user_name != self.active_player.user_name:
+                    count += 1
+
         if count == 1:
-            self.winner = self.shift_players_manager.shift_player(self.players, self.active_player)  # aktivan igrac je i dalje isti, samo sto smo rekli ko je winner
-            self.game_timer.cancel()
-            self.game_mutex.release()
-            self.change_player()
-            self.game_mutex.acquire()
-
-            self.network_manager.notify_game_over(self.winner, self.players)
+            self.winner_found()
             return 1
-
         else:
             return None
 
@@ -101,18 +197,7 @@ class Game:
             if player.snakes is not None and player.user_name != self.active_player.user_name:
                 return None
 
-        '''
-        self.winner = self.shift_players_manager.shift_player(self.players, self.active_player)  # aktivan igrac je i dalje isti, samo sto smo rekli ko je winner
-        self.game_timer.cancel()
-        self.game_mutex.release()
-        self.change_player()
-        self.game_mutex.acquire()
-        '''
-        self.winner = self.active_player
-        self.game_timer.cancel()
-        self.network_manager.send_state_to_players(self.food, self.players, self.active_player)
-
-        self.network_manager.notify_game_over(self.winner, self.players)
+        self.winner_found_trapping()
         return 1
 
     def finish_players_turn(self):
@@ -122,36 +207,34 @@ class Game:
             self.players_finished_turn = 0
 
     def disconnect_player(self, username):
+        print("DISKONEKTUJEM JEDNOG KLIJENTA")
         self.game_mutex.acquire()
         for player in self.players:
             if player.user_name == username:
-                player.snakes.clear()
+                player.snakes = None
         self.network_manager.shutdown_user(username)
         self.game_mutex.release()
         self.change_player()
 
     def run_game(self):
-        #send initial game parameters to all clients
-        self.set_active_player(self.players[0])
-        self.set_active_snake(self.players[0].snakes[0])
-        self.network_manager.notify_start_timer()
-        self.game_timer.start()
-        self.network_manager.send_state_to_players(self.food, self.players, self.active_player)
-        self.network_manager.notify_start_input(self.active_player.user_name)
+        # send initial game parameters to all clients
+        self.initialize_start_parameters()
 
         while True:
             command = self.network_manager.get_recv_queue.get()
-            #skip if issuer is not active player
+            # skip if issuer is not active player
             if command.key is None:
                 self.disconnect_player(command.username)
-                print('Umro Pantelija')
+                if self.is_it_over_player_alone() is not None:
+                    continue
+
             if command.username != self.active_player.user_name:
                 continue
 
             self.game_mutex.acquire()
             if command.key == KeyPressed.TAB:
                 self.change_snake()
-            elif self.active_snake.steps != self.active_snake.played_steps:  # ako igrac ima koraka sa trenutnom zmijom
+            elif self.active_snake.steps > self.active_snake.played_steps:  # ako igrac ima koraka sa trenutnom zmijom
                 snake_tail_x = self.active_snake.snake_parts[-1].x_coordinate
                 snake_tail_y = self.active_snake.snake_parts[-1].y_coordinate
                 if self.movement_manager.set_snake_direction(command.key, self.active_snake) is not None:
@@ -163,22 +246,18 @@ class Game:
                                                                                                         self.food)
                 if collision_result == CollisionDetectionResult.FOOD_COLLISION:
                     self.food.remove(object_collided)
-                    self.active_snake.increase_steps(object_collided.steps_worth)
-                    self.active_player.increase_points(object_collided.points_worth)
-                    self.snake_part_manager.increase_snake(self.active_snake, snake_tail_x, snake_tail_y)
+                    if object_collided.is_super_food is not True:
+                        self.active_snake.increase_steps(object_collided.steps_worth)
+                        self.active_player.increase_points(object_collided.points_worth)
+                        self.snake_part_manager.increase_snake(self.active_snake, snake_tail_x, snake_tail_y)
 
-
-                    generated_food = self.food_manager.generate_food(object_collided.points_worth, object_collided.steps_worth,
-                                                                     object_collided.width, self.all_snakes, self.food,
-                                                                     object_collided.is_super_food)
-                    self.food.append(generated_food)
-
-
-                    if object_collided.is_super_food:
-                        snake = self.snake_part_manager.generate_snake_for_player(self.active_player, 5,
-                                                                                  self.all_snakes, self.food)
-                        self.active_player.add_snake(snake)
-                        self.all_snakes.append(snake)
+                        generated_food = self.food_manager.generate_food(object_collided.points_worth,
+                                                                         object_collided.steps_worth,
+                                                                         object_collided.width, self.all_snakes, self.food,
+                                                                         object_collided.is_super_food)
+                        self.food.append(generated_food)
+                    else:
+                        self.activate_deux_ex_machine()
 
                 elif collision_result == CollisionDetectionResult.FRIENDLY_COLLISION or\
                         collision_result == CollisionDetectionResult.AUTO_COLLISION:
@@ -192,7 +271,8 @@ class Game:
                         self.game_mutex.acquire()
                         self.reset_timer()
                     else:
-                        return # TODO::Add more logic
+                        self.restart_game()
+                        continue
 
                 elif collision_result != CollisionDetectionResult.NO_COLLISION:
                     self.all_snakes.remove(self.active_snake)
@@ -202,6 +282,9 @@ class Game:
                         self.change_player()
                         self.game_mutex.acquire()
                         self.reset_timer()
+                    else:
+                        self.restart_game()
+                        continue
 
                 trapped_snakes = self.collision_manager.get_trapped_enemy_snakes(self.all_snakes, self.active_player)
                 if trapped_snakes:
@@ -211,10 +294,9 @@ class Game:
                                 self.all_snakes.remove(snake)
                                 player.remove_snake(snake)
 
-
-                    if self.is_it_game_over_by_trapping_an_enemy_snake() != None:
-                        return # TODO::Add more logic
-
+                    if self.is_it_game_over_by_trapping_an_enemy_snake() is not None:
+                        self.restart_game()
+                        continue
 
                 if self.check_player_steps() is None:
                     self.game_mutex.release()
