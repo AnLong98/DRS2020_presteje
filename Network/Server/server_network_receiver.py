@@ -10,12 +10,12 @@ from Network.socket_manager import SocketManager
 class ServerNetworkReceiver(Thread):
     def __init__(self, clients_dict, queue, exit_event, shutdown_signal):
         Thread.__init__(self)
-        self.shutdown_signal = shutdown_signal
         self.queue = queue
         self.clients_dict = clients_dict
         self.exit_event = exit_event
         self.sockets = []
         self.socket_to_info_dict = {}
+        self.shutdown_signal = shutdown_signal
         for username in clients_dict.keys():
             self.sockets.append(clients_dict[username])
             self.socket_to_info_dict[clients_dict[username]] = SocketInfo(SocketManager(clients_dict[username]), username)

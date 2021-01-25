@@ -16,7 +16,6 @@ class ServerNetworkManager:
         self.receiver_exit_event = threading.Event()
         self.recv_queue, self.receiver = self.__get_reading_queue_and_receiver(self.receiver_exit_event)
 
-
     @property
     def get_recv_queue(self):
         return self.recv_queue

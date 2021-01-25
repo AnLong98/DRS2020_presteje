@@ -126,10 +126,12 @@ class InputWindow(QWidget):
 class ServerStackedWidgets(QWidget):
     def __init__(self, input_signal, hosting_signal, shutdown_signal):
         super(QWidget, self).__init__()
+        self.thread = QThread()
         self.clients_number = 0
         self.snake_count = 0
-        self.thread = QThread()
+        self.worker = None
         self.setMinimumSize(400, 300)
+        self.setWindowTitle("Hosting Information")
 
         self.shutdown_signal = shutdown_signal.shutdown_signal
         self.shutdown_signal.connect(self.close_server_window)
@@ -139,17 +141,17 @@ class ServerStackedWidgets(QWidget):
 
         self.server_hosting_signal = hosting_signal.hosting_widget_signal
         self.server_hosting_signal.connect(self.display_server_hosting_widget)
+
+        self.stack = QStackedWidget(self)
+        self.server_stack = InputWindow(self.server_hosting_signal)
+        self.hosting_stack = HostingWindow()
+
         self.define_stacked_widget_style()
         self.stack.setCurrentIndex(0)
 
     def define_stacked_widget_style(self):
-        self.stack = QStackedWidget(self)
         self.stack.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
-
-        self.server_stack = InputWindow(self.server_hosting_signal)
         self.stack.addWidget(self.server_stack)
-
-        self.hosting_stack = HostingWindow()
         self.stack.addWidget(self.hosting_stack)
 
         hbox = QVBoxLayout()
@@ -162,14 +164,12 @@ class ServerStackedWidgets(QWidget):
 
     def display_server_hosting_widget(self):
         self.stack.setCurrentIndex(1)
-
         network_connector = PlayerNetworkConnector()
-
-        self.hosting_stack.host_port_field.setText(str(network_connector.PORT))
-        self.hosting_stack.host_address_field.setText(str(network_connector.HOST))
-
-        self.worker = GameWorker(self.server_stack.player_count, self.server_stack.snake_count, network_connector, self.shutdown_signal)
-
+        self.hosting_stack.host_port_field.setText(str(1))
+        self.hosting_stack.host_address_field.setText(str(1))
+        self.worker = GameWorker(self.server_stack.player_count,
+                                 self.server_stack.snake_count, network_connector,
+                                 self.shutdown_signal)
         self.worker.moveToThread(self.thread)
         self.thread.started.connect(self.worker.run)
         self.thread.start()
