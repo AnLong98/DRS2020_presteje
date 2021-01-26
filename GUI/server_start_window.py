@@ -165,8 +165,8 @@ class ServerStackedWidgets(QWidget):
     def display_server_hosting_widget(self):
         self.stack.setCurrentIndex(1)
         network_connector = PlayerNetworkConnector()
-        self.hosting_stack.host_port_field.setText(str(1))
-        self.hosting_stack.host_address_field.setText(str(1))
+        self.hosting_stack.host_port_field.setText(str(network_connector.listen_socket.getsockname()[1]))
+        self.hosting_stack.host_address_field.setText(str(network_connector.listen_socket.getsockname()[0]))
         self.worker = GameWorker(self.server_stack.player_count,
                                  self.server_stack.snake_count, network_connector,
                                  self.shutdown_signal)
