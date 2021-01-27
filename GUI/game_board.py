@@ -42,30 +42,11 @@ class ResultsBoard(QFrame):
         scoreboard_layout.addLayout(score_row_column)
         scoreboard_layout.addStretch()
 
-        # creating exit and restart button
-        restart_button = QPushButton("Restart")
-        restart_button.setMaximumWidth(100)
-        restart_button.setMaximumHeight(50)
-        restart_button.setCheckable(True)
-        restart_button.toggle()
-
-        exit_button = QPushButton("Exit")
-        exit_button.setMaximumWidth(100)
-        exit_button.setMaximumHeight(50)
-
-        restart_button.clicked.connect(self.restart_game)
-        exit_button.clicked.connect(self.exit_game)
-
-        buttons_layout = QHBoxLayout()
-        buttons_layout.addWidget(restart_button)
-        buttons_layout.addWidget(exit_button)
-
         self.frame_layout.addWidget(winner_label_heading)
         winner_label_heading.setAlignment(Qt.AlignHCenter)
         self.frame_layout.addWidget(self.winner_label)
         self.winner_label.setAlignment(Qt.AlignHCenter)
         self.frame_layout.addLayout(scoreboard_layout)
-        self.frame_layout.addLayout(buttons_layout)
         self.frame_layout.addStretch()
         self.setLayout(self.frame_layout)
 
