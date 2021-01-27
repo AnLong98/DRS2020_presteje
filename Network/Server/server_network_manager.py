@@ -102,6 +102,11 @@ class ServerNetworkManager:
         for username in self.client_out_queue_dict.keys():
             self.client_out_queue_dict[username].put(player_message)
 
+    def notify_second_elapsed(self):
+        timer_message = SendRequest(1, NetworkPackageFlag.SECOND_ELAPSED)
+        for username in self.client_out_queue_dict.keys():
+            self.client_out_queue_dict[username].put(timer_message)
+
     def shutdown_user(self, username):
         if username in self.client_senders_dict.keys() and username in self.client_out_queue_dict.keys():
             sentinel = self.client_senders_dict[username].sentinel

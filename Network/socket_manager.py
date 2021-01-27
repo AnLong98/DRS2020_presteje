@@ -19,6 +19,8 @@ class NetworkPackageFlag:
     USERNAME_VALID = 13
     GAME_STATE = 14
     GAME_RESTART = 15
+    SECOND_ELAPSED = 16
+
 
 
 class SocketManager:

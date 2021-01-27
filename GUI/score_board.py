@@ -2,6 +2,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
+from GUI.TimerFrame import TimerFrame
+
 
 class PlayerFrame(QFrame):
     def __init__(self):
@@ -54,51 +56,6 @@ class PlayerFrame(QFrame):
             # self.layout.removeWidget(self.points_labels[-1])
             # self.name_labels.pop(-1)
             # self.points_labels.pop(-1)
-
-class TimerFrame(QFrame):
-    def __init__(self):
-        super(QFrame, self).__init__()
-
-        self.setFixedSize(240, 100)
-        self.setStyleSheet('background-color: #bababa')
-        self.elapsedTime = 10 #zakucano vreme za potez.
-
-
-        self.qTimer = QTimer()  # pocinje tajmer da radi i da odbrojava vreme, svake 1 sec poziva funkciju koja smanjuje elapsed_time
-        self.qTimer.setInterval(1000)
-        # connect timeout signal to signal handler
-        self.qTimer.timeout.connect(self.start_timer)
-
-        self.generate_window_layout()
-        self.qTimer.start()
-
-    def generate_window_layout(self):
-        self.vbox = QVBoxLayout()
-        self.time = QLabel("Time left: " + str(self.elapsedTime), self)
-        self.time.setStyleSheet("color: #e31212")
-        self.time.setFont(QFont('Arial', 25))
-        self.vbox.addWidget(self.time)
-        self.setLayout(self.vbox)
-
-    #def paintEvent(self, event):
-
-
-    def init_timer(self):
-        self.reset_timer()
-
-    def reset_timer(self):
-        self.elapsedTime = 10
-        self.time.setText("Time left: " + str(self.elapsedTime))
-
-    def stop_timer(self):
-        self.qTimer.stop()
-
-
-    def start_timer(self):
-        self.time.setText("Time left: " + str(self.elapsedTime))
-        self.elapsedTime = self.elapsedTime - 1
-        if self.elapsedTime == -1:
-            self.reset_timer()
 
 class InformationFrame(QFrame):
     def __init__(self):
@@ -187,6 +144,9 @@ class ScoreBoard(QFrame):
 
     def reset_timer(self):
         self.timer.reset_timer()
+
+    def advance_time(self):
+        self.timer.advance_time()
 
     def init_timer(self):
         self.timer.init_timer()

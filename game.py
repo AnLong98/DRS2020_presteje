@@ -7,7 +7,8 @@ from random import randrange
 
 
 class Game:
-    def __init__(self, players, food, collision_manager, network_manager, movement_manager, snake_part_manager, food_manager, shift_players_manager, table_width, table_height, initializer):
+    def __init__(self, players, food, collision_manager, network_manager, movement_manager, snake_part_manager,
+                 food_manager, shift_players_manager, table_width, table_height, initializer):
         self.players = players
         self.food = food
         self.collision_manager = collision_manager
@@ -33,13 +34,15 @@ class Game:
         self.players_finished_turn = 0
         self.winner = None
         self.deux_ex_machine = None
-        self.timer = Timer(10, self.generate_deux_ex_machine)
+        self.timer = Timer(30, self.generate_deux_ex_machine)
         self.timer.start()
         self.game_timer = Timer(10.0, self.change_player)
+        self.display_timer = Timer(1.0, self.advance_game_time)
         self.game_mutex = Lock()
 
     def restart_game(self):
         self.game_timer.cancel()
+        self.display_timer.cancel()
         self.players, self.food = self.initializer.get_players_deepcopy()
         pl = []
         for player in self.players: #filtriranje players po userame - uzimam samo zive klijente iz network_manager.get_clients_names - property
@@ -56,16 +59,25 @@ class Game:
     def initialize_start_parameters(self):
         self.set_active_player(self.players[0])
         self.set_active_snake(self.players[0].snakes[0])
-        self.network_manager.notify_start_timer()
         self.game_timer.start()
+        self.display_timer.start()
         self.network_manager.send_state_to_players(self.food, self.players, self.active_player)
         self.network_manager.notify_game_restart()
         self.network_manager.notify_start_input(self.active_player.user_name)
 
+    def advance_game_time(self):
+        self.network_manager.notify_second_elapsed()
+        self.display_timer = Timer(1.0, self.advance_game_time)
+        self.display_timer.start()
+
     def reset_timer(self):
         self.game_timer.cancel()
+        self.display_timer.cancel()
         self.game_timer = Timer(10.0, self.change_player)
+        self.display_timer = Timer(1.0, self.advance_game_time)
         self.game_timer.start()
+        self.display_timer.start()
+        self.network_manager.notify_reset_timer()
 
     def set_active_player(self, active_player):
         self.active_player = active_player
@@ -134,36 +146,39 @@ class Game:
         self.winner = self.shift_players_manager.shift_player(self.players,
                                                               self.active_player)
         self.game_timer.cancel()
+        self.display_timer.cancel()
         self.timer.cancel()
         self.deux_ex_machine = None
 
         self.network_manager.notify_game_over(self.winner, self.players)
-        time.sleep(3)
+        time.sleep(30)
 
 
     def winner_found(self):
         self.winner = self.shift_players_manager.shift_player(self.players,
                                                               self.active_player)  # aktivan igrac je i dalje isti, samo sto smo rekli ko je winner
         self.game_timer.cancel()
+        self.display_timer.cancel()
         self.timer.cancel()
         self.deux_ex_machine = None
         # ako se ide na play again i odmah je prikaze onda ovde osveziti
+
+        self.network_manager.notify_game_over(self.winner, self.players)
+        time.sleep(30)
         self.game_mutex.release()
         self.change_player()
         self.game_mutex.acquire()
 
-        self.network_manager.notify_game_over(self.winner, self.players)
-        time.sleep(3)
-
     def winner_found_trapping(self):
         self.winner = self.active_player
         self.game_timer.cancel()
+        self.display_timer.cancel()
         self.timer.cancel()
         self.deux_ex_machine = None
         self.network_manager.send_state_to_players(self.food, self.players, self.active_player)
 
         self.network_manager.notify_game_over(self.winner, self.players)
-        time.sleep(3)
+        time.sleep(30)
 
     def is_it_over_player_alone(self):
         count = 0

@@ -46,6 +46,9 @@ class DrawingManager:
     def start_timer(self):
         self.score_board.init_timer()
 
+    def update_time(self):
+        self.score_board.advance_time()
+
     def set_active_player(self, player):
         self.game_board.set_active_player(player)
         self.score_board.set_active_player_on_information_frame(player)

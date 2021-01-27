@@ -39,19 +39,6 @@ class PlayerNetworkConnector:
     def await_client_connections(self, clients_number):
         socket_handle_dict = {}
         clients_dict = {}
-
-        # self.HOST = self.get_pc_ip()
-        # try:
-        #     listen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        #     listen_socket.bind((self.HOST, self.PORT))
-        #     listen_socket.listen(self.MAX_CONNECTIONS_LISTEN)
-        #     ip_port = listen_socket.getsockname()
-        #     print("Server is listening on IP and Port ", ip_port[0], ip_port[1])
-        # except Exception as ex:
-        #     print("Cloud not listen at server default port. Game aborted! ", ex)
-        #     # return None
-
-
         connection_attempts = 0
         connected_clients = 0
         clients_ready = 0

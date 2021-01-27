@@ -83,6 +83,9 @@ class ClientSocketReceiver(SocketManager, Thread):
             elif flag == NetworkPackageFlag.RESET_TIMER:
                 self.drawing_manager.reset_turn_time()
 
+            elif flag == NetworkPackageFlag.SECOND_ELAPSED:
+                self.drawing_manager.update_time()
+
             elif flag == NetworkPackageFlag.ACTIVE_PLAYER:
                 self.drawing_manager.set_active_player(message)
 
@@ -94,11 +97,9 @@ class ClientSocketReceiver(SocketManager, Thread):
 
             elif flag == NetworkPackageFlag.GAME_OVER:
                 #game is over, do some game over things here
+                self.drawing_manager.reset_turn_time()
                 self.drawing_manager.stop_input()
                 self.drawing_manager.show_results(message[0], message[1])
-                # finish_window = ClientFinishWindow(message[0],message[1])
-                # finish_window.exec()
-                # call signal that will handle finish window
                 continue
 
             elif flag == NetworkPackageFlag.GAME_RESTART:
