@@ -9,12 +9,12 @@ from Network.Server.server_network_helpers import SendRequest
 
 
 class ServerNetworkManager:
-    def __init__(self, clients_number, network_connector):
+    def __init__(self, clients_number, network_connector, shutdown_signal):
+        self.shutdown_signal = shutdown_signal
         self.clients_dict = network_connector.await_client_connections(clients_number)
         self.client_out_queue_dict, self.client_senders_dict  = self.__create_client_senders(self.clients_dict)
         self.receiver_exit_event = threading.Event()
         self.recv_queue, self.receiver = self.__get_reading_queue_and_receiver(self.receiver_exit_event)
-
 
     @property
     def get_recv_queue(self):
@@ -40,7 +40,7 @@ class ServerNetworkManager:
 
     def __get_reading_queue_and_receiver(self, receiver_exit_event):
         recv_queue = Queue()
-        receiver = ServerNetworkReceiver(self.clients_dict, recv_queue, receiver_exit_event)
+        receiver = ServerNetworkReceiver(self.clients_dict, recv_queue, receiver_exit_event, self.shutdown_signal)
         receiver.setDaemon(True)
         receiver.start()
         return recv_queue, receiver

@@ -5,12 +5,11 @@ from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QVBoxLayout, QHBoxLayout
 class ClientStartWindow(QDialog):
     def __init__(self):
         super(QDialog, self).__init__()
-        self.setFixedSize(300,150)
+        self.setFixedSize(300, 150)
         self.setWindowTitle("Username input")
         self.username = None
         self.player_input_field()
         self.username_field.setFocus()
-
 
     def player_input_field(self):
         self.username_label = QLabel("Username: ")
@@ -55,8 +54,8 @@ class ClientStartWindow(QDialog):
         if len(self.username_field.text()) == 0:
             self.error_label.setText("Player name can't be an empty string.")
         else:
-         self.username = self.username_field.text()
-         self.close()
+            self.username = self.username_field.text()
+            self.close()
 
     def close_window(self):
         self.close()

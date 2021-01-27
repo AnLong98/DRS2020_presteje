@@ -8,8 +8,6 @@ from Network.socket_manager import SocketManager, NetworkPackageFlag
 
 
 class ClientGameConnector:
-
-
     def connect(self):
 
         server_parameters_window = ClientServerParametersWindow()
