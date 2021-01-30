@@ -1,5 +1,4 @@
 # DRS2020_presteje
-DRS 2020 projekat
 Multiplayer snake game implementation in Python.
 
 1.Run Server.py and host game.
